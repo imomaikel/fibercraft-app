@@ -1,4 +1,0 @@
-export type TEnvVars =
-    | 'DISCORD_DEVELOPMENT_BOT_TOKEN'
-    | 'DISCORD_PRODUCTION_BOT_TOKEN'
-    | 'NODE_ENV';
