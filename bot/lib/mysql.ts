@@ -56,7 +56,7 @@ export const dbUpdateTribeLogs = async (ids: string[]) => {
 
 export const dbGetNewTribeLogs = async () => {
   const data = await db(
-    'SELECT l.ID AS id, l.TribeID AS tribeId, l.TribeName AS content, r.TribeName AS tribeName, l.timestamp FROM tribesfiber.wtribes_events l RIGHT JOIN tribesfiber.wtribes_tribedata r ON l.TribeID = r.tribeId WHERE l.EventType = 1012;',
+    'SELECT l.ID AS id, l.TribeID AS tribeId, l.TribeName AS content, r.TribeName AS tribeName, l.timestamp FROM tribesfiber.wtribes_events l RIGHT JOIN tribesfiber.wtribes_tribedata r ON l.TribeID = r.tribeId WHERE l.EventType = 1012 AND fetched = 0;',
   );
   return typeof data === 'object' ? (data as TDbGetNewTribeLogs) : null;
 };

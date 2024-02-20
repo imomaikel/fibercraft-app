@@ -66,7 +66,11 @@ export const _calculateTribePoints = async () => {
     });
   }
 
-  const updatedTribes = await prisma.tribe.findMany();
+  const updatedTribes = await prisma.tribe.findMany({
+    orderBy: {
+      points: 'desc',
+    },
+  });
 
   for (let i = 0; i < updatedTribes.length; i++) {
     const tribe = updatedTribes[i];

@@ -7,3 +7,15 @@ export type TEnvVars =
   | 'DATABASE_USER'
   | 'DATABASE_PASSWORD'
   | 'DATABASE_SCHEMA';
+
+export const colors = {
+  red: 0xeb2f06,
+  orange: 0xe58e26,
+  blue: 0x3742fa,
+  green: 0x2ed573,
+  purple: 0xc56cf0,
+};
+
+export const extraSigns = {
+  zap: '⚡️',
+};

@@ -1,6 +1,10 @@
+import { colors, extraSigns } from '../../constans';
+import { EmbedBuilder, time } from 'discord.js';
+import { client } from '../../client';
 import prisma from '../../lib/prisma';
 
-export const _sendTribeScore = async () => {
+// TODO
+export const _sendTribeScore = async (channelId: string) => {
   const tribes = await prisma.tribe.findMany({
     orderBy: {
       points: 'desc',
@@ -22,7 +26,20 @@ export const _sendTribeScore = async () => {
     return line;
   });
 
-  // TODO
-  const messageContent = `\`\`\`diff\n${content.join('\n')}\`\`\``;
-  return messageContent;
+  const channel = client.channels.cache.get(channelId);
+  if (channel?.isTextBased()) {
+    const embed = new EmbedBuilder()
+      .setColor(colors.purple)
+      .setDescription(`**Last update: ** ${time(new Date(), 'R')}`)
+      .setFooter({
+        text: `${extraSigns.zap} Auto update every 30 minutes`,
+      })
+      .addFields({
+        name: 'How is it calculated?',
+        value:
+          'Each structure in game has its certain points. Every time you destroy a structure you get points, as well as minus points when someone destroys your structure.',
+      });
+
+    channel.send({ embeds: [embed], content: `\`\`\`diff\n${content.join('\n')}\`\`\`` });
+  }
 };
