@@ -6,3 +6,51 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+// Temp
+// TODO
+model Server {
+  id          Int     @id @default(autoincrement())
+  mapName     String  @db.VarChar(45)
+  path        String  @db.VarChar(200)
+  gameMode    String  @db.VarChar(45)
+  gameType    String  @db.VarChar(45)
+  autoRestart Int     @db.TinyInt
+  customName  String? @db.VarChar(45)
+  multiHome   String? @db.VarChar(45)
+  queryPort   Int
+  rconPort    Int
+  lastStatus  String  @default("offline") @db.VarChar(45)
+  lastPlayers Int     @default(0) @db.TinyInt
+  position    Int     @default(1) @db.TinyInt
+}
+
+enum TribePosition {
+  PROMOTE
+  DEMOTE
+  SAME
+}
+
+model Tribe {
+  tribeId      Int           @id
+  tribeName    String        @db.TinyText
+  points       Int           @default(0)
+  position     Int?
+  newScoreMode TribePosition @default(PROMOTE)
+}
+
+model TribeLog {
+  id             BigInt   @id
+  tribeId        Int
+  tribeName      String
+  content        String
+  possiblePoints Boolean
+  timestamp      DateTime
+}
+
+model Building {
+  id Int @id @default(autoincrement())
+
+  label  String
+  points Int?
+}

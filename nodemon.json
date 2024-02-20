@@ -2,8 +2,7 @@
     "ext": "ts",
     "exec": "ts-node --project tsconfig.server.json server/index.ts",
     "watch": [
-        "src/server.ts",
-        "src/bot/**/*",
-        "src/trpc/**/*"
+        "./server/**/*",
+        "./bot/**/*"
     ]
 }
