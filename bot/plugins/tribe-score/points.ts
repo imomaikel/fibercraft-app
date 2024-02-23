@@ -61,7 +61,15 @@ export const _calculateTribePoints = async () => {
         points: tribe.points,
       },
       update: {
-        points: tribe.points,
+        points: {
+          ...(tribe.points >= 0
+            ? {
+                increment: tribe.points,
+              }
+            : {
+                decrement: Math.abs(tribe.points),
+              }),
+        },
       },
     });
   }
@@ -75,12 +83,12 @@ export const _calculateTribePoints = async () => {
   for (let i = 0; i < updatedTribes.length; i++) {
     const tribe = updatedTribes[i];
     const currentPosition = tribe.position;
-    if (!currentPosition) {
+    if (currentPosition === null) {
       tribe.newScoreMode = 'PROMOTE';
     } else if (currentPosition < i) {
-      tribe.newScoreMode = 'PROMOTE';
-    } else if (currentPosition > i) {
       tribe.newScoreMode = 'DEMOTE';
+    } else if (currentPosition > i) {
+      tribe.newScoreMode = 'PROMOTE';
     } else if (currentPosition === i) {
       tribe.newScoreMode = 'SAME';
     }
@@ -93,6 +101,17 @@ export const _calculateTribePoints = async () => {
       data: tribe,
     });
   }
+
+  await prisma.tribeLog.updateMany({
+    where: {
+      id: {
+        in: logsToUpdate,
+      },
+    },
+    data: {
+      possiblePoints: false,
+    },
+  });
 
   const buildingsToAdd = Array.from(newBuildings);
   if (buildingsToAdd.length >= 1) {

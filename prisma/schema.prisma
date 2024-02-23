@@ -54,3 +54,25 @@ model Building {
   label  String
   points Int?
 }
+
+model Widget {
+  id Int @id @default(autoincrement())
+
+  // Tribe Score
+  tribeScoreChannelId String? @db.TinyText
+  tribeScoreMessageId String? @db.TinyText
+
+  guild   Guild  @relation(fields: [guildId], references: [id])
+  guildId String @unique
+}
+
+model Guild {
+  id String @id @unique
+
+  name String @db.TinyText
+
+  widgets Widget?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
