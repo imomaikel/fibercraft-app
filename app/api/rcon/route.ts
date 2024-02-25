@@ -1,6 +1,6 @@
+import { executeRconCommand } from '../../../bot/plugins/rcon';
+import { COMMANDS } from '../../../bot/constans';
 import crypto from 'node:crypto';
-
-const COMMANDS = ['aac.ban', 'aac.removeban', 'broadcast', 'kmute'] as const;
 
 const RCON_API_SECRET = process.env.RCON_API_SECRET;
 
@@ -36,9 +36,21 @@ const handle = async (request: Request) => {
     }
 
     if (command === 'aac.ban') {
-      // TODO
+      const executed = await executeRconCommand({
+        command,
+        args,
+        // TODO
+        executedBy: 'API_USER',
+      });
+      return Response.json(executed, { status: 200 });
     } else if (command === 'aac.removeban') {
-      // TODO
+      const executed = await executeRconCommand({
+        command,
+        args,
+        // TODO
+        executedBy: 'API_USER',
+      });
+      return Response.json(executed, { status: 200 });
     } else if (command === 'broadcast') {
       // TODO
     } else if (command === 'kmute') {
