@@ -59,8 +59,8 @@ export const _executeRconCommand = async ({ command, serverId, args, executedBy 
   await Promise.all(
     rconWithServer
       .filter(({ rcon: { authenticated } }) => authenticated)
-      .map(({ rcon, server: { mapName } }) => {
-        rcon
+      .map(async ({ rcon, server: { mapName } }) => {
+        await rcon
           .send(toExecute)
           .then((value) =>
             executed.push({

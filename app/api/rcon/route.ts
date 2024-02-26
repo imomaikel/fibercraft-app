@@ -54,7 +54,31 @@ const handle = async (request: Request) => {
     } else if (command === 'broadcast') {
       // TODO
     } else if (command === 'kmute') {
-      // TODO
+      const splitArgs = args.split(' ');
+      const timeout = splitArgs[1];
+      try {
+        if (timeout) {
+          const parseTimeout = parseInt(timeout);
+          if (parseTimeout >= 1) {
+            const executed = await executeRconCommand({
+              command,
+              args,
+              // TODO
+              executedBy: 'API_USER',
+            });
+            return Response.json(executed, { status: 200 });
+          }
+        }
+      } catch {}
+      return new Response('Invalid args!', { status: 200 });
+    } else if (command === 'kunmute') {
+      const executed = await executeRconCommand({
+        command,
+        args,
+        // TODO
+        executedBy: 'API_USER',
+      });
+      return Response.json(executed, { status: 200 });
     }
 
     return new Response('Success!', { status: 200 });
