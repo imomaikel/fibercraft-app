@@ -1,5 +1,5 @@
-import { executeRconCommand } from '../../../bot/plugins/rcon';
-import { COMMANDS } from '../../../bot/constans';
+import { executeRconCommand } from '../../../../bot/plugins/rcon';
+import { COMMANDS } from '../../../../bot/constans';
 import crypto from 'node:crypto';
 
 const RCON_API_SECRET = process.env.RCON_API_SECRET;

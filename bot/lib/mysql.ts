@@ -60,3 +60,28 @@ export const dbGetNewTribeLogs = async () => {
   );
   return typeof data === 'object' ? (data as TDbGetNewTribeLogs) : null;
 };
+
+export const temp_data = async (search: string) => {
+  const byId = await db('SELECT steam_id, player_name FROM statisticsfiber.personal_stats where steam_id = ?;', [
+    search,
+  ]);
+  const byName = await db(
+    'SELECT steam_id, player_name FROM statisticsfiber.personal_stats where player_name like ?;',
+    [`%${search}%`],
+  );
+
+  let response = '';
+
+  if (byId) {
+    for (const row of byId as any) {
+      response += `• \`${row.steam_id}\` => \`${row.player_name}\`\n`;
+    }
+  }
+  if (byName) {
+    for (const row of byName as any) {
+      response += `• \`${row.player_name}\` => \`${row.steam_id}\`\n`;
+    }
+  }
+
+  return response;
+};

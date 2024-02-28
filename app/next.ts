@@ -1,4 +1,4 @@
-import { getPort } from './_assets/utils';
+import { getPort } from './(assets)/lib/utils';
 import next from 'next';
 
 export const nextApp = next({

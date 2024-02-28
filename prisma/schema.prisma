@@ -25,6 +25,8 @@ model Server {
   position    Int     @default(1) @db.TinyInt
 }
 
+// 
+
 enum TribePosition {
   PROMOTE
   DEMOTE
@@ -91,4 +93,10 @@ model RconLog {
   servers    String
 
   createdAt DateTime @default(now())
+}
+
+// Website
+enum Permission {
+  ALL_PERMISSIONS @map("All Permissions")
+  SERVER_RESTART  @map("Server Restart")
 }

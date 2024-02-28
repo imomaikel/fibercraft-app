@@ -1,8 +1,8 @@
 import { CreateExpressContextOptions, createExpressMiddleware } from '@trpc/server/adapters/express';
-import { appRouter } from '../app/_assets/trpc/trpc-router';
+import { appRouter } from '../app/(assets)/trpc/trpc-router';
 import { nextApp, nextRequestHandler } from '../app/next';
 import { inferAsyncReturnType } from '@trpc/server';
-import { getPort } from '../app/_assets/utils';
+import { getPort } from '../app/(assets)/lib/utils';
 import buildNextApp from 'next/dist/build';
 import express from 'express';
 
