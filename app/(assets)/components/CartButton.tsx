@@ -12,7 +12,7 @@ const CartButton = () => {
       aria-labelledby="open cart"
       onClick={openCart}
     >
-      <HiOutlineShoppingBag className="group-h h-8 w-8" />
+      <HiOutlineShoppingBag className="group-h h-6 w-6 sm:h-8 sm:w-8" />
     </div>
   );
 };

@@ -43,6 +43,7 @@ const NavLinks = ({ userPermissions }: TNavLinks) => {
         {navLinksWithAccess.map((entry) => {
           if (!entry) return null;
           if (!entry.itemsOnHover) {
+            if (!entry.redirectOnClick) return null;
             return (
               <NavigationMenuItem key={entry.label}>
                 <Link href={entry.redirectOnClick} legacyBehavior passHref>
@@ -55,8 +56,8 @@ const NavLinks = ({ userPermissions }: TNavLinks) => {
           return (
             <NavigationMenuItem key={entry.label}>
               <NavigationMenuTrigger>{entry.label}</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+              <NavigationMenuContent className="max-w-[calc(100vw-48px)] md:w-auto">
+                <ul className="grid w-[400px] max-w-[calc(100vw-48px)] gap-3 p-4 md:w-[500px] md:max-w-none md:grid-cols-2 lg:w-[600px] ">
                   {entry.itemsOnHover.map((children) => {
                     if (!children) return null;
                     return (

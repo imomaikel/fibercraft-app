@@ -3,13 +3,18 @@ import { TNavLink } from './types';
 export const NAV_LINKS: TNavLink[] = [
   {
     label: 'Management',
-    redirectOnClick: 'ok',
     itemsOnHover: [
       {
         label: 'Permissions',
         path: '/management/permissions',
         description: 'Manage access to the management panel.',
         permission: 'ALL_PERMISSIONS',
+      },
+      {
+        label: 'Discord Selection',
+        path: '/management/discord-selection',
+        description: 'Select a Discord server that you want to control.',
+        permission: 'USE_WIDGETS',
       },
       {
         label: 'Server Restart',

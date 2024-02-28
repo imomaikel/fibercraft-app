@@ -13,7 +13,7 @@ const UserProfile = () => {
   const { user, sessionStatus } = useCurrentUser();
 
   if (sessionStatus === 'loading') {
-    return <Skeleton className="h-12 w-48" />;
+    return <Skeleton className="h-12 w-40 sm:w-48" />;
   }
 
   if (sessionStatus === 'unauthenticated' || !user) {
@@ -24,7 +24,7 @@ const UserProfile = () => {
         aria-labelledby="login"
         onClick={() => signIn('discord')}
       >
-        <p className="text-sm text-red-500">You are not logged in!</p>
+        <p className="text-xs text-red-500 sm:text-sm">You are not logged in!</p>
         <p className="text-xs text-muted-foreground">Click to login.</p>
       </div>
     );
@@ -34,11 +34,11 @@ const UserProfile = () => {
     <>
       <Popover>
         <PopoverTrigger className="group">
-          <div className="flex cursor-default items-center space-x-2 rounded-md px-2 py-1 transition-colors hover:bg-muted group-data-[state=open]:bg-muted">
+          <div className="flex cursor-pointer items-center space-x-2 rounded-md px-2 py-1 transition-colors hover:bg-muted group-data-[state=open]:bg-muted">
             <div>
               <HiChevronDoubleDown className="transition-transform group-data-[state=open]:rotate-180" />
             </div>
-            <div className="max-w-[128px]">
+            <div className="max-w-[84px] sm:max-w-[128px]">
               <p className="truncate font-semibold">{user.name}</p>
             </div>
             <div>

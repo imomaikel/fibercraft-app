@@ -1,4 +1,5 @@
 import SessionWrapper from '@assets/components/SessionWrapper';
+import MobileNavbar from '@assets/components/MobileNavbar';
 import { Provider } from '@assets/trpc/Provider';
 import Navbar from '@assets/components/Navbar';
 import { Inter } from 'next/font/google';
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SessionWrapper>
             <div className="mx-auto max-w-screen-xl">
               <Navbar />
+              <MobileNavbar />
               <div>{children}</div>
             </div>
           </SessionWrapper>

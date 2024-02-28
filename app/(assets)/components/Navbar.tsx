@@ -1,25 +1,33 @@
 'use client';
-import { useCurrentUser } from '@assets/hooks/useCurrentUser';
+import { useMobileNavbar } from '@assets/hooks/useMobileNavbar';
+import NavbarLinksAccess from './NavbarLinksAccess';
+import { GiHamburgerMenu } from 'react-icons/gi';
 import { Separator } from '@ui/separator';
 import UserProfile from './UserProfile';
 import CartButton from './CartButton';
-import NavLinks from './NavLinks';
+import Link from 'next/link';
 
 const Navbar = () => {
-  const { user } = useCurrentUser();
-  const userPermissions = user?.permissions;
+  const { openMobileNav } = useMobileNavbar();
 
   return (
-    <div className="fixed left-0 h-16 w-screen bg-background/40 px-4 backdrop-blur-sm">
+    <div className="fixed left-0 h-16 w-screen bg-background/40 px-1 backdrop-blur-sm sm:px-4">
       <div className="relative mx-auto flex h-full w-full max-w-screen-xl items-center border-b">
         <header className="w-full">
           <nav>
             <div className="flex w-full items-center justify-between">
-              <div className="flex items-center space-x-6">
-                <div className="text-3xl font-bold tracking-wide antialiased">Fibercraft</div>
-                <div>{userPermissions && <NavLinks userPermissions={userPermissions} />}</div>
+              <div className="flex items-center space-x-2 sm:space-x-6">
+                <div className="md:hidden" role="button" aria-labelledby="open sidebar" onClick={openMobileNav}>
+                  <GiHamburgerMenu className="h-8 w-8" />
+                </div>
+                <Link href="/">
+                  <h1 className="text-xl font-bold antialiased sm:tracking-wide md:text-3xl">Fibercraft</h1>
+                </Link>
+                <div className="hidden md:block">
+                  <NavbarLinksAccess />
+                </div>
               </div>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-1 sm:space-x-3">
                 <div>
                   <UserProfile />
                 </div>

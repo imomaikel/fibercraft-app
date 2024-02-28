@@ -101,6 +101,7 @@ enum ManagementPermission {
   ALL_PERMISSIONS      @map("All Permissions")
   SERVER_RESTART       @map("Server Restart")
   VIEW_PAIRED_ACCOUNTS @map("View Paired Accounts")
+  USE_WIDGETS          @map("Use Widgets")
 }
 
 model UserPermission {
