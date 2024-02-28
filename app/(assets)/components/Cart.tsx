@@ -1,12 +1,19 @@
-import { HiOutlineShoppingBag } from 'react-icons/hi2';
+'use client';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@ui/sheet';
+import { useCart } from '@assets/hooks/useCart';
 
 const Cart = () => {
+  const { isCartOpen, closeCart } = useCart();
+
   return (
-    <div>
-      <div>
-        <HiOutlineShoppingBag className="h-10 w-10" />
-      </div>
-    </div>
+    <Sheet open={isCartOpen} onOpenChange={closeCart}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Your Cart</SheetTitle>
+          <SheetDescription>Under construction</SheetDescription>
+        </SheetHeader>
+      </SheetContent>
+    </Sheet>
   );
 };
 

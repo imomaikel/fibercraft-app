@@ -1,7 +1,7 @@
 import { Separator } from '@ui/separator';
 import UserProfile from './UserProfile';
+import CartButton from './CartButton';
 import NavLinks from './NavLinks';
-import Cart from './Cart';
 
 const Navbar = () => {
   return (
@@ -22,7 +22,7 @@ const Navbar = () => {
                 </div>
                 <Separator orientation="vertical" className="h-10" />
                 <div>
-                  <Cart />
+                  <CartButton />
                 </div>
               </div>
             </div>
