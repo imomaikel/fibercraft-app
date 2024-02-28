@@ -1,3 +1,4 @@
+import SessionWrapper from '@assets/components/SessionWrapper';
 import { Provider } from '@assets/trpc/Provider';
 import Navbar from '@assets/components/Navbar';
 import { Inter } from 'next/font/google';
@@ -17,10 +18,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={cn(inter.className, 'w-screen overflow-x-hidden bg-background')}>
         <Provider>
-          <div className="mx-auto max-w-screen-xl">
-            <Navbar />
-            <div>{children}</div>
-          </div>
+          <SessionWrapper>
+            <div className="mx-auto max-w-screen-xl">
+              <Navbar />
+              <div>{children}</div>
+            </div>
+          </SessionWrapper>
         </Provider>
       </body>
     </html>

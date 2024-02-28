@@ -1,3 +1,5 @@
+import { Separator } from '@ui/separator';
+import UserProfile from './UserProfile';
 import NavLinks from './NavLinks';
 import Cart from './Cart';
 
@@ -14,11 +16,14 @@ const Navbar = () => {
                   <NavLinks />
                 </div>
               </div>
-              <div>
+              <div className="flex items-center space-x-3">
+                <div>
+                  <UserProfile />
+                </div>
+                <Separator orientation="vertical" className="h-10" />
                 <div>
                   <Cart />
                 </div>
-                <div></div>
               </div>
             </div>
           </nav>
