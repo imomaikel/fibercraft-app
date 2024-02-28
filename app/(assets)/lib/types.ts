@@ -1,11 +1,13 @@
+import { ManagementPermission } from '@prisma/client';
+
 export type TNavLink = {
   label: string;
   redirectOnClick: string;
-  // permission?: Management
+  permission: ManagementPermission[];
   itemsOnHover?: {
     label: string;
     path: string;
     description?: string;
-    // permission?:
+    permission: ManagementPermission[];
   }[];
 };
