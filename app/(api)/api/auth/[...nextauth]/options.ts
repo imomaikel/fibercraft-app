@@ -33,6 +33,18 @@ const authOptions: NextAuthOptions = {
           data: { discordId: token.discordId },
         });
       }
+      if (getUserData && getUserData.permissions.length <= 0) {
+        await prisma.user.update({
+          where: { id: token.uid },
+          data: {
+            permissions: {
+              create: {
+                permission: 'USER',
+              },
+            },
+          },
+        });
+      }
       if (session.user.image?.includes('https') && getUserData?.image !== session.user.image) {
         await prisma.user.update({
           where: { id: token.uid },

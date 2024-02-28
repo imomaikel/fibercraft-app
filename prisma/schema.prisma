@@ -97,8 +97,10 @@ model RconLog {
 
 // Website
 enum ManagementPermission {
-  ALL_PERMISSIONS @map("All Permissions")
-  SERVER_RESTART  @map("Server Restart")
+  USER                 @map("User")
+  ALL_PERMISSIONS      @map("All Permissions")
+  SERVER_RESTART       @map("Server Restart")
+  VIEW_PAIRED_ACCOUNTS @map("View Paired Accounts")
 }
 
 model UserPermission {
