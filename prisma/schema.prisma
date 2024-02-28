@@ -96,7 +96,7 @@ model RconLog {
 }
 
 // Website
-enum Permission {
+enum ManagementPermission {
   ALL_PERMISSIONS @map("All Permissions")
   SERVER_RESTART  @map("Server Restart")
 }
