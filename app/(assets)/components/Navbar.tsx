@@ -2,6 +2,7 @@
 import { useMobileNavbar } from '@assets/hooks/useMobileNavbar';
 import NavbarLinksAccess from './NavbarLinksAccess';
 import { GiHamburgerMenu } from 'react-icons/gi';
+import { usePathname } from 'next/navigation';
 import { Separator } from '@ui/separator';
 import UserProfile from './UserProfile';
 import CartButton from './CartButton';
@@ -9,6 +10,9 @@ import Link from 'next/link';
 
 const Navbar = () => {
   const { openMobileNav } = useMobileNavbar();
+  const pathname = usePathname();
+
+  const showCartButton = !pathname.startsWith('/management');
 
   return (
     <div className="fixed left-0 h-16 w-screen bg-background/40 px-1 backdrop-blur-sm sm:px-4">
@@ -20,7 +24,7 @@ const Navbar = () => {
                 <div className="md:hidden" role="button" aria-labelledby="open sidebar" onClick={openMobileNav}>
                   <GiHamburgerMenu className="h-8 w-8" />
                 </div>
-                <Link href="/">
+                <Link href="/dashboard">
                   <h1 className="text-xl font-bold antialiased sm:tracking-wide md:text-3xl">Fibercraft</h1>
                 </Link>
                 <div className="hidden md:block">
@@ -31,10 +35,14 @@ const Navbar = () => {
                 <div>
                   <UserProfile />
                 </div>
-                <Separator orientation="vertical" className="h-10" />
-                <div>
-                  <CartButton />
-                </div>
+                {showCartButton && (
+                  <>
+                    <Separator orientation="vertical" className="h-10" />
+                    <div>
+                      <CartButton />
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </nav>

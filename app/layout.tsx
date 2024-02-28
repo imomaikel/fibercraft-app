@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="mx-auto max-w-screen-xl">
               <Navbar />
               <MobileNavbar />
-              <div>{children}</div>
+              <div className="px-2">{children}</div>
             </div>
           </SessionWrapper>
         </Provider>

@@ -22,7 +22,8 @@
       "@ui/*": ["./app/(assets)/components/ui/*"],
       "@trpc/*": ["./app/(assets)/trpc/*"],
       "@/*": ["./app/(dashboard)/*"],
-      "@assets/*": ["./app/(assets)/*"]
+      "@assets/*": ["./app/(assets)/*"],
+      "@management/*": ["./app/(management)/components/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

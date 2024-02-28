@@ -1,12 +1,3 @@
-import { ManagementPermission } from '@prisma/client';
+import { NAV_LINKS } from './constans';
 
-export type TNavLink = {
-  label: string;
-  redirectOnClick?: string;
-  itemsOnHover?: {
-    label: string;
-    path: string;
-    description?: string;
-    permission: ManagementPermission;
-  }[];
-};
+export type TAllNavLabels = (typeof NAV_LINKS)[number]['itemsOnHover'][number]['label'];

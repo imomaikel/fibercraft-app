@@ -3,16 +3,13 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuListItem,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from '@ui/navigation-menu';
 import { ManagementPermission } from '@prisma/client';
 import { NAV_LINKS } from '@assets/lib/constans';
 import { useMemo } from 'react';
-import Link from 'next/link';
 
 type TNavLinks = {
   userPermissions: ManagementPermission[];
@@ -42,16 +39,6 @@ const NavLinks = ({ userPermissions }: TNavLinks) => {
       <NavigationMenuList>
         {navLinksWithAccess.map((entry) => {
           if (!entry) return null;
-          if (!entry.itemsOnHover) {
-            if (!entry.redirectOnClick) return null;
-            return (
-              <NavigationMenuItem key={entry.label}>
-                <Link href={entry.redirectOnClick} legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>{entry.label}</NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-            );
-          }
 
           return (
             <NavigationMenuItem key={entry.label}>
