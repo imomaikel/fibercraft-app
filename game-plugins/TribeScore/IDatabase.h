@@ -12,8 +12,11 @@ public:
 	virtual bool IsAlreadyInDatabase(std::string tribe_id) = 0;
 	virtual int tribescore_amount(std::string tribe_id) = 0;
 
-	//command related
+	//Command related
 	virtual bool DisabledTribescore(std::string id) = 0;
 	virtual bool AddDisableTribescore(std::string id) = 0;
 	virtual bool DeleteFromDisabledTribescoreDatabase(std::string id) = 0;
+
+	//Setup
+	virtual bool Setup() = 0;
 };

@@ -154,4 +154,23 @@ public:
 				return false;
     } 
 	}
+
+	bool Setup() {
+    
+    try {
+        res = conn->prepareStatement("CREATE TABLE IF NOT EXISTS score (TribeID BIGINT(255),Score BIGINT(255));");
+
+        res->executeUpdate();
+        delete res;
+
+        res = conn->prepareStatement("CREATE TABLE IF NOT EXISTS disabledscore (SteamID BIGINT(255)); ");
+        res->executeUpdate();
+        delete res;
+
+        return true;
+    } catch(std::exception &e){
+        std::cout << e.what() << std::endl;
+        return false;
+    }
+	}
 };
