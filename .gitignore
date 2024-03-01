@@ -36,3 +36,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+Browse.VC.db
+TribeScore.tlog
+TribeScore.exp
+TribeScore.lib
+TribeScore.pdb
+TribeScore.dll.recipe
+TribeScore.iobj
+TribeScore.ipdb
+TribeScore.log
+TribeScore.obj
+vc143.pdb
