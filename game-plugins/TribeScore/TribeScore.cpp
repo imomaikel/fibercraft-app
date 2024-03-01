@@ -225,9 +225,14 @@ void Load() {
 
 // Unload plugin
 void Unload() {
+    //Hooks
+
     ArkApi::GetHooks().DisableHook("APrimalStructure.Die", &Hook_APrimalStructure_Die_);
     ArkApi::GetHooks().DisableHook("AShooterGameMode.Logout", &Hook_AShooterGameMode_Logout);
     ArkApi::GetHooks().DisableHook("AShooterGameMode.StartNewShooterPlayer", &AShooterGameMode_StartNewShooterPlayer_Hook);
+
+    // Remove commands
+    ArkApi::GetCommands().RemoveChatCommand("/ts");
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
