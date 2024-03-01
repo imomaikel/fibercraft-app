@@ -7,6 +7,7 @@
 #include "IDatabase.h"
 
 
+
 class MySql : public IDatabase {
 private:
 	sql::Driver* driver;
@@ -23,5 +24,21 @@ public:
 		} catch (const std::exception &exception) {
 			Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
 		}
+	}
+
+	bool AddTribescore(std::string tribeid, std::string score) {
+		try {
+			res = conn->prepareStatement("INSERT INTO score (TribeID, Score) VALUES (?, ?)");
+			res->setBigInt(1, tribeid);
+			res->setBigInt(2, score);
+
+			res->executeUpdate();
+			delete res;
+			return true;
+		} catch (std::exception& e) {
+			std::cout << e.what() << std::endl;
+			return false;
+		}
+
 	}
 };

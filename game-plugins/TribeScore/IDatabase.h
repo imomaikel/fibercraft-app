@@ -5,4 +5,8 @@
 class IDatabase {
 public: 
 	virtual ~IDatabase() = default;
+
+	//Tribescore related
+	virtual bool AddTribescore(std::string tribeid, std::string score) = 0;
+
 };
