@@ -36,7 +36,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-Browse.VC.db
+Browse.VC.*
 TribeScore.tlog
 TribeScore.exp
 TribeScore.lib
@@ -46,4 +46,6 @@ TribeScore.iobj
 TribeScore.ipdb
 TribeScore.log
 TribeScore.obj
+FileContentIndex/
 vc143.pdb
+AutoPCH/
