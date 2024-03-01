@@ -86,5 +86,21 @@ public:
 				delete res;
         return false;
     } 
-}
+	}
+
+	int tribescore_amount(std::string tribe_id) {
+    try {
+        conn->setSchema("sys");
+        res = conn->prepareStatement("SELECT * FROM score WHERE TribeID = " + tribe_id);
+
+        ResultSet* result = res->executeQuery();
+        while (result->next()) {
+            return result->getInt("Score");
+        }
+        delete res;
+    } catch (SQLException& e) {
+        return 0;
+    }
+    
+	}
 };
