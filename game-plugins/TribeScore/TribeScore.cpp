@@ -3,13 +3,47 @@
 
 #include <API/ARK/Ark.h>
 #include <fstream>
+#include <vector>
 
 #pragma comment(lib, "ArkApi.lib")
+
+// Vectors
+
+std::vector<std::string> disabledtribescore;
+
 // Hooks Declaration
 
 DECLARE_HOOK(APrimalStructure_Die, bool, APrimalStructure*, float, FDamageEvent*, AController*, AActor*);
 DECLARE_HOOK(AShooterGameMode_Logout, void, AShooterGameMode*, AController*);
 DECLARE_HOOK(AShooterGameMode_StartNewShooterPlayer, void, AShooterGameMode*, APlayerController*, bool, bool,FPrimalPlayerCharacterConfigStruct*, UPrimalPlayerData*);
+
+// Show tribescore command
+
+void tribescoreenabled(AShooterPlayerController* player_controller, FString* message, bool /*unused*/) {
+    uint64 steam_id = ArkApi::GetApiUtils().GetSteamIdFromController(player_controller);
+    std::string id = std::to_string(steam_id);
+
+    bool found = false;
+    int index = 0;
+    for (const auto& cadena : disabledtribescore) {
+        if (cadena == id) {
+            found = true;
+            break;
+        }
+        index += 1;
+    }
+
+    if (found) {
+        disabledtribescore.erase(disabledtribescore.begin() + index);
+        MySql::DeleteFromDisabledTribescoreDatabase(id);
+        ArkApi::GetApiUtils().SendChatMessage(player_controller, "SHOW TRIBESCORE", "ENABLED");
+    }
+    else {
+        MySql::AddDisableTribescore(id);
+        disabledtribescore.push_back(id);
+        ArkApi::GetApiUtils().SendChatMessage(player_controller, "SHOW TRIBESCORE", "DISABLED");
+    }
+}
 
 // Login Hook
 
@@ -44,7 +78,7 @@ void Hook_AShooterGameMode_Logout(AShooterGameMode* mode, AController* controlle
     AShooterGameMode_Logout_original(mode, controller);
 }
 
-// Structure die Hook and string vector
+// Structure die Hook
 bool Hook_APrimalStructure_Die_(APrimalStructure* _this, float damage, FDamageEvent* eventor, AController* controller, AActor* actor) {
 
     if (_this == nullptr) {
@@ -184,6 +218,9 @@ void Load() {
     ArkApi::GetHooks().SetHook("APrimalStructure.Die", &Hook_APrimalStructure_Die_, &APrimalStructure_Die_original);
     ArkApi::GetHooks().SetHook("AShooterGameMode.Logout", &Hook_AShooterGameMode_Logout, &AShooterGameMode_Logout_original);
     ArkApi::GetHooks().SetHook("AShooterGameMode.StartNewShooterPlayer", &AShooterGameMode_StartNewShooterPlayer_Hook, &AShooterGameMode_StartNewShooterPlayer_original);
+
+    // Add commands
+    ArkApi::GetCommands().AddChatCommand("/ts", &tribescoreenabled);
 }
 
 // Unload plugin
