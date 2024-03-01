@@ -15,4 +15,5 @@ public:
 	//command related
 	virtual bool DisabledTribescore(std::string id) = 0;
 	virtual bool AddDisableTribescore(std::string id) = 0;
+	virtual bool DeleteFromDisabledTribescoreDatabase(std::string id) = 0;
 };

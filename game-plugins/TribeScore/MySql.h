@@ -62,7 +62,6 @@ public:
 
 	bool IsAlreadyInDatabase(std::string tribe_id) {
     try {
-        conn->setSchema("sys");
         res = conn->prepareStatement("SELECT * FROM score WHERE TribeID = " + tribe_id);
         ResultSet* result = res->executeQuery();
         while (result->next()) {
@@ -90,7 +89,6 @@ public:
 
 	int tribescore_amount(std::string tribe_id) {
     try {
-        conn->setSchema("sys");
         res = conn->prepareStatement("SELECT * FROM score WHERE TribeID = " + tribe_id);
 
         ResultSet* result = res->executeQuery();
@@ -106,7 +104,6 @@ public:
 
 	bool DisabledTribescore(std::string id) {
     try{
-        conn->setSchema("sys");
         res = conn->prepareStatement("SELECT * FROM disabledscore WHERE SteamID = " + id);
         ResultSet* result = res->executeQuery();
         while (result->next()) {
@@ -132,7 +129,6 @@ public:
 
 	bool AddDisableTribescore(std::string id) {
     try {
-        conn->setSchema("sys");
         res = conn->prepareStatement("INSERT INTO disabledscore (SteamID) VALUES (?)");
         res->setBigInt(1, id);
         res->executeUpdate();
@@ -143,5 +139,19 @@ public:
 				return false;
     }
     
+	}
+	
+	bool DeleteFromDisabledTribescoreDatabase(std::string id) {
+    try {
+        res = conn->prepareStatement("DELETE FROM disabledscore WHERE SteamID = ?");
+        res->setBigInt(1, id);
+
+        res->executeUpdate();
+        delete res;
+				return true;
+    } catch (SQLException& e) {
+        std::cout << e.what() << std::endl;
+				return false;
+    } 
 	}
 };
