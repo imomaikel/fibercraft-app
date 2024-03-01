@@ -3,16 +3,30 @@
 
 #include <API/ARK/Ark.h>
 #include <fstream>
-#include <vector>
 
 #pragma comment(lib, "ArkApi.lib")
 // Hooks Declaration
 
 DECLARE_HOOK(APrimalStructure_Die, bool, APrimalStructure*, float, FDamageEvent*, AController*, AActor*);
 
-// Structure die Hook and string vector
-std::vector<std::string> disabledtribescore;
+// Logout Hook
+void Hook_AShooterGameMode_Logout(AShooterGameMode* mode, AController* controller) {
+    if (controller) {
+        AShooterPlayerController* player = static_cast<AShooterPlayerController*>(controller);
+        uint64 steamID = ArkApi::GetApiUtils().GetSteamIdFromController(player);
+        std::string id = std::to_string(steamID);
+        std::cout << id << std::endl;
+        int index = getIndex(id);
+        if (index == 90999430) {
 
+        }else{ 
+            disabledtribescore.erase(disabledtribescore.begin() + index);
+        }
+    }
+    AShooterGameMode_Logout_original(mode, controller);
+}
+
+// Structure die Hook and string vector
 bool Hook_APrimalStructure_Die_(APrimalStructure* _this, float damage, FDamageEvent* eventor, AController* controller, AActor* actor) {
 
     if (_this == nullptr) {
@@ -61,8 +75,7 @@ bool Hook_APrimalStructure_Die_(APrimalStructure* _this, float damage, FDamageEv
             std::string score = std::to_string(score_amount);
             MySql::UpdateTribescore(defender, score);
         } else {
-            int score_amount = MySql::tribescore_amount(defender) - score;
-            std::string score = std::to_string(score_amount);
+            std::string score = std::to_string(-1);
             MySql::AddTribescore(defender, score);
         }
 
@@ -135,9 +148,7 @@ void Load() {
         Log::GetLog()->error(error.what());
         throw;
     }
-    // Load Setup
-    MySql::Setup();
-    
+
     // Load database
     try {
         const auto& mysqlCredentials = TribeScore::config["MySql"];
@@ -153,12 +164,13 @@ void Load() {
 
     // Set hooks
     ArkApi::GetHooks().SetHook("APrimalStructure.Die", &Hook_APrimalStructure_Die_, &APrimalStructure_Die_original);
+    ArkApi::GetHooks().SetHook("AShooterGameMode.Logout", &Hook_AShooterGameMode_Logout, &AShooterGameMode_Logout_original);
 }
 
 // Unload plugin
 void Unload() {
-    // Disable hooks
     ArkApi::GetHooks().DisableHook("APrimalStructure.Die", &Hook_APrimalStructure_Die_);
+    ArkApi::GetHooks().DisableHook("AShooterGameMode.Logout", &Hook_AShooterGameMode_Logout);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
