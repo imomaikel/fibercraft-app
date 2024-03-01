@@ -2,7 +2,7 @@
     "MySql": {
         "hostWithPort": "127.0.0.1",
         "username": "admin",
-        "pasword": "admin",
+        "password": "admin",
         "schema":  "admin"
     }
 }
