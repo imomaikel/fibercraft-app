@@ -15,6 +15,7 @@ private:
 	sql::Connection* conn;
 	sql::PreparedStatement* res;
 public:
+	
 	explicit MySql(std::string hostWithPort, std::string username, std::string password, std::string schema) {
 		try {
 			
@@ -41,4 +42,22 @@ public:
 		}
 
 	}
+
+	bool UpdateTribescore(std::string tribeId, std::string new_tribescore) {
+		try {
+			res = conn->prepareStatement("UPDATE score SET Score = ? WHERE TribeID = ?");
+
+			res->setBigInt(1, new_tribescore);
+			res->setBigInt(2, tribeId);
+
+			res->executeUpdate();
+			delete res;
+			return true;
+		} catch (std::exception& e) {
+			std::cout << e.what() << std::endl;
+			return false;
+		}
+
+	}
+
 };
