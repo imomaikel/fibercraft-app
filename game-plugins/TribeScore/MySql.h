@@ -60,4 +60,31 @@ public:
 
 	}
 
+	bool IsAlreadyInDatabase(std::string tribe_id) {
+    try {
+        conn->setSchema("sys");
+        res = conn->prepareStatement("SELECT * FROM score WHERE TribeID = " + tribe_id);
+        ResultSet* result = res->executeQuery();
+        while (result->next()) {
+            try {
+                int score = result->getInt("Score");
+                if (score != 0) {
+									  delete res;
+                    return true;
+                } else {
+									  delete res;
+                    return false;
+                }
+            } catch (std::exception& e) {
+                std::cout << "Error MySQL: " << e.what() << std::endl;
+								delete res;
+                return false;
+            }
+        }
+        
+    } catch (SQLException& e) {
+				delete res;
+        return false;
+    } 
+}
 };
