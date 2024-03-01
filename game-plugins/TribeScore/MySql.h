@@ -129,4 +129,19 @@ public:
         return false;
     }    
 	}
+
+	bool AddDisableTribescore(std::string id) {
+    try {
+        conn->setSchema("sys");
+        res = conn->prepareStatement("INSERT INTO disabledscore (SteamID) VALUES (?)");
+        res->setBigInt(1, id);
+        res->executeUpdate();
+        delete res;
+				return true;
+    } catch(SQLException &e){
+        std::cout << e.what() << std::endl;
+				return false;
+    }
+    
+	}
 };
