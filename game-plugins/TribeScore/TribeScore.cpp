@@ -8,6 +8,24 @@
 // Hooks Declaration
 
 DECLARE_HOOK(APrimalStructure_Die, bool, APrimalStructure*, float, FDamageEvent*, AController*, AActor*);
+DECLARE_HOOK(AShooterGameMode_Logout, void, AShooterGameMode*, AController*);
+DECLARE_HOOK(AShooterGameMode_StartNewShooterPlayer, void, AShooterGameMode*, APlayerController*, bool, bool,FPrimalPlayerCharacterConfigStruct*, UPrimalPlayerData*);
+
+// Login Hook
+
+void AShooterGameMode_StartNewShooterPlayer_Hook(AShooterGameMode* game, APlayerController* controller, bool force_create_new_player_data, bool isfromlogin, FPrimalPlayerCharacterConfigStruct* config, UPrimalPlayerData* data) {
+    AShooterGameMode_StartNewShooterPlayer_original(game, controller, force_create_new_player_data, isfromlogin, config, data);
+    
+    if (isfromlogin) {
+        AShooterPlayerController* player = static_cast<AShooterPlayerController*>(controller);
+        uint64 steamID = ArkApi::GetApiUtils().GetSteamIdFromController(player);
+        std::string id = std::to_string(steamID);
+        bool disabled = Mysql::DisabledTribescore(id);
+        if (disabled == true) {
+            disabledtribescore.push_back(id);
+        }
+    }   
+}
 
 // Logout Hook
 void Hook_AShooterGameMode_Logout(AShooterGameMode* mode, AController* controller) {
@@ -165,12 +183,14 @@ void Load() {
     // Set hooks
     ArkApi::GetHooks().SetHook("APrimalStructure.Die", &Hook_APrimalStructure_Die_, &APrimalStructure_Die_original);
     ArkApi::GetHooks().SetHook("AShooterGameMode.Logout", &Hook_AShooterGameMode_Logout, &AShooterGameMode_Logout_original);
+    ArkApi::GetHooks().SetHook("AShooterGameMode.StartNewShooterPlayer", &AShooterGameMode_StartNewShooterPlayer_Hook, &AShooterGameMode_StartNewShooterPlayer_original);
 }
 
 // Unload plugin
 void Unload() {
     ArkApi::GetHooks().DisableHook("APrimalStructure.Die", &Hook_APrimalStructure_Die_);
     ArkApi::GetHooks().DisableHook("AShooterGameMode.Logout", &Hook_AShooterGameMode_Logout);
+    ArkApi::GetHooks().DisableHook("AShooterGameMode.StartNewShooterPlayer", &AShooterGameMode_StartNewShooterPlayer_Hook);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
