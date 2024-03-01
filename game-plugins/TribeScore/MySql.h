@@ -103,4 +103,30 @@ public:
     }
     
 	}
+
+	bool DisabledTribescore(std::string id) {
+    try{
+        conn->setSchema("sys");
+        res = conn->prepareStatement("SELECT * FROM disabledscore WHERE SteamID = " + id);
+        ResultSet* result = res->executeQuery();
+        while (result->next()) {
+            try {
+                std::string steamID = result->getString("SteamID");
+                std::cout << steamID << " - " << id << std::endl;
+                if (steamID == id) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (SQLException& e) {
+                std::cout << e.what() << std::endl;
+                return false;
+            }
+        }
+        delete res;
+        return false;
+    } catch (SQLException& e) {
+        return false;
+    }    
+	}
 };
