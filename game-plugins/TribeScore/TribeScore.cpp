@@ -135,7 +135,9 @@ void Load() {
         Log::GetLog()->error(error.what());
         throw;
     }
-
+    // Load Setup
+    MySql::Setup();
+    
     // Load database
     try {
         const auto& mysqlCredentials = TribeScore::config["MySql"];
