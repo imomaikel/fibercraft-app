@@ -23,4 +23,36 @@ namespace TribeScore::Utils {
         }
 
     }
+
+    // Get Structure points
+    int GetStructureTribescore(std::string structureName) {
+    try {
+        const std::string config_path = ArkApi::Tools::GetCurrentDir() + "/ArkApi/Plugins/TribeScore/structures.json";
+        std::ifstream file(config_path);
+
+        if (!file.is_open()) {
+            Log::GetLog()->critical("cannot open `structures.json`!");
+            return 0;
+        }
+        json j;
+
+        file >> j;
+        file.close();
+        if (j.is_array()) {
+            for (const auto& elemento : j) {
+                if (elemento.contains("structure") && elemento["structure"] == structureName) {
+                    if (elemento.contains("points")) {
+                        return elemento["points"];
+                    }
+                }
+            }
+        }
+
+        return 0;
+
+    } catch (std::exception& e) {
+        std::cout << e.what() << std::endl;
+        return 0;
+    }
+}
 }

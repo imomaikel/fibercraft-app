@@ -1,7 +1,7 @@
 #include "Hooks.h"
 #include "Commands.h"
 #include "TribeScore.h"
-
+#include "Utils.h"
 
 namespace TribeScore::Hooks {
 
@@ -63,28 +63,28 @@ namespace TribeScore::Hooks {
 
 
         // TODO BEGIN
-        int score = GetStructureTribescore(name.ToString());
+        int score = TribeScore::Utils->GetStructureTribescore(name.ToString());
 
         std::string attacker = std::to_string(attacker_id);
         std::string defender = std::to_string(id);
-        bool IsInDatabase = MySql::IsAlreadyInDatabase(attacker);
+        bool IsInDatabase = TribeScore::database->IsAlreadyInDatabase(attacker);
         if (IsInDatabase) {
-            int score_amount = MySql::tribescore_amount(attacker) + score;
+            int score_amount = TribeScore::database->tribescore_amount(attacker) + score;
             std::string score = std::to_string(score_amount);
-            MySql::UpdateTribescore(attacker, score);
+            TribeScore::database->UpdateTribescore(attacker, score);
         } else {
             std::string score = std::to_string(1);
-            MySql::AddTribescore(attacker, score);
+            TribeScore::database->AddTribescore(attacker, score);
         }
 
-        bool IsDefenderInDatabase = MySql::IsAlreadyInDatabase(defender);
+        bool IsDefenderInDatabase = TribeScore::database->IsAlreadyInDatabase(defender);
         if (IsDefenderInDatabase) {
-            int score_amount = MySql::tribescore_amount(defender) - score;
+            int score_amount = TribeScore::database->tribescore_amount(defender) - score;
             std::string score = std::to_string(score_amount);
-            MySql::UpdateTribescore(defender, score);
+            TribeScore::database->UpdateTribescore(defender, score);
         } else {
             std::string score = std::to_string(-1);
-            MySql::AddTribescore(defender, score);
+            TribeScore::database->AddTribescore(defender, score);
         }
 
         const auto& actorsInRange = ArkApi::GetApiUtils().GetAllActorsInRange(_this->RootComponentField()->RelativeLocationField(), 20000.0f, EServerOctreeGroup::PLAYERS_CONNECTED);
