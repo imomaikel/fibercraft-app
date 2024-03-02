@@ -2,5 +2,6 @@
 
 namespace TribeScore::Utils {
 	void ReadConfig();
-	int GetStructureTribescore(std::string structureName);
+	void ReadStructures();
+	int GetStructurePoints(std::string structureName);
 }
