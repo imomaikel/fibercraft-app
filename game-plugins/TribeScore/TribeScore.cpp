@@ -31,6 +31,9 @@ void Load() {
         throw;
     }
 
+    // Create tables
+    TribeScore::database->Setup();
+
     // Load hooks
     TribeScore::Hooks::Load();
 

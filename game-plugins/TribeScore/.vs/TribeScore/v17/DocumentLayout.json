@@ -3,20 +3,20 @@
   "WorkspaceRootPath": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\Hooks.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|solutionrelative:Hooks.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\Utils.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|solutionrelative:Utils.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\TribeScore.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|solutionrelative:TribeScore.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\TribeScore.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|solutionrelative:TribeScore.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\MySql.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|solutionrelative:MySql.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\IDatabase.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|solutionrelative:IDatabase.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,57 +26,58 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "MySql.h",
-              "DocumentMoniker": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\MySql.h",
-              "RelativeDocumentMoniker": "MySql.h",
-              "ToolTip": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\MySql.h",
-              "RelativeToolTip": "MySql.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAaAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-03-01T21:05:58.78Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "IDatabase.h",
-              "DocumentMoniker": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\IDatabase.h",
-              "RelativeDocumentMoniker": "IDatabase.h",
-              "ToolTip": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\IDatabase.h",
-              "RelativeToolTip": "IDatabase.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-03-01T21:05:56.8Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "TribeScore.h",
-              "DocumentMoniker": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\TribeScore.h",
-              "RelativeDocumentMoniker": "TribeScore.h",
-              "ToolTip": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\TribeScore.h",
-              "RelativeToolTip": "TribeScore.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-03-01T21:05:50.76Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
               "Title": "TribeScore.cpp",
               "DocumentMoniker": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\TribeScore.cpp",
               "RelativeDocumentMoniker": "TribeScore.cpp",
               "ToolTip": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\TribeScore.cpp",
               "RelativeToolTip": "TribeScore.cpp",
-              "ViewState": "AQIAAAkAAAAAAAAAAAAAADUAAAAgAAAA",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAAC4AAAATAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-03-01T20:58:49.469Z",
+              "WhenOpened": "2024-03-02T09:20:40.216Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MySql.h",
+              "DocumentMoniker": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\MySql.h",
+              "RelativeDocumentMoniker": "MySql.h",
+              "ToolTip": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\MySql.h",
+              "RelativeToolTip": "MySql.h",
+              "ViewState": "AQIAAIwAAAAAAAAAAAAAAJ8AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-03-02T09:27:12.284Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Hooks.cpp",
+              "DocumentMoniker": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\Hooks.cpp",
+              "RelativeDocumentMoniker": "Hooks.cpp",
+              "ToolTip": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\Hooks.cpp",
+              "RelativeToolTip": "Hooks.cpp",
+              "ViewState": "AQIAACAAAAAAAAAAAAAIwDkAAAAKAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-03-02T08:42:38.327Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Utils.cpp",
+              "DocumentMoniker": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\Utils.cpp",
+              "RelativeDocumentMoniker": "Utils.cpp",
+              "ToolTip": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\Utils.cpp",
+              "RelativeToolTip": "Utils.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-03-02T09:38:00.189Z",
               "EditorCaption": ""
             }
           ]

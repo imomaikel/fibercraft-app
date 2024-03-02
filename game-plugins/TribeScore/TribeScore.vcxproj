@@ -144,12 +144,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Commands.cpp" />
+    <ClCompile Include="Hooks.cpp" />
     <ClCompile Include="TribeScore.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Commands.h" />
+    <ClInclude Include="Hooks.h" />
     <ClInclude Include="IDatabase.h" />
     <ClInclude Include="MySql.h" />
     <ClInclude Include="TribeScore.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />
