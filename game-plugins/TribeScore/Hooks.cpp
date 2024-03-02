@@ -43,11 +43,13 @@ namespace TribeScore::Hooks {
     // Kill Player Hook
     bool Hook_AShooterCharacter_Die(AShooterCharacter* _this, float KillingDamage, FDamageEvent* DamageEvent, AController* Killer, AActor* DamageCauser) {
         
+        if (_this == nullptr || DamageCauser == nullptr || !DamageCauser->IsA(AActor::GetPrivateStaticClass())) return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
+
         const int AttackerId = Killer->TargetingTeamField();
         const int DefenderId = _this->TargetingTeamField();
 
         // Kill someone of your tribe
-        if (AttackerId == DefenderId) return AShooterCharacter_Die_original;
+        if (AttackerId == DefenderId) return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
         
         std::string attacker = std::to_string(AttackerId);
         std::string defender = std::to_string(DefenderId);
@@ -67,8 +69,8 @@ namespace TribeScore::Hooks {
             const bool found = Commands::isSteamDisabled(textSteamId);
 
 
-            if (!playerController) return APrimalStructure_Die_original;
-            if (found == true) return APrimalStructure_Die_original;
+            if (!playerController) return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
+            if (found == true) return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
 
             if (actorInRange->TargetingTeamField() == DefenderId) {
                 playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 0, 0, 255), 0.6, 0.6, 6, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
