@@ -1,7 +1,7 @@
 #include "Hooks.h"
 #include "Commands.h"
-#include "TribeScore.h"
 #include "Utils.h"
+#include "TribeScore.h"
 
 namespace TribeScore::Hooks {
 
@@ -72,41 +72,33 @@ namespace TribeScore::Hooks {
 
         TribeScore::database->AddTribeScore(attacker, std::to_string(score));
         TribeScore::database->RemoveTribeScore(defender, std::to_string(-score));
-        //vs restart
         
         const auto& actorsInRange = ArkApi::GetApiUtils().GetAllActorsInRange(_this->RootComponentField()->RelativeLocationField(), 20000.0f, EServerOctreeGroup::PLAYERS_CONNECTED);
         for (AActor* actorInRange : actorsInRange) {
             if (actorInRange != nullptr && actorInRange->IsA(AActor::GetPrivateStaticClass())) {
-                if (actorInRange->IsA(APrimalStructure::GetPrivateStaticClass())) {
-                    return APrimalStructure_Die_original(_this, damage, damageEvent, controller, actorInRange);
-                }
+                if (actorInRange->IsA(APrimalStructure::GetPrivateStaticClass())) return APrimalStructure_Die_original;
+
                 const auto aController = actorInRange->GetInstigatorController();
-                AShooterPlayerController* PlayerController = reinterpret_cast<AShooterPlayerController*>(aController);
-                std::string numbertext = std::to_string(score);
-                FString text = FString("Tribescore +" + numbertext);
+                AShooterPlayerController* playerController = reinterpret_cast<AShooterPlayerController*>(aController);
 
-                uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(PlayerController);
-                bool found = false;
-                std::string converted = std::to_string(steamId);
-                bool found = Commands::isSteamDisabled(converted);
+                const std::string textPoints = std::to_string(score);
+                FString floatingText = FString("+ " + textPoints + " tribe score");
 
-                if (found == true) {
-                    return APrimalStructure_Die_original(_this, damage, damageEvent, controller, actor);
-                }
+                uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
+                std::string textSteamId = std::to_string(steamId);
+                const bool found = Commands::isSteamDisabled(textSteamId);
 
-                if (PlayerController == nullptr) {
-                // hey follow me
+
+                if (!playerController) return APrimalStructure_Die_original;
+                if (found == true) return APrimalStructure_Die_original;
+
+                if (actor->TargetingTeamField() == _this->TargetingTeamField()) {
+                    playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 0, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
+                } else if (actor->TargetingTeamField() == attackerId) {
+                    playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(0, 255, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
                 } else {
-                    if (actor->TargetingTeamField() == d) {
-                        PlayerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &text, FColor(255, 0, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
-                    } else if (actor->TargetingTeamField() == attackerId) {
-                        PlayerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &text, FColor(0, 255, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
-
-                    } else {
-                        PlayerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &text, FColor(255, 177, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
-                    }
+                    playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 177, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
                 }
-            } else {
             }
         }
 
