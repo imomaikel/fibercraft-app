@@ -43,44 +43,46 @@ namespace TribeScore::Hooks {
     // Kill Player Hook
     bool Hook_AShooterCharacter_Die(AShooterCharacter* _this, float KillingDamage, FDamageEvent* DamageEvent, AController* Killer, AActor* DamageCauser) {
         
-        if (_this == nullptr || DamageCauser == nullptr || !DamageCauser->IsA(AActor::GetPrivateStaticClass())) return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
+        if (Killer && !Killer->IsLocalController() && Killer->IsA(AShooterPlayerController::GetPrivateStaticClass()) && _this->TargetingTeamField() != Killer->TargetingTeamField() && _this->GetPlayerData()) {
+            const int AttackerId = DamageCauser->TargetingTeamField();
+            const int DefenderId = _this->TargetingTeamField();
 
-        const int AttackerId = Killer->TargetingTeamField();
-        const int DefenderId = _this->TargetingTeamField();
+            std::string attacker = std::to_string(AttackerId);
+            std::string defender = std::to_string(DefenderId);
 
-        // Kill someone of your tribe
-        if (AttackerId == DefenderId) return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
-        
-        std::string attacker = std::to_string(AttackerId);
-        std::string defender = std::to_string(DefenderId);
+            TribeScore::database->UpdateTribeScore(attacker, defender, std::to_string(50));
+            const auto& actorsInRange = ArkApi::GetApiUtils().GetAllActorsInRange(_this->RootComponentField()->RelativeLocationField(), 20000.0f, EServerOctreeGroup::PLAYERS_CONNECTED);
+            for (AActor* actorInRange : actorsInRange) {
+                const auto aController = actorInRange->GetInstigatorController();
+                AShooterPlayerController* playerController = reinterpret_cast<AShooterPlayerController*>(aController);
 
-        TribeScore::database->UpdateTribeScore(attacker, defender, std::to_string(50));
+                const std::string textPoints = std::to_string(50);
+                if (actorInRange->TargetingTeamField() == DefenderId) {
+                    FString floatingText = FString("+ " + textPoints + " tribe score");
+                } else if (actorInRange->TargetingTeamField() == AttackerId) {
+                    FString floatingText = FString("- " + textPoints + " tribe score");
+                } else {
+                    FString floatingText = FString("+ " + textPoints + " tribe score");
+                }
 
-        const auto& actorsInRange = ArkApi::GetApiUtils().GetAllActorsInRange(_this->RootComponentField()->RelativeLocationField(), 20000.0f, EServerOctreeGroup::PLAYERS_CONNECTED);
-        for (AActor* actorInRange : actorsInRange) {
-            const auto aController = actorInRange->GetInstigatorController();
-            AShooterPlayerController* playerController = reinterpret_cast<AShooterPlayerController*>(aController);
-
-            const std::string textPoints = std::to_string(50);
-            FString floatingText = FString("+ " + textPoints + " tribe score");
-
-            uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
-            std::string textSteamId = std::to_string(steamId);
-            const bool found = Commands::isSteamDisabled(textSteamId);
+                uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
+                std::string textSteamId = std::to_string(steamId);
+                const bool found = Commands::isSteamDisabled(textSteamId);
 
 
-            if (!playerController) return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
-            if (found == true) return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
+                if (!playerController) return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
+                if (found == true) return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
 
-            if (actorInRange->TargetingTeamField() == DefenderId) {
-                playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 0, 0, 255), 0.6, 0.6, 6, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
-            } else if (actorInRange->TargetingTeamField() == AttackerId) {
-                playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(0, 255, 0, 255), 0.6, 0.6, 6, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
-            } else {
-                playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 177, 0, 255), 0.6, 0.6, 6, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
+                if (actorInRange->TargetingTeamField() == DefenderId) {
+                    playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 0, 0, 255), 0.6, 0.6, 6, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
+                } else if (actorInRange->TargetingTeamField() == AttackerId) {
+                    playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(0, 255, 0, 255), 0.6, 0.6, 6, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
+                } else {
+                    playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 177, 0, 255), 0.6, 0.6, 6, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
+                }
             }
-        }
 
+        }
         return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
     }
 
