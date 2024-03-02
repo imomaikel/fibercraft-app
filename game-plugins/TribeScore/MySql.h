@@ -32,22 +32,17 @@ public:
     
     bool UpdateTribeScore(const std::string attackerTribeId, const std::string defenderTribeId, const std::string points) {
         try {
-            res = conn->prepareStatement("INSERT INTO tribescore (id, score) VALUES (?, ?) ON DUPLICATE KEY UPDATE score = score + ?;");
+            res = conn->prepareStatement("UPDATE tribescore SET SCORE = CASE WHEN ID = ? THEN SCORE + ? WHEN ID = ? THEN SCORE - ? END WHERE ID IN (?, ?);");
 
             res->setBigInt(1, attackerTribeId);
             res->setBigInt(2, points);
-            res->setBigInt(3, points);
+            res->setBigInt(3, defenderTribeId);
+            res->setBigInt(4, points);
+            res->setBigInt(5, attackerTribeId);
+            res->setBigInt(6, defenderTribeId);
 
             res->executeUpdate();
-            
-
-            res = conn->prepareStatement("INSERT INTO tribescore (id, score) VALUES(? , ?) ON DUPLICATE KEY UPDATE score = score - ?;");
-
-            res->setBigInt(1, defenderTribeId);
-            res->setBigInt(2, points);
-            res->setBigInt(3, points);
-
-            res->executeUpdate();
+ 
             
             delete res;
             return true;
