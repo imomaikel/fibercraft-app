@@ -1,5 +1,6 @@
 #include "MySql.h"
 #include "Hooks.h"
+#include "Commands.h"
 #include "TribeScore.h"
 
 #include <API/ARK/Ark.h>
@@ -7,38 +8,6 @@
 #include <vector>
 
 #pragma comment(lib, "ArkApi.lib")
-
-
-// Vectors
-std::vector<std::string> disabledtribescore;
-
-
-// Show tribescore command
-void tribescoreenabled(AShooterPlayerController* player_controller, FString* message, bool /*unused*/) {
-    uint64 steam_id = ArkApi::GetApiUtils().GetSteamIdFromController(player_controller);
-    std::string id = std::to_string(steam_id);
-
-    bool found = false;
-    int index = 0;
-    for (const auto& cadena : disabledtribescore) {
-        if (cadena == id) {
-            found = true;
-            break;
-        }
-        index += 1;
-    }
-
-    if (found) {
-        disabledtribescore.erase(disabledtribescore.begin() + index);
-        MySql::DeleteFromDisabledTribescoreDatabase(id);
-        ArkApi::GetApiUtils().SendChatMessage(player_controller, "SHOW TRIBESCORE", "ENABLED");
-    }
-    else {
-        MySql::AddDisableTribescore(id);
-        disabledtribescore.push_back(id);
-        ArkApi::GetApiUtils().SendChatMessage(player_controller, "SHOW TRIBESCORE", "DISABLED");
-    }
-}
 
 
 // Read config
@@ -79,12 +48,11 @@ void Load() {
         throw;
     }
 
-
     // Load hooks
     TribeScore::Hooks::Load();
 
-    // Add commands
-    ArkApi::GetCommands().AddChatCommand("/ts", &tribescoreenabled);
+    // Load commands
+    TribeScore::Commands::Load();
 }
 
 
@@ -94,7 +62,7 @@ void Unload() {
     TribeScore::Hooks::Unload();
 
     // Remove commands
-    ArkApi::GetCommands().RemoveChatCommand("/ts");
+    TribeScore::Commands::Unload();
 }
 
 
