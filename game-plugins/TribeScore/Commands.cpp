@@ -2,34 +2,27 @@
 #include "TribeScore.h"
 
 
-std::vector<std::string> disabledtribescore;
+std::vector<std::string> disabledSteamIds;
 
 namespace TribeScore::Commands {
 
+    void ToggleTribeScore(AShooterPlayerController* playerController, FString* message, bool /*unused*/) {
+        uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
+        
+        std::string textSteamId = std::to_string(steamId);
 
-	
-    void tribescoreenabled(AShooterPlayerController* player_controller, FString* message, bool /*unused*/) {
-        uint64 steam_id = ArkApi::GetApiUtils().GetSteamIdFromController(player_controller);
-        std::string id = std::to_string(steam_id);
+        auto it = std::find(disabledSteamIds.begin(), disabledSteamIds.end(), textSteamId);
 
-        bool found = false;
-        int index = 0;
-        for (const auto& cadena : disabledtribescore) {
-            if (cadena == id) {
-                found = true;
-                break;
-            }
-            index += 1;
-        }
+        const bool isDisabled = it != disabledSteamIds.end();
 
-        if (found) {
-            disabledtribescore.erase(disabledtribescore.begin() + index);
-            MySql::DeleteFromDisabledTribescoreDatabase(id);
-            ArkApi::GetApiUtils().SendChatMessage(player_controller, "SHOW TRIBESCORE", "ENABLED");
+        ArkApi::GetApiUtils().SendChatMessage(playerController, "Floating Tribe Score", isDisabled ? "ENABLED" : "DISABLED");
+
+        if (isDisabled) {
+            disabledSteamIds.erase(it);
+            TribeScore::database->DeleteFromDisabledTribescoreDatabase(textSteamId);
         } else {
-            MySql::AddDisableTribescore(id);
-            disabledtribescore.push_back(id);
-            ArkApi::GetApiUtils().SendChatMessage(player_controller, "SHOW TRIBESCORE", "DISABLED");
+            disabledSteamIds.push_back(textSteamId);
+            TribeScore::database->AddDisableTribescore(textSteamId);
         }
     }
 
@@ -39,6 +32,6 @@ namespace TribeScore::Commands {
 	}
 	
 	void Load() {
-		ArkApi::GetCommands().AddChatCommand("/ts", &tribescoreenabled);
+		ArkApi::GetCommands().AddChatCommand("/ts", &ToggleTribeScore);
 	}
 }
