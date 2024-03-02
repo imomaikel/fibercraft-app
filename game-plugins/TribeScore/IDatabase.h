@@ -16,5 +16,5 @@ public:
 	virtual bool DeleteFromDisabledTribescoreDatabase(std::string id) = 0;
 
 	//Setup
-	virtual bool Setup() = 0;
+	virtual void Setup() = 0;
 };

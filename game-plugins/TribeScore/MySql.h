@@ -173,22 +173,19 @@ public:
     } 
 	}
 
-	bool Setup() {
-    
-    try {
-        res = conn->prepareStatement("CREATE TABLE IF NOT EXISTS score (TribeID BIGINT(255),Score BIGINT(255));");
+	void Setup() {
+        try {
+            res = conn->prepareStatement("CREATE TABLE IF NOT EXISTS disabledsteamid (id VARCHAR(32) NOT NULL, PRIMARY KEY (id))");
 
-        res->executeUpdate();
-        delete res;
+            res->executeUpdate();
+            delete res;
 
-        res = conn->prepareStatement("CREATE TABLE IF NOT EXISTS disabledscore (SteamID BIGINT(255)); ");
-        res->executeUpdate();
-        delete res;
+            res = conn->prepareStatement("CREATE TABLE IF NOT EXISTS tribescore (id BIGINT NOT NULL, score INT NOT NULL DEFAULT 0, PRIMARY KEY (id));");
+            res->executeUpdate();
+            delete res;
 
-        return true;
-    } catch(std::exception &e){
-        std::cout << e.what() << std::endl;
-        return false;
-    }
+        } catch(std::exception &e){
+            std::cout << e.what() << std::endl;
+        }
 	}
 };
