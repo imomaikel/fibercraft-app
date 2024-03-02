@@ -92,9 +92,9 @@ namespace TribeScore::Hooks {
                 if (!playerController) return APrimalStructure_Die_original;
                 if (found == true) return APrimalStructure_Die_original;
 
-                if (actor->TargetingTeamField() == _this->TargetingTeamField()) {
+                if (actorInRange->TargetingTeamField() == _this->TargetingTeamField()) {
                     playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 0, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
-                } else if (actor->TargetingTeamField() == attackerId) {
+                } else if (actorInRange->TargetingTeamField() == attackerId) {
                     playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(0, 255, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
                 } else {
                     playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 177, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
