@@ -33,6 +33,11 @@ namespace TribeScore::Commands {
         disabledSteamIds.erase(std::remove(disabledSteamIds.begin(), disabledSteamIds.end(), steamId), disabledSteamIds.end());
     }
 
+    bool isSteamDisabled(std::string steamId) {
+        auto it = std::find(disabledSteamIds.begin(), disabledSteamIds.end(), steamId);
+        const bool isDisabled = it != disabledSteamIds.end();
+        return isDisabled;
+    }
 
 	void Unload() {
 		ArkApi::GetCommands().RemoveChatCommand("/ts");

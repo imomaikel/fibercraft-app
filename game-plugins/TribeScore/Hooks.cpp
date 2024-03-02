@@ -46,7 +46,7 @@ namespace TribeScore::Hooks {
 
         if (_this == nullptr || actor == nullptr || !actor->IsA(AActor::GetPrivateStaticClass())) return APrimalStructure_Die_original;
         
-        const FString destroyedStructureName = _this->DescriptiveNameField();
+        const std::string destroyedStructureName = _this->DescriptiveNameField().ToString();
         const int destroyedTribeId = _this->TargetingTeamField();
 
         auto attackerTribeId = actor->TargetingTeamField();
@@ -61,32 +61,19 @@ namespace TribeScore::Hooks {
         // Untamed dinos
         if (attackerId < 100) return APrimalStructure_Die_original;
 
+        // Get points for the structure
+        int score = TribeScore::Utils::GetStructurePoints(destroyedStructureName);
+        if (score == 0) return APrimalStructure_Die_original;
 
-        // TODO BEGIN
-        int score = TribeScore::Utils->GetStructureTribescore(name.ToString());
+       
+        std::string attacker = std::to_string(attackerId);
+        std::string defender = std::to_string(destroyedTribeId);
 
-        std::string attacker = std::to_string(attacker_id);
-        std::string defender = std::to_string(id);
-        bool IsInDatabase = TribeScore::database->IsAlreadyInDatabase(attacker);
-        if (IsInDatabase) {
-            int score_amount = TribeScore::database->tribescore_amount(attacker) + score;
-            std::string score = std::to_string(score_amount);
-            TribeScore::database->UpdateTribescore(attacker, score);
-        } else {
-            std::string score = std::to_string(1);
-            TribeScore::database->AddTribescore(attacker, score);
-        }
 
-        bool IsDefenderInDatabase = TribeScore::database->IsAlreadyInDatabase(defender);
-        if (IsDefenderInDatabase) {
-            int score_amount = TribeScore::database->tribescore_amount(defender) - score;
-            std::string score = std::to_string(score_amount);
-            TribeScore::database->UpdateTribescore(defender, score);
-        } else {
-            std::string score = std::to_string(-1);
-            TribeScore::database->AddTribescore(defender, score);
-        }
-
+        TribeScore::database->AddTribeScore(attacker, std::to_string(score));
+        TribeScore::database->RemoveTribeScore(defender, std::to_string(-score));
+        //vs restart
+        
         const auto& actorsInRange = ArkApi::GetApiUtils().GetAllActorsInRange(_this->RootComponentField()->RelativeLocationField(), 20000.0f, EServerOctreeGroup::PLAYERS_CONNECTED);
         for (AActor* actorInRange : actorsInRange) {
             if (actorInRange != nullptr && actorInRange->IsA(AActor::GetPrivateStaticClass())) {
@@ -101,23 +88,18 @@ namespace TribeScore::Hooks {
                 uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(PlayerController);
                 bool found = false;
                 std::string converted = std::to_string(steamId);
-                for (std::string content : disabledtribescore) {
-                    if (content == converted) {
-                        found = true;
-                        break;
-                    }
-                }
+                bool found = Commands::isSteamDisabled(converted);
 
                 if (found == true) {
                     return APrimalStructure_Die_original(_this, damage, damageEvent, controller, actor);
                 }
 
                 if (PlayerController == nullptr) {
-
+                // hey follow me
                 } else {
-                    if (actor->TargetingTeamField() == _this->TargetingTeamField()) {
+                    if (actor->TargetingTeamField() == d) {
                         PlayerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &text, FColor(255, 0, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
-                    } else if (actor->TargetingTeamField() == attacker_id) {
+                    } else if (actor->TargetingTeamField() == attackerId) {
                         PlayerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &text, FColor(0, 255, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
 
                     } else {
@@ -127,7 +109,6 @@ namespace TribeScore::Hooks {
             } else {
             }
         }
-        // TODO END
 
         return APrimalStructure_Die_original;
     }

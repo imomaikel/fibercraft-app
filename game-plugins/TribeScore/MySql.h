@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mysql_error.h>
 #include <mysql_driver.h>
 #include <mysql_connection.h>
 #include <cppconn/prepared_statement.h>
@@ -14,6 +15,8 @@ private:
 	sql::Statement* stmt;
 	sql::Connection* conn;
 	sql::PreparedStatement* res;
+    sql::ResultSet* result;
+    sql::SQLException* err;
 public:
 	
 	explicit MySql(std::string hostWithPort, std::string username, std::string password, std::string schema) {
@@ -27,43 +30,49 @@ public:
 		}
 	}
 
-	bool AddTribescore(std::string tribeid, std::string score) {
-		try {
-			res = conn->prepareStatement("INSERT INTO score (TribeID, Score) VALUES (?, ?)");
-			res->setBigInt(1, tribeid);
-			res->setBigInt(2, score);
+    bool AddTribeScore(std::string tribeId, const std::string points) {
+        try {
+            res = conn->prepareStatement("INSERT INTO score (TribeID, Score) VALUES (?, ?) ON DUPLICATE KEY UPDATE score = score + ?");
+           
+            res->setBigInt(1, tribeId);
+            res->setBigInt(2, points);
+            res->setBigInt(3, points);
 
-			res->executeUpdate();
-			delete res;
-			return true;
-		} catch (std::exception& e) {
-			std::cout << e.what() << std::endl;
-			return false;
-		}
+            res->executeUpdate();
+           
+            delete res;
+            
+            return true;
+        } catch (const std::exception& exception) {
+            Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
+            return false;
+        }
+    }
 
-	}
+    bool RemoveTribeScore(std::string tribeId, const std::string points) {
+        try {
+            res = conn->prepareStatement("INSERT INTO score (TribeID, Score) VALUES (?, ?) ON DUPLICATE KEY UPDATE score = score - ?");
 
-	bool UpdateTribescore(std::string tribeId, std::string new_tribescore) {
-		try {
-			res = conn->prepareStatement("UPDATE score SET Score = ? WHERE TribeID = ?");
+            res->setBigInt(1, tribeId);
+            res->setBigInt(2, points);
+            res->setBigInt(3, points);
 
-			res->setBigInt(1, new_tribescore);
-			res->setBigInt(2, tribeId);
+            res->executeUpdate();
 
-			res->executeUpdate();
-			delete res;
-			return true;
-		} catch (std::exception& e) {
-			std::cout << e.what() << std::endl;
-			return false;
-		}
+            delete res;
 
-	}
+            return true;
+        } catch (const std::exception& exception) {
+            Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
+            return false;
+        }
+    }
+
 
 	bool IsAlreadyInDatabase(std::string tribe_id) {
     try {
         res = conn->prepareStatement("SELECT * FROM score WHERE TribeID = " + tribe_id);
-        ResultSet* result = res->executeQuery();
+        result = res->executeQuery();
         while (result->next()) {
             try {
                 int score = result->getInt("Score");
@@ -81,7 +90,7 @@ public:
             }
         }
         
-    } catch (SQLException& e) {
+    } catch (const std::exception& exception) {
 				delete res;
         return false;
     } 
@@ -91,12 +100,12 @@ public:
     try {
         res = conn->prepareStatement("SELECT * FROM score WHERE TribeID = " + tribe_id);
 
-        ResultSet* result = res->executeQuery();
+        result = res->executeQuery();
         while (result->next()) {
             return result->getInt("Score");
         }
         delete res;
-    } catch (SQLException& e) {
+    } catch (const std::exception& exception) {
         return 0;
     }
     
@@ -105,7 +114,7 @@ public:
 	bool DisabledTribescore(std::string id) {
     try{
         res = conn->prepareStatement("SELECT * FROM disabledscore WHERE SteamID = " + id);
-        ResultSet* result = res->executeQuery();
+        result = res->executeQuery();
         while (result->next()) {
             try {
                 std::string steamID = result->getString("SteamID");
@@ -115,14 +124,14 @@ public:
                 } else {
                     return false;
                 }
-            } catch (SQLException& e) {
-                std::cout << e.what() << std::endl;
+            } catch (const std::exception& exception) {
+                std::cout << exception.what() << std::endl;
                 return false;
             }
         }
         delete res;
         return false;
-    } catch (SQLException& e) {
+    } catch (const std::exception& exception) {
         return false;
     }    
 	}
@@ -134,8 +143,8 @@ public:
         res->executeUpdate();
         delete res;
 				return true;
-    } catch(SQLException &e){
-        std::cout << e.what() << std::endl;
+    } catch (const std::exception& exception) {
+        std::cout << exception.what() << std::endl;
 				return false;
     }
     
@@ -149,8 +158,8 @@ public:
         res->executeUpdate();
         delete res;
 				return true;
-    } catch (SQLException& e) {
-        std::cout << e.what() << std::endl;
+    } catch (const std::exception& exception) {
+        std::cout << exception.what() << std::endl;
 				return false;
     } 
 	}

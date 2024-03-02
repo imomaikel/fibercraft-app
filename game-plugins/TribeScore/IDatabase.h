@@ -7,9 +7,8 @@ public:
 	virtual ~IDatabase() = default;
 
 	//Tribescore related
-	virtual bool AddTribescore(std::string tribeid, std::string score) = 0;
-	virtual bool UpdateTribescore(std::string tribeId, std::string new_tribescore) = 0;
-	virtual bool IsAlreadyInDatabase(std::string tribe_id) = 0;
+	virtual bool AddTribeScore(std::string tribeId, const std::string points) = 0;
+	virtual bool RemoveTribeScore(std::string tribeId, const std::string points) = 0;
 	virtual int tribescore_amount(std::string tribe_id) = 0;
 
 	//Command related

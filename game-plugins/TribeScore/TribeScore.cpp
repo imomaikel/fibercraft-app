@@ -17,6 +17,8 @@ void Load() {
     // Load config
     TribeScore::Utils::ReadConfig();
 
+    // Load structures
+    TribeScore::Utils::ReadStructures();
 
     // Load database
     try {
