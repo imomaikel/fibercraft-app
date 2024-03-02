@@ -1,26 +1,13 @@
 #include "MySql.h"
 #include "Hooks.h"
+#include "Utils.h"
 #include "Commands.h"
 #include "TribeScore.h"
 
 #include <API/ARK/Ark.h>
-#include <fstream>
 #include <vector>
 
 #pragma comment(lib, "ArkApi.lib")
-
-
-// Read config
-void ReadConfig() {
-    const std::string path = ArkApi::Tools::GetCurrentDir() + "/ArkApi/Plugins/TribeScore/config.json";
-    std::ifstream file{ path };
-    if (!file.is_open()) {
-        throw std::runtime_error("Failed to open (Plugins/TribeScore/config.json)");
-    }
-
-    file >> TribeScore::config;
-    file.close();
-}
 
 
 // Load plugin
@@ -28,12 +15,8 @@ void Load() {
     Log::Get().Init("TribeScore");
 
     // Load config
-    try {
-        ReadConfig();
-    } catch (const std::exception& error) {
-        Log::GetLog()->error(error.what());
-        throw;
-    }
+    TribeScore::Utils::ReadConfig();
+
 
     // Load database
     try {
