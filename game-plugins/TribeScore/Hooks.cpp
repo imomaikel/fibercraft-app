@@ -127,7 +127,13 @@ namespace TribeScore::Hooks {
                 AShooterPlayerController* playerController = reinterpret_cast<AShooterPlayerController*>(aController);
 
                 const std::string textPoints = std::to_string(score);
-                FString floatingText = FString("+ " + textPoints + " tribe score");
+                if (actorInRange->TargetingTeamField() == _this->TargetingTeamField()) {
+                    FString floatingText = FString("+ " + textPoints + " tribe score");
+                } else if (actorInRange->TargetingTeamField() == attackerId) {
+                    FString floatingText = FString("- " + textPoints + " tribe score");
+                } else {
+                    FString floatingText = FString("+ " + textPoints + " tribe score");
+                }
 
                 uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
                 std::string textSteamId = std::to_string(steamId);
