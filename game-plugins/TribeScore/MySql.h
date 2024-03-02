@@ -14,7 +14,8 @@ private:
 	sql::Driver* driver;
 	sql::Statement* stmt;
 	sql::Connection* conn;
-	sql::PreparedStatement* res;
+    sql::PreparedStatement* res;
+    sql::PreparedStatement* res2;
     sql::ResultSet* result;
     sql::SQLException* err;
 public:
@@ -30,18 +31,26 @@ public:
 		}
 	}
 
-    bool AddTribeScore(std::string tribeId, const std::string points) {
+
+    bool UpdateTribeScore(std::string attackerTribeId, std::string defenderTribeId,const std::string points) {
         try {
-            res = conn->prepareStatement("INSERT INTO score (TribeID, Score) VALUES (?, ?) ON DUPLICATE KEY UPDATE score = score + ?");
-           
-            res->setBigInt(1, tribeId);
+            res = conn->prepareStatement("INSERT INTO score (TribeID, Score) VALUES (?, ?) ON DUPLICATE KEY UPDATE score = score + ?;");
+            res2 = conn->prepareStatement("INSERT INTO score(TribeID, Score) VALUES(? , ? ) ON DUPLICATE KEY UPDATE score = score - ?;");
+
+            res->setBigInt(1, attackerTribeId);
             res->setBigInt(2, points);
             res->setBigInt(3, points);
 
+            res2->setBigInt(1, defenderTribeId);
+            res2->setBigInt(2, points);
+            res2->setBigInt(3, points);
+
             res->executeUpdate();
-           
-            delete res;
+            res2->executeUpdate();
             
+            delete res;
+            delete res2;
+
             return true;
         } catch (const std::exception& exception) {
             Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());

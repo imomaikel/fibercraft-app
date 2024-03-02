@@ -3,6 +3,7 @@
 #include "Utils.h"
 #include "TribeScore.h"
 
+
 namespace TribeScore::Hooks {
 
     // Declare hooks
@@ -51,7 +52,7 @@ namespace TribeScore::Hooks {
 
         auto attackerTribeId = actor->TargetingTeamField();
         auto attackerId = actor->TargetingTeamField();
-
+        
         // Destroyed own structure
         if (destroyedTribeId == attackerTribeId) return APrimalStructure_Die_original;
 
@@ -70,8 +71,7 @@ namespace TribeScore::Hooks {
         std::string defender = std::to_string(destroyedTribeId);
 
 
-        TribeScore::database->AddTribeScore(attacker, std::to_string(score));
-        TribeScore::database->RemoveTribeScore(defender, std::to_string(-score));
+        TribeScore::database->UpdateTribeScore(attacker, defender, std::to_string(score));
         
         const auto& actorsInRange = ArkApi::GetApiUtils().GetAllActorsInRange(_this->RootComponentField()->RelativeLocationField(), 20000.0f, EServerOctreeGroup::PLAYERS_CONNECTED);
         for (AActor* actorInRange : actorsInRange) {
