@@ -21,7 +21,7 @@ namespace TribeScore::Hooks {
             uint64 steamID = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
             std::string textSteamId = std::to_string(steamID);
 
-            bool isDisabled = TribeScore::database -> DisabledTribescore(textSteamId);
+            bool isDisabled = TribeScore::database ->CheckIfSteamIdIsDisabled(textSteamId);
             if (isDisabled == true) {
                 TribeScore::Commands::DisableOnLogin(textSteamId);
             }

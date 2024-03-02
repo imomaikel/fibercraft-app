@@ -19,10 +19,10 @@ namespace TribeScore::Commands {
 
         if (isDisabled) {
             disabledSteamIds.erase(it);
-            TribeScore::database->DeleteFromDisabledTribescoreDatabase(textSteamId);
+            TribeScore::database->EnableSteamId(textSteamId);
         } else {
             disabledSteamIds.push_back(textSteamId);
-            TribeScore::database->AddDisableTribescore(textSteamId);
+            TribeScore::database->DisableSteamId(textSteamId);
         }
     }
 

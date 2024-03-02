@@ -15,7 +15,6 @@ private:
 	sql::Statement* stmt;
 	sql::Connection* conn;
     sql::PreparedStatement* res;
-    sql::PreparedStatement* res2;
     sql::ResultSet* result;
     sql::SQLException* err;
 public:
@@ -30,150 +29,103 @@ public:
 			Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
 		}
 	}
-
-
-    bool UpdateTribeScore(std::string attackerTribeId, std::string defenderTribeId,const std::string points) {
+    
+    bool UpdateTribeScore(const std::string attackerTribeId, const std::string defenderTribeId, const std::string points) {
         try {
-            res = conn->prepareStatement("INSERT INTO score (TribeID, Score) VALUES (?, ?) ON DUPLICATE KEY UPDATE score = score + ?;");
-            res2 = conn->prepareStatement("INSERT INTO score(TribeID, Score) VALUES(? , ? ) ON DUPLICATE KEY UPDATE score = score - ?;");
+            res = conn->prepareStatement("INSERT INTO tribescore (id, score) VALUES (?, ?) ON DUPLICATE KEY UPDATE score = score + ?;");
 
             res->setBigInt(1, attackerTribeId);
             res->setBigInt(2, points);
             res->setBigInt(3, points);
 
-            res2->setBigInt(1, defenderTribeId);
-            res2->setBigInt(2, points);
-            res2->setBigInt(3, points);
-
             res->executeUpdate();
-            res2->executeUpdate();
             
-            delete res;
-            delete res2;
 
-            return true;
-        } catch (const std::exception& exception) {
-            Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
-            return false;
-        }
-    }
+            res = conn->prepareStatement("INSERT INTO tribescore (id, score) VALUES(? , ?) ON DUPLICATE KEY UPDATE score = score - ?;");
 
-    bool RemoveTribeScore(std::string tribeId, const std::string points) {
-        try {
-            res = conn->prepareStatement("INSERT INTO score (TribeID, Score) VALUES (?, ?) ON DUPLICATE KEY UPDATE score = score - ?");
-
-            res->setBigInt(1, tribeId);
+            res->setBigInt(1, defenderTribeId);
             res->setBigInt(2, points);
             res->setBigInt(3, points);
 
             res->executeUpdate();
-
+            
             delete res;
-
             return true;
         } catch (const std::exception& exception) {
             Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
             return false;
         }
     }
-
-
-	bool IsAlreadyInDatabase(std::string tribe_id) {
-    try {
-        res = conn->prepareStatement("SELECT * FROM score WHERE TribeID = " + tribe_id);
-        result = res->executeQuery();
-        while (result->next()) {
-            try {
-                int score = result->getInt("Score");
-                if (score != 0) {
-									  delete res;
-                    return true;
-                } else {
-									  delete res;
+	
+    bool CheckIfSteamIdIsDisabled(const std::string steamId) {
+        try {
+            res = conn->prepareStatement("SELECT * FROM disabledscore WHERE id = " + steamId);
+            result = res->executeQuery();
+            while (result->next()) {
+                try {
+                    std::string dbSteamId = result->getString("id");
+                    const bool found = dbSteamId == steamId;
+                    return found;
+                } catch (const std::exception& exception) {
+                    Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
                     return false;
                 }
-            } catch (std::exception& e) {
-                std::cout << "Error MySQL: " << e.what() << std::endl;
-								delete res;
-                return false;
             }
-        }
-        
-    } catch (const std::exception& exception) {
-				delete res;
-        return false;
-    } 
+            delete res;
+            return false;
+        } catch (const std::exception& exception) {
+            Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
+            return false;
+        }   
 	}
 
-	int tribescore_amount(std::string tribe_id) {
-    try {
-        res = conn->prepareStatement("SELECT * FROM score WHERE TribeID = " + tribe_id);
-
-        result = res->executeQuery();
-        while (result->next()) {
-            return result->getInt("Score");
+	bool DisableSteamId(const std::string steamId) {
+        try {
+            res = conn->prepareStatement("INSERT INTO disabledsteamid (id) VALUES (?)");
+            res->setBigInt(1, steamId);
+            res->executeUpdate();
+            delete res;
+			return true;
+        } catch (const std::exception& exception) {
+            Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
+            return false;
         }
-        delete res;
-    } catch (const std::exception& exception) {
-        return 0;
-    }
-    
-	}
-
-	bool DisabledTribescore(std::string id) {
-    try{
-        res = conn->prepareStatement("SELECT * FROM disabledscore WHERE SteamID = " + id);
-        result = res->executeQuery();
-        while (result->next()) {
-            try {
-                std::string steamID = result->getString("SteamID");
-                std::cout << steamID << " - " << id << std::endl;
-                if (steamID == id) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } catch (const std::exception& exception) {
-                std::cout << exception.what() << std::endl;
-                return false;
-            }
-        }
-        delete res;
-        return false;
-    } catch (const std::exception& exception) {
-        return false;
-    }    
-	}
-
-	bool AddDisableTribescore(std::string id) {
-    try {
-        res = conn->prepareStatement("INSERT INTO disabledscore (SteamID) VALUES (?)");
-        res->setBigInt(1, id);
-        res->executeUpdate();
-        delete res;
-				return true;
-    } catch (const std::exception& exception) {
-        std::cout << exception.what() << std::endl;
-				return false;
-    }
-    
 	}
 	
-	bool DeleteFromDisabledTribescoreDatabase(std::string id) {
-    try {
-        res = conn->prepareStatement("DELETE FROM disabledscore WHERE SteamID = ?");
-        res->setBigInt(1, id);
+    bool EnableSteamId(const std::string steamId) {
+        try {
+            res = conn->prepareStatement("DELETE FROM disabledsteamid WHERE id = ?");
+            res->setBigInt(1, steamId);
 
-        res->executeUpdate();
-        delete res;
-				return true;
-    } catch (const std::exception& exception) {
-        std::cout << exception.what() << std::endl;
-				return false;
-    } 
+            res->executeUpdate();
+            delete res;
+			return true;
+        } catch (const std::exception& exception) {
+            Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
+            return false;
+        }
 	}
+    
+    int GetTribeScore(const std::string tribeId) {
+        try {
+            res = conn->prepareStatement("SELECT * FROM tribescore WHERE id = ?");
+            res->setString(1, tribeId);
 
-	void Setup() {
+            result = res->executeQuery();
+
+            while (result->next()) {
+                return result->getInt("score");
+            }
+            delete res;
+
+        } catch (const std::exception& exception) {
+            std::cout << exception.what() << std::endl;
+            return 0;
+        }
+
+    }
+	
+    void Setup() {
         try {
             res = conn->prepareStatement("CREATE TABLE IF NOT EXISTS disabledsteamid (id VARCHAR(32) NOT NULL, PRIMARY KEY (id))");
 
@@ -184,8 +136,8 @@ public:
             res->executeUpdate();
             delete res;
 
-        } catch(std::exception &e){
-            std::cout << e.what() << std::endl;
+        } catch (const std::exception& exception) {
+            Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
         }
 	}
 };
