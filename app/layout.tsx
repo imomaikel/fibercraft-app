@@ -5,6 +5,7 @@ import Navbar from '@assets/components/Navbar';
 import { Inter } from 'next/font/google';
 import { cn } from '@assets/lib/utils';
 import type { Metadata } from 'next';
+import { Toaster } from 'sonner';
 import './(assets)/globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="mx-auto max-w-screen-xl">
               <Navbar />
               <MobileNavbar />
+              <Toaster richColors position="bottom-right" />
               <div className="px-2">{children}</div>
             </div>
           </SessionWrapper>
