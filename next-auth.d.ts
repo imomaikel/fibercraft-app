@@ -4,6 +4,7 @@ import { ManagementPermission } from '@prisma/client';
 interface NextAuthUser {
   id?: string;
   discordId?: string;
+  selectedDiscordId?: string;
   permissions?: ManagementPermission[];
 }
 export interface NextAuthSession {

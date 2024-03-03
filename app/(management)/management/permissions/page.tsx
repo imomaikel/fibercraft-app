@@ -1,8 +1,14 @@
 'use client';
+import { trpc } from '@trpc/index';
 import ManagementPageWrapper from '../ManagementPageWrapper';
 import ItemWrapper from '../components/ItemWrapper';
+import AddUser from './components/AddUser';
 
 const ManagementPage = () => {
+  const { data: users, isLoading: usersLoading } = trpc.management.getUsersWithPermissions.useQuery(undefined, {
+    retry: 1,
+  });
+
   return (
     <>
       <ManagementPageWrapper pageLabel="Permissions">
@@ -16,6 +22,7 @@ const ManagementPage = () => {
           </ItemWrapper>
         </div>
       </ManagementPageWrapper>
+      <AddUser />
     </>
   );
 };

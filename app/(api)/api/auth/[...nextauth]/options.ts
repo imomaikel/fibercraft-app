@@ -27,6 +27,10 @@ const authOptions: NextAuthOptions = {
         include: { permissions: true },
       });
 
+      if (getUserData?.discordId) {
+        session.user.discordId = getUserData.discordId;
+      }
+
       if (!getUserData?.discordId) {
         await prisma.user.update({
           where: { id: token.uid },
@@ -54,6 +58,8 @@ const authOptions: NextAuthOptions = {
 
       const permissions = getUserData?.permissions.map(({ permission }) => permission);
       session.user.permissions = permissions;
+
+      session.user.selectedDiscordId = getUserData?.selectedDiscordId || undefined;
 
       return session;
     },
