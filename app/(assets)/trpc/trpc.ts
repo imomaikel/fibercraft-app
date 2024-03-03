@@ -1,5 +1,8 @@
+import { NextAuthSession } from '../../../next-auth';
 import { TRPCError, initTRPC } from '@trpc/server';
 import { ExpressContext } from '../../../server';
+import { getSession } from 'next-auth/react';
+import prisma from '../lib/prisma';
 import SuperJSON from 'superjson';
 
 const t = initTRPC.context<ExpressContext>().create({
@@ -7,16 +10,30 @@ const t = initTRPC.context<ExpressContext>().create({
 });
 const middleware = t.middleware;
 
-const checkUser = middleware(async ({ next }) => {
-  // Auth check here
-  // eslint-disable-next-line no-constant-condition
-  if (true) {
-    return next();
-  } else {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
-  }
+const checkManagementAccess = middleware(async ({ ctx, next }) => {
+  const { req } = ctx;
+  const session = (await getSession({ req })) as NextAuthSession | null;
+  if (!session) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+  const { user } = session;
+  if (!user.selectedDiscordId || !user.discordId) throw new TRPCError({ code: 'BAD_REQUEST' });
+  if (!user.permissions || user.permissions.length === 0) throw new TRPCError({ code: 'UNAUTHORIZED' });
+  if (user.permissions.length === 1 && user.permissions[0] === 'USER') throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+  return next({
+    ctx: {
+      prisma,
+      user: {
+        ...user,
+        discordId: user.discordId as string,
+        selectedDiscordId: user.selectedDiscordId as string,
+      },
+      userPermissions: user.permissions,
+    },
+  });
 });
 
+// TODO procedures
 export const router = t.router;
 export const publicProcedure = t.procedure;
-export const privateProcedure = t.procedure.use(checkUser);
+export const managementProcedure = t.procedure.use(checkManagementAccess);
