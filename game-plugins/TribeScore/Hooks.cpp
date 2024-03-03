@@ -55,6 +55,8 @@ namespace TribeScore::Hooks {
             for (AActor* actorInRange : actorsInRange) {
                 const auto aController = actorInRange->GetInstigatorController();
                 AShooterPlayerController* playerController = reinterpret_cast<AShooterPlayerController*>(aController);
+                
+                FString floatingText;
 
                 const std::string textPoints = std::to_string(50);
                 if (actorInRange->TargetingTeamField() == DefenderId) {
@@ -126,6 +128,8 @@ namespace TribeScore::Hooks {
                 const auto aController = actorInRange->GetInstigatorController();
                 AShooterPlayerController* playerController = reinterpret_cast<AShooterPlayerController*>(aController);
 
+                FString floatingText;
+
                 const std::string textPoints = std::to_string(score);
                 if (actorInRange->TargetingTeamField() == _this->TargetingTeamField()) {
                     FString floatingText = FString("+ " + textPoints + " tribe score");
@@ -134,7 +138,7 @@ namespace TribeScore::Hooks {
                 } else {
                     FString floatingText = FString("+ " + textPoints + " tribe score");
                 }
-
+                
                 uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
                 std::string textSteamId = std::to_string(steamId);
                 const bool found = Commands::isSteamDisabled(textSteamId);
