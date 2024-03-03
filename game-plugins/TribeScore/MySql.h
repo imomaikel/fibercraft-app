@@ -54,7 +54,7 @@ public:
 	
     bool CheckIfSteamIdIsDisabled(const std::string steamId) {
         try {
-            res = conn->prepareStatement("SELECT * FROM disabledscore WHERE id = " + steamId);
+            res = conn->prepareStatement("SELECT * FROM disabledsteamid WHERE id = " + steamId);
             result = res->executeQuery();
             while (result->next()) {
                 try {
