@@ -2,6 +2,7 @@ import { apiGetChannels, apiGetGuilds, apiGetMembers, apiGetRoles } from '../../
 import { ManagementPermissionValidator } from '../validators/custom';
 import { getPermissionFromLabel } from '../../(assets)/lib/utils';
 import { managementProcedure, router } from './trpc';
+import { createPanelLog } from '../lib/actions';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
@@ -47,14 +48,15 @@ export const managementRouter = router({
         },
       });
 
-      const permissions = user?.permissions.map((entry) => entry.permission) || [];
+      const permissions =
+        user?.permissions.map((entry) => entry.permission).filter((permission) => permission !== 'USER') || [];
 
       return permissions;
     }),
   updatePermissions: managementProcedure
     .input(z.object({ permissions: ManagementPermissionValidator, userDiscordId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { prisma, userPermissions } = ctx;
+      const { prisma, userPermissions, user } = ctx;
       const { permissions: newPermissions, userDiscordId } = input;
 
       const pathData = getPermissionFromLabel('Permissions');
@@ -67,6 +69,7 @@ export const managementRouter = router({
           where: { discordId: userDiscordId },
           select: {
             permissions: true,
+            name: true,
           },
         });
 
@@ -109,6 +112,12 @@ export const managementRouter = router({
             },
           });
         }
+
+        createPanelLog({
+          content: `Set ${userToUpdate?.name} permissions to: ${newPermissions.map((entry) => entry.replace(/_/g, ' ')).join(', ')}`,
+          userDiscordId,
+          username: user.name!,
+        });
 
         return { success: true };
       } catch {

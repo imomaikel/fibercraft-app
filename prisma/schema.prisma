@@ -73,7 +73,8 @@ model Guild {
 
   name String @db.TinyText
 
-  widgets Widget?
+  widgets  Widget?
+  PanelLog PanelLog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -91,6 +92,19 @@ model RconLog {
   executedBy String
   command    String
   servers    String
+
+  createdAt DateTime @default(now())
+}
+
+model PanelLog {
+  id BigInt @id @default(autoincrement())
+
+  userDiscordId String @db.TinyText
+  username      String @db.TinyText
+  content       String
+
+  guild   Guild?  @relation(fields: [guildId], references: [id])
+  guildId String?
 
   createdAt DateTime @default(now())
 }
