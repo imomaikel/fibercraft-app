@@ -11,25 +11,44 @@ import { trpc } from '@trpc/index';
 import { Input } from '@ui/input';
 import Image from 'next/image';
 
-type TAddUser = {
+type TUser = {
+  label: string;
+  value: string;
+  avatar: string;
+};
+type TUserList = {
   isOpen: boolean;
   handleClose: () => void;
+  currentUsers: TUser[];
 };
-const AddUser = ({ isOpen, handleClose }: TAddUser) => {
+const UserList = ({ isOpen, handleClose, currentUsers }: TUserList) => {
+  const [userList, setUserList] = useState<TUser[] | null>(null);
   const [debouncedSearchText, setSearchText] = useDebounceValue('', 200);
+  const [permissionModalOpen, setPermissionModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState({
     username: '',
     userId: '',
   });
-  const [permissionModalOpen, setPermissionModalOpen] = useState(false);
 
-  const { mutate: searchForUsers, isLoading, data: users } = trpc.management.searchForUsers.useMutation();
+  const { mutate: searchForUsers, isLoading } = trpc.management.searchForUsers.useMutation();
+
+  useEffect(() => {
+    setUserList(currentUsers);
+  }, [currentUsers]);
 
   useEffect(() => {
     if (debouncedSearchText.length < 4) return;
-    searchForUsers({
-      searchText: debouncedSearchText,
-    });
+    searchForUsers(
+      {
+        searchText: debouncedSearchText,
+      },
+      {
+        onSuccess: (data) => {
+          if (data) setUserList(data);
+        },
+      },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchText]);
 
   return (
@@ -37,7 +56,7 @@ const AddUser = ({ isOpen, handleClose }: TAddUser) => {
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add a new user</DialogTitle>
+            <DialogTitle>Select a user</DialogTitle>
             <DialogDescription>Enter username or id in the field below.</DialogDescription>
           </DialogHeader>
           <div className="flex flex-col">
@@ -49,10 +68,11 @@ const AddUser = ({ isOpen, handleClose }: TAddUser) => {
                 </div>
               )}
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">At least four characters</p>
+            <p className="mt-1 text-xs text-muted-foreground">At least four characters.</p>
+            <p className="mt-1 text-xs text-muted-foreground">The user has to log in at least once to this panel.</p>
           </div>
           <div className="h-[50vh] space-y-2 overflow-y-auto pr-2">
-            {users?.map((entry) => (
+            {userList?.map((entry) => (
               <div
                 key={entry.value}
                 className={cn(
@@ -61,7 +81,13 @@ const AddUser = ({ isOpen, handleClose }: TAddUser) => {
                 )}
                 role="button"
                 aria-labelledby="select user"
-                onClick={() => setSelectedUser({ userId: entry.value, username: entry.label })}
+                onClick={() => {
+                  if (selectedUser.userId === entry.value) {
+                    setSelectedUser({ userId: '', username: '' });
+                  } else {
+                    setSelectedUser({ userId: entry.value, username: entry.label });
+                  }
+                }}
               >
                 <Avatar>
                   <AvatarImage src={entry.avatar} />
@@ -98,4 +124,4 @@ const AddUser = ({ isOpen, handleClose }: TAddUser) => {
   );
 };
 
-export default AddUser;
+export default UserList;

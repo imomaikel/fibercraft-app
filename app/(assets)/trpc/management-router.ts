@@ -17,7 +17,17 @@ export const managementRouter = router({
 
     const users = (
       await prisma.user.findMany({
-        select: { name: true, createdAt: true, image: true, discordId: true, permissions: true },
+        select: {
+          name: true,
+          createdAt: true,
+          image: true,
+          discordId: true,
+          permissions: {
+            select: {
+              permission: true,
+            },
+          },
+        },
       })
     ).filter(({ permissions }) => {
       if (permissions.length <= 1 && permissions.some((entry) => entry.permission === 'USER')) return false;
