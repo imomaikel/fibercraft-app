@@ -146,11 +146,11 @@ namespace TribeScore::Hooks {
                 
                 uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
                 std::string textSteamId = std::to_string(steamId);
-                const bool found = Commands::isSteamDisabled(textSteamId);
 
+                const bool found = Commands::isSteamDisabled(textSteamId);
+                if (found) continue;
 
                 if (!playerController) return APrimalStructure_Die_original;
-                if (found == true) return APrimalStructure_Die_original;
 
                 if (actorInRange->TargetingTeamField() == _this->TargetingTeamField()) {
                     playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 0, 0, 255), 0.4, 0.4, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
