@@ -36,7 +36,7 @@ const ManagementPageWrapper = ({ children, pageLabel }: TManagementPageWrapper) 
     <div>
       <div className="mb-6 flex flex-col">
         <div className="flex items-center space-x-2">
-          <h1 className="text-3xl font-bold">{navItem.label}</h1>
+          <h1 className="text-4xl font-bold">{navItem.label}</h1>
           <div
             className="mt-1 flex items-center text-sm text-muted-foreground transition-colors hover:text-primary"
             role="button"

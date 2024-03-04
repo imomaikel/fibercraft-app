@@ -1,4 +1,5 @@
 import { apiGetChannels, apiGetGuilds, apiGetMembers, apiGetRoles } from '../../../bot/api/index';
+import { ManagementPermissionValidator } from '../validators/custom';
 import { getPermissionFromLabel } from '../../(assets)/lib/utils';
 import { managementProcedure, router } from './trpc';
 import { TRPCError } from '@trpc/server';
@@ -24,6 +25,96 @@ export const managementRouter = router({
 
     return users;
   }),
+  getUserPermissions: managementProcedure
+    .input(z.object({ userDiscordId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { prisma, userPermissions } = ctx;
+      const { userDiscordId } = input;
+
+      const pathData = getPermissionFromLabel('Permissions');
+      if (!pathData || !userPermissions.includes(pathData?.permission)) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { discordId: userDiscordId },
+        select: {
+          permissions: {
+            select: {
+              permission: true,
+            },
+          },
+        },
+      });
+
+      const permissions = user?.permissions.map((entry) => entry.permission) || [];
+
+      return permissions;
+    }),
+  updatePermissions: managementProcedure
+    .input(z.object({ permissions: ManagementPermissionValidator, userDiscordId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma, userPermissions } = ctx;
+      const { permissions: newPermissions, userDiscordId } = input;
+
+      const pathData = getPermissionFromLabel('Permissions');
+      if (!pathData || !userPermissions.includes(pathData?.permission)) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+
+      try {
+        const userToUpdate = await prisma.user.findUnique({
+          where: { discordId: userDiscordId },
+          select: {
+            permissions: true,
+          },
+        });
+
+        const currentPermissions = userToUpdate?.permissions.map((entry) => entry.permission);
+        if (!currentPermissions) return { error: true };
+
+        const permissionsToAdd = newPermissions.filter(
+          (permission) => !currentPermissions.includes(permission) && permission !== 'ALL_PERMISSIONS',
+        );
+        const permissionsToRemove = currentPermissions.filter(
+          (permission) => !newPermissions.includes(permission) && permission !== 'USER',
+        );
+
+        if (permissionsToAdd.length >= 1) {
+          await prisma.user.update({
+            where: { discordId: userDiscordId },
+            data: {
+              permissions: {
+                createMany: {
+                  data: permissionsToAdd.map((permission) => ({
+                    permission,
+                  })),
+                },
+              },
+            },
+          });
+        }
+
+        if (permissionsToRemove.length >= 1) {
+          await prisma.user.update({
+            where: { discordId: userDiscordId },
+            data: {
+              permissions: {
+                deleteMany: {
+                  permission: {
+                    in: permissionsToRemove,
+                  },
+                },
+              },
+            },
+          });
+        }
+
+        return { success: true };
+      } catch {
+        return { error: true };
+      }
+    }),
   searchForUsers: managementProcedure
     .input(z.object({ searchText: z.string().min(4) }))
     .mutation(async ({ ctx, input }) => {

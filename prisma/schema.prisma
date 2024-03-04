@@ -137,7 +137,7 @@ model Account {
 model User {
   id String @id @default(cuid())
 
-  discordId     String?
+  discordId     String?          @unique
   name          String?
   accounts      Account[]
   image         String?
