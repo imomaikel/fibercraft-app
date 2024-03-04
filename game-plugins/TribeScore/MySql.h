@@ -40,6 +40,10 @@ public:
                 Log::GetLog()->critical("Failed to create table tribescore!");
             }
 
+            result = db_.query(fmt::format("CREATE TABLE IF NOT EXISTS adminstribescoredisable (id VARCHAR(32) NOT NULL, PRIMARY KEY (id))"));
+            if (!result) {
+                Log::GetLog()->critical("Failed to create table disabledsteamid!");
+            }
 
         } catch (const std::exception& exception) {
             Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
@@ -64,9 +68,9 @@ public:
         }
     }
 
-    bool CheckIfSteamIdIsDisabled(const std::string steamId) {
+    bool CheckIfAdminDisabled(const std::string steamId) {
         try {
-            std::string id = db_.query(fmt::format("SELECT id FROM disabledsteamid WHERE id = {}", steamId)).get_value<std::string>();
+            std::string id = db_.query(fmt::format("SELECT id FROM adminstribescoredisable WHERE id = {}", steamId)).get_value<std::string>();
 
             if (id.length() >= 5) return true;
             return false;
@@ -77,9 +81,40 @@ public:
         }
     }
 
+    bool CheckIfSteamIdIsDisabled(const std::string steamId) {
+        try {
+            std::string id = db_.query(fmt::format("SELECT id FROM disabledsteamid WHERE id = {}", steamId)).get_value<std::string>();
+
+            if (id.length() >= 5) return true;
+            return false;
+
+        } catch (const std::exception& exception) {
+            Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
+            return false;
+        }
+    }
+
+    bool DisableAdminSteamId(const std::string steamId) {
+        try {
+            return db_.query(fmt::format("INSERT INTO adminstribescoredisable (id) VALUES ({})", steamId));
+        } catch (const std::exception& exception) {
+            Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
+            return false;
+        }
+    }
+
     bool DisableSteamId(const std::string steamId) {
         try {
             return db_.query(fmt::format("INSERT INTO disabledsteamid (id) VALUES ({})", steamId));
+        } catch (const std::exception& exception) {
+            Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
+            return false;
+        }
+    }
+
+    bool EnableAdminSteamId(const std::string steamId) {
+        try {
+            return db_.query(fmt::format("DELETE FROM adminstribescoredisable WHERE id = {}", steamId));
         } catch (const std::exception& exception) {
             Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
             return false;

@@ -25,8 +25,12 @@ namespace TribeScore::Hooks {
             TribeScore::database->CreateTribeData(playerTribeId);
 
             bool isDisabled = TribeScore::database -> CheckIfSteamIdIsDisabled(textSteamId);
+            bool IsAdminDisabled = TribeScore::database->CheckIfAdminDisabled(textSteamId);
             if (isDisabled == true) {
                 TribeScore::Commands::DisableOnLogin(textSteamId);
+            }
+            if (IsAdminDisabled == true) {
+                TribeScore::Commands::AdminDisableOnLogin(textSteamId);
             }
         }
     }
@@ -40,6 +44,7 @@ namespace TribeScore::Hooks {
             uint64 steamID = ArkApi::GetApiUtils().GetSteamIdFromController(player);
             std::string textSteamId = std::to_string(steamID);
             TribeScore::Commands::EraseOnLogout(textSteamId);
+            TribeScore::Commands::AdminEraseOnLogout(textSteamId);
         }
     }
 
@@ -131,7 +136,6 @@ namespace TribeScore::Hooks {
 
                     std::string structure_name = structure->DescriptiveNameField().ToString();
 
-                    ArkApi::GetApiUtils().SendChatMessageToAll("vamosh a ver","y ese turret raiding?");
                     std::cout << "Structure Name: " << _this->DescriptiveNameField().ToString() << " Tribe ID: " << _this->TargetingTeamField() << " Got destroyed by: " << structure_name << " Tribe ID: " << structure->TargetingTeamField() << std::endl;
                 }
 

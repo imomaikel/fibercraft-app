@@ -8,4 +8,7 @@ namespace TribeScore::Commands {
 	void DisableOnLogin(std::string steamId);
 	void EraseOnLogout(std::string steamId);
 	bool isSteamDisabled(std::string steamId);
+	void AdminEraseOnLogout(std::string steamId);
+	void AdminDisableOnLogin(std::string steamId);
+
 }
