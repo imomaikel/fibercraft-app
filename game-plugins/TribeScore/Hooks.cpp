@@ -126,7 +126,14 @@ namespace TribeScore::Hooks {
         const auto& actorsInRange = ArkApi::GetApiUtils().GetAllActorsInRange(_this->RootComponentField()->RelativeLocationField(), 20000.0f, EServerOctreeGroup::PLAYERS_CONNECTED);
         for (AActor* actorInRange : actorsInRange) {
             if (actorInRange != nullptr && actorInRange->IsA(AActor::GetPrivateStaticClass())) {
-                if (actorInRange->IsA(APrimalStructure::GetPrivateStaticClass())) return APrimalStructure_Die_original;
+                if (actor->IsA(APrimalStructure::GetPrivateStaticClass())) {
+                    APrimalStructure* structure = reinterpret_cast<APrimalStructure*>(actor);
+
+                    std::string structure_name = structure->DescriptiveNameField().ToString();
+
+                    ArkApi::GetApiUtils().SendChatMessageToAll("vamosh a ver","y ese turret raiding?");
+                    std::cout << "Structure Name: " << _this->DescriptiveNameField().ToString() << " Tribe ID: " << _this->TargetingTeamField() << " Got destroyed by: " << structure_name << " Tribe ID: " << structure->TargetingTeamField() << std::endl;
+                }
 
                 const auto aController = actorInRange->GetInstigatorController();
                 AShooterPlayerController* playerController = reinterpret_cast<AShooterPlayerController*>(aController);
