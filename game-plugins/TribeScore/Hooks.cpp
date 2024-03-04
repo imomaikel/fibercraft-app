@@ -21,7 +21,10 @@ namespace TribeScore::Hooks {
             uint64 steamID = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
             std::string textSteamId = std::to_string(steamID);
 
-            bool isDisabled = TribeScore::database ->CheckIfSteamIdIsDisabled(textSteamId);
+            const int playerTribeId = shooterPlayerController->TargetingTeamField();
+            TribeScore::database->CreateTribeData(playerTribeId);
+
+            bool isDisabled = TribeScore::database -> CheckIfSteamIdIsDisabled(textSteamId);
             if (isDisabled == true) {
                 TribeScore::Commands::DisableOnLogin(textSteamId);
             }
@@ -132,12 +135,14 @@ namespace TribeScore::Hooks {
 
                 const std::string textPoints = std::to_string(score);
                 if (actorInRange->TargetingTeamField() == _this->TargetingTeamField()) {
-                    FString floatingText = FString("+ " + textPoints + " tribe score");
+                    floatingText = FString("- " + textPoints + " tribe score");
                 } else if (actorInRange->TargetingTeamField() == attackerId) {
-                    FString floatingText = FString("- " + textPoints + " tribe score");
+                    floatingText = FString("+ " + textPoints + " tribe score");
                 } else {
-                    FString floatingText = FString("+ " + textPoints + " tribe score");
+                    floatingText = FString("+ " + textPoints + " tribe score");
                 }
+
+                if (floatingText.ToString().length() <= 4) floatingText = FString("? " + textPoints + " tribe score");
                 
                 uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
                 std::string textSteamId = std::to_string(steamId);
@@ -148,15 +153,15 @@ namespace TribeScore::Hooks {
                 if (found == true) return APrimalStructure_Die_original;
 
                 if (actorInRange->TargetingTeamField() == _this->TargetingTeamField()) {
-                    playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 0, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
+                    playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 0, 0, 255), 0.4, 0.4, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
                 } else if (actorInRange->TargetingTeamField() == attackerId) {
-                    playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(0, 255, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
+                    playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(0, 255, 0, 255), 0.4, 0.4, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
                 } else {
-                    playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 177, 0, 255), 0.2, 0.2, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
+                    playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 177, 0, 255), 0.4, 0.4, 4, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
                 }
             }
         }
-
+        std::cout << std::endl;
         return APrimalStructure_Die_original;
     }
 

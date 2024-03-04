@@ -3,20 +3,16 @@
   "WorkspaceRootPath": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\MySql.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|solutionrelative:MySql.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\Commands.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|solutionrelative:Commands.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\Hooks.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|solutionrelative:Hooks.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\IDatabase.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|solutionrelative:IDatabase.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\TribeScore.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|solutionrelative:TribeScore.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\MySql.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{4F335C30-001F-44DF-9A5E-47F452174202}|TribeScore.vcxproj|solutionrelative:MySql.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,57 +22,44 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Commands.cpp",
-              "DocumentMoniker": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\Commands.cpp",
-              "RelativeDocumentMoniker": "Commands.cpp",
-              "ToolTip": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\Commands.cpp",
-              "RelativeToolTip": "Commands.cpp",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAAABYAAAAQAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-03-02T19:02:29.674Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "Hooks.cpp",
               "DocumentMoniker": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\Hooks.cpp",
               "RelativeDocumentMoniker": "Hooks.cpp",
               "ToolTip": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\Hooks.cpp",
               "RelativeToolTip": "Hooks.cpp",
-              "ViewState": "AQIAABsAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "ViewState": "AQIAAHgAAAAAAAAAAAAAAJsAAACpAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-03-02T19:02:01.529Z"
+              "WhenOpened": "2024-03-04T13:38:50.862Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "IDatabase.h",
-              "DocumentMoniker": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\IDatabase.h",
-              "RelativeDocumentMoniker": "IDatabase.h",
-              "ToolTip": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\IDatabase.h",
-              "RelativeToolTip": "IDatabase.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAATAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-03-02T18:59:41.649Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "MySql.h",
               "DocumentMoniker": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\MySql.h",
               "RelativeDocumentMoniker": "MySql.h",
               "ToolTip": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\MySql.h",
               "RelativeToolTip": "MySql.h",
-              "ViewState": "AQIAAA4AAAAAAAAAAADgvyAAAAA/AAAA",
+              "ViewState": "AQIAACoAAAAAAAAAAAAAABQAAAAiAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-03-02T18:59:41.21Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-04T13:26:43.867Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TribeScore.cpp",
+              "DocumentMoniker": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\TribeScore.cpp",
+              "RelativeDocumentMoniker": "TribeScore.cpp",
+              "ToolTip": "Q:\\all\\projects\\fibercraft-app\\game-plugins\\TribeScore\\TribeScore.cpp",
+              "RelativeToolTip": "TribeScore.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-03-04T12:48:58.826Z"
             }
           ]
         }

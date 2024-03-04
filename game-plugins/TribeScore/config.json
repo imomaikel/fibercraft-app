@@ -1,6 +1,6 @@
 {
     "MySql": {
-        "hostWithPort": "127.0.0.1",
+        "hostWithoutPort": "127.0.0.1",
         "username": "admin",
         "password": "admin",
         "schema":  "admin"

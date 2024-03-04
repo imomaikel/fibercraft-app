@@ -15,7 +15,5 @@ public:
 	virtual bool CheckIfSteamIdIsDisabled(const std::string steamId) = 0;
 	virtual bool DisableSteamId(const std::string steamId) = 0;
 	virtual bool EnableSteamId(const std::string steamId) = 0;
-
-	// Setup
-	virtual void Setup() = 0;
+	virtual bool CreateTribeData(const int tribeId) = 0;
 };
