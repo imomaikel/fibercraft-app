@@ -10,7 +10,7 @@ const NavbarLinksAccess = () => {
 
   if (!userPermissions) return null;
 
-  return <NavLinks userPermissions={userPermissions} />;
+  return <NavLinks userPermissions={userPermissions} userSelectedGuildId={user.selectedDiscordId} />;
 };
 
 export default NavbarLinksAccess;

@@ -16,7 +16,12 @@ const checkManagementAccess = middleware(async ({ ctx, next }) => {
   if (!session) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
   const { user } = session;
-  if (!user.selectedDiscordId || !user.discordId) throw new TRPCError({ code: 'BAD_REQUEST' });
+  if (
+    !(req.path === '/management.getGuilds' || req.path === '/management.selectGuild') &&
+    (!user.selectedDiscordId || !user.discordId)
+  ) {
+    throw new TRPCError({ code: 'BAD_REQUEST' });
+  }
   if (!user.permissions || user.permissions.length === 0) throw new TRPCError({ code: 'UNAUTHORIZED' });
   if (user.permissions.length === 1 && user.permissions[0] === 'USER') throw new TRPCError({ code: 'UNAUTHORIZED' });
 

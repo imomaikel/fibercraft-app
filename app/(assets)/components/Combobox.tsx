@@ -76,7 +76,7 @@ const Combobox = ({
         </Button>
       </PopoverTrigger>
       {!isLoading && (
-        <PopoverContent className="w-[200px] p-0">
+        <PopoverContent className={cn('p-0', className)}>
           <Command>
             <CommandInput placeholder={searchLabel} />
             <CommandEmpty>{notFoundText}</CommandEmpty>
@@ -93,10 +93,12 @@ const Combobox = ({
                     if (newValue.length === 0 && onReset) onReset();
 
                     if (!newLabel) {
-                      setSelected({
-                        label: '',
-                        value: '',
-                      });
+                      if (onReset) {
+                        setSelected({
+                          label: '',
+                          value: '',
+                        });
+                      }
                       return;
                     }
 

@@ -9,7 +9,7 @@ import { trpc } from '@trpc/index';
 import { Badge } from '@ui/badge';
 import { useState } from 'react';
 
-const ManagementPage = () => {
+const ManagementPermissionsPage = () => {
   const { data: users } = trpc.management.getUsersWithPermissions.useQuery(undefined, {
     retry: 1,
   });
@@ -67,4 +67,4 @@ const ManagementPage = () => {
   );
 };
 
-export default ManagementPage;
+export default ManagementPermissionsPage;

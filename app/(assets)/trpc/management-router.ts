@@ -1,19 +1,26 @@
 import { apiGetChannels, apiGetGuilds, apiGetMembers, apiGetRoles } from '../../../bot/api/index';
 import { ManagementPermissionValidator } from '../validators/custom';
 import { getPermissionFromLabel } from '../../(assets)/lib/utils';
+import { TAllNavLabels } from '../../(assets)/lib/types';
+import { ManagementPermission } from '@prisma/client';
 import { managementProcedure, router } from './trpc';
 import { createPanelLog } from '../lib/actions';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
+const verifyFromLabel = (label: TAllNavLabels, userPermissions: ManagementPermission[]): boolean => {
+  const pathData = getPermissionFromLabel(label);
+  if (userPermissions.includes('ALL_PERMISSIONS')) return true;
+  if (!pathData) return false;
+  if (!userPermissions.includes(pathData.permission)) return false;
+  return true;
+};
+
 export const managementRouter = router({
   getUsersWithPermissions: managementProcedure.query(async ({ ctx }) => {
     const { prisma, userPermissions } = ctx;
 
-    const pathData = getPermissionFromLabel('Permissions');
-    if (!pathData || !userPermissions.includes(pathData?.permission)) {
-      throw new TRPCError({ code: 'UNAUTHORIZED' });
-    }
+    if (!verifyFromLabel('Permissions', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
     const users = (
       await prisma.user.findMany({
@@ -42,10 +49,7 @@ export const managementRouter = router({
       const { prisma, userPermissions } = ctx;
       const { userDiscordId } = input;
 
-      const pathData = getPermissionFromLabel('Permissions');
-      if (!pathData || !userPermissions.includes(pathData?.permission)) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
+      if (!verifyFromLabel('Permissions', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       const user = await prisma.user.findUnique({
         where: { discordId: userDiscordId },
@@ -69,10 +73,7 @@ export const managementRouter = router({
       const { prisma, userPermissions, user } = ctx;
       const { permissions: newPermissions, userDiscordId } = input;
 
-      const pathData = getPermissionFromLabel('Permissions');
-      if (!pathData || !userPermissions.includes(pathData?.permission)) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
+      if (!verifyFromLabel('Permissions', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       try {
         const userToUpdate = await prisma.user.findUnique({
@@ -140,10 +141,7 @@ export const managementRouter = router({
       const { user, userPermissions } = ctx;
       const { searchText } = input;
 
-      const pathData = getPermissionFromLabel('Permissions');
-      if (!pathData || !userPermissions.includes(pathData?.permission)) {
-        throw new TRPCError({ code: 'UNAUTHORIZED' });
-      }
+      if (!verifyFromLabel('Permissions', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       const getMembers = await apiGetMembers({ guildId: user.selectedDiscordId, searchText });
 
@@ -155,6 +153,28 @@ export const managementRouter = router({
     const guilds = await apiGetGuilds({ userId: user.discordId });
 
     return guilds.data;
+  }),
+  selectGuild: managementProcedure.input(z.object({ guildId: z.string() })).mutation(async ({ ctx, input }) => {
+    const { user, prisma, userPermissions } = ctx;
+    const { guildId } = input;
+
+    if (!verifyFromLabel('Discord Selection', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+    const guilds = await apiGetGuilds({ userId: user.discordId });
+    const hasAccess = guilds.data.some((guild) => guild.value === guildId);
+
+    if (!hasAccess) {
+      return { error: true, message: 'You do not have access to this server,' };
+    }
+
+    await prisma.user.update({
+      where: { discordId: user.discordId },
+      data: {
+        selectedDiscordId: guildId,
+      },
+    });
+
+    return { success: true };
   }),
   getRoles: managementProcedure.query(async ({ ctx }) => {
     const { user } = ctx;

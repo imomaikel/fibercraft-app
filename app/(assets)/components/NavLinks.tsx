@@ -13,14 +13,16 @@ import { useMemo } from 'react';
 
 type TNavLinks = {
   userPermissions: ManagementPermission[];
+  userSelectedGuildId: string | undefined;
 };
-const NavLinks = ({ userPermissions }: TNavLinks) => {
+const NavLinks = ({ userPermissions, userSelectedGuildId }: TNavLinks) => {
   const navLinksWithAccess = useMemo(() => {
     return NAV_LINKS.map((parent) => {
       if (!parent.itemsOnHover) return parent;
 
       const childrenAccess = (
         parent.itemsOnHover.map((children) => {
+          if (children.path !== '/management/discord-selection' && !userSelectedGuildId) return null;
           const hasAccess = userPermissions.some(
             (userPermission) => userPermission === children.permission || userPermission === 'ALL_PERMISSIONS',
           );
@@ -32,7 +34,7 @@ const NavLinks = ({ userPermissions }: TNavLinks) => {
 
       return { ...parent, itemsOnHover: childrenAccess };
     }).filter((hasAccess) => hasAccess);
-  }, [userPermissions]);
+  }, [userPermissions, userSelectedGuildId]);
 
   return (
     <NavigationMenu delayDuration={100}>
@@ -44,7 +46,7 @@ const NavLinks = ({ userPermissions }: TNavLinks) => {
             <NavigationMenuItem key={entry.label}>
               <NavigationMenuTrigger>{entry.label}</NavigationMenuTrigger>
               <NavigationMenuContent className="max-w-[calc(100vw-48px)] md:w-auto">
-                <ul className="grid w-[400px] max-w-[calc(100vw-48px)] gap-3 p-4 md:w-[500px] md:max-w-none md:grid-cols-2 lg:w-[600px] ">
+                <ul className="grid w-[400px] max-w-[calc(100vw-48px)] gap-3 p-4 md:w-[500px] md:max-w-none md:grid-cols-2 lg:w-[600px]">
                   {entry.itemsOnHover.map((children) => {
                     if (!children) return null;
                     return (
@@ -54,6 +56,7 @@ const NavLinks = ({ userPermissions }: TNavLinks) => {
                     );
                   })}
                 </ul>
+                <div className="!z-50 h-96 w-96 bg-red-500"></div>
               </NavigationMenuContent>
             </NavigationMenuItem>
           );

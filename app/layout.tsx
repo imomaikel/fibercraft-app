@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Navbar />
               <MobileNavbar />
               <Toaster richColors position="bottom-right" />
-              <div className="px-2">{children}</div>
+              <div className="px-2 md:px-6">{children}</div>
             </div>
           </SessionWrapper>
         </Provider>
