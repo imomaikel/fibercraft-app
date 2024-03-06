@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Separator } from '@ui/separator';
 import UserProfile from './UserProfile';
 import CartButton from './CartButton';
+import Image from 'next/image';
 import Link from 'next/link';
 
 const Navbar = () => {
@@ -25,7 +26,18 @@ const Navbar = () => {
                   <GiHamburgerMenu className="h-8 w-8" />
                 </div>
                 <Link href="/dashboard">
-                  <h1 className="text-xl font-bold antialiased sm:tracking-wide md:text-3xl">Fibercraft</h1>
+                  <div className="group flex items-center">
+                    <Image
+                      alt="logo"
+                      src="/fiber.webp"
+                      width={54}
+                      height={54}
+                      className="absolute -z-10 -translate-x-2 -translate-y-1 md:-translate-x-4"
+                    />
+                    <h1 className="ml-4 text-xl font-bold antialiased sm:tracking-wide md:ml-2 md:text-3xl">
+                      Fibercraft
+                    </h1>
+                  </div>
                 </Link>
                 <div className="hidden md:block">
                   <NavbarLinksAccess />
