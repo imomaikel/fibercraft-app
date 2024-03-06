@@ -68,7 +68,7 @@ const authOptions: NextAuthOptions = {
     jwt: async ({ token, user, account }) => {
       if (!user || !account) return token;
 
-      if (!token.permissions || !token.selectedDiscordId) {
+      if ((!token.permissions || !token.selectedDiscordId) && token.uid) {
         const getUserData = await prisma.user.findUnique({
           where: { id: token.uid },
           include: { permissions: true },
