@@ -56,7 +56,6 @@ const NavLinks = ({ userPermissions, userSelectedGuildId }: TNavLinks) => {
                     );
                   })}
                 </ul>
-                <div className="!z-50 h-96 w-96 bg-red-500"></div>
               </NavigationMenuContent>
             </NavigationMenuItem>
           );

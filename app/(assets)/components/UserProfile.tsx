@@ -5,16 +5,11 @@ import { AvatarFallback } from '@radix-ui/react-avatar';
 import { HiChevronDoubleDown } from 'react-icons/hi';
 import { signIn, signOut } from 'next-auth/react';
 import { Avatar, AvatarImage } from '@ui/avatar';
-import { Skeleton } from '@ui/skeleton';
 import { Button } from '@ui/button';
 import Image from 'next/image';
 
 const UserProfile = () => {
   const { user, sessionStatus } = useCurrentUser();
-
-  if (sessionStatus === 'loading') {
-    return <Skeleton className="h-12 w-40 sm:w-48" />;
-  }
 
   if (sessionStatus === 'unauthenticated' || !user) {
     return (

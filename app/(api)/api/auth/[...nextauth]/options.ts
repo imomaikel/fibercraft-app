@@ -58,6 +58,7 @@ const authOptions: NextAuthOptions = {
 
       const permissions = getUserData?.permissions.map(({ permission }) => permission);
       session.user.permissions = permissions;
+      token.permissions = permissions;
 
       session.user.selectedDiscordId = getUserData?.selectedDiscordId || undefined;
 
@@ -65,6 +66,16 @@ const authOptions: NextAuthOptions = {
     },
     jwt: async ({ token, user, account }) => {
       if (!user || !account) return token;
+
+      if (!token.permissions) {
+        const getUserData = await prisma.user.findUnique({
+          where: { id: token.uid },
+          include: { permissions: true },
+        });
+        const permissions = getUserData?.permissions.map((entry) => entry.permission);
+        token.permissions = permissions;
+      }
+
       token.discordId = account.providerAccountId;
       token.uid = user.id;
       return token;

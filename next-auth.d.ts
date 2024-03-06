@@ -21,5 +21,6 @@ declare module 'next-auth/jwt' {
   interface JWT {
     discordId?: string;
     uid?: string;
+    permissions?: ManagementPermission[];
   }
 }
