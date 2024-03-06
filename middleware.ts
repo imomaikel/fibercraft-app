@@ -12,7 +12,7 @@ export default withAuth(
     if (!userPermissions.includes(pathData.permission) && !userPermissions.includes('ALL_PERMISSIONS')) {
       return NextResponse.redirect(new URL('/', req.url));
     }
-    if (pathData.label !== 'Discord Selection' && !req.nextauth.token?.selectedDiscordId) {
+    if (pathData.label === 'Widgets' && !req.nextauth.token?.selectedDiscordId) {
       return NextResponse.redirect(new URL('/management/discord-selection', req.url));
     }
 

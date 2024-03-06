@@ -21,7 +21,9 @@ export default event('ready', async (client) => {
         data: {
           id: guild.id,
           name: guild.name,
-          widgets: {},
+          widgets: {
+            create: {},
+          },
         },
       });
       console.log(`Added a new guild: ${guild.name}`);

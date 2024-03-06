@@ -64,6 +64,12 @@ model Widget {
   tribeScoreChannelId String? @db.TinyText
   tribeScoreMessageId String? @db.TinyText
 
+  // Server Control
+  serverControlLogChannelId String? @db.TinyText
+  serverControlChannelId    String? @db.TinyText
+  serverControlMessageId    String? @db.TinyText
+  serverControlRoleId       String? @db.TinyText
+
   guild   Guild  @relation(fields: [guildId], references: [id])
   guildId String @unique
 }
@@ -74,7 +80,7 @@ model Guild {
   name String @db.TinyText
 
   widgets  Widget?
-  PanelLog PanelLog[]
+  panelLog PanelLog[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -113,7 +119,7 @@ model PanelLog {
 enum ManagementPermission {
   USER                 @map("User")
   ALL_PERMISSIONS      @map("All Permissions")
-  SERVER_RESTART       @map("Server Restart")
+  SERVER_CONTROL       @map("Server Control")
   VIEW_PAIRED_ACCOUNTS @map("View Paired Accounts")
   USE_WIDGETS          @map("Use Widgets")
 }

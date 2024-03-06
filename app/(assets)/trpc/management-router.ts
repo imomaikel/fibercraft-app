@@ -1,6 +1,6 @@
 import { apiGetChannels, apiGetGuilds, apiGetMembers, apiGetPairedAccounts, apiGetRoles } from '../../../bot/api/index';
+import { getPermissionFromLabel, translateWidgetEnum, widgetEnums } from '../../(assets)/lib/utils';
 import { ManagementPermissionValidator } from '../validators/custom';
-import { getPermissionFromLabel } from '../../(assets)/lib/utils';
 import { TAllNavLabels } from '../../(assets)/lib/types';
 import { ManagementPermission } from '@prisma/client';
 import { managementProcedure, router } from './trpc';
@@ -201,5 +201,82 @@ export const managementRouter = router({
       const query = await apiGetPairedAccounts(searchText);
 
       return query;
+    }),
+  getWidgets: managementProcedure.query(async ({ ctx }) => {
+    const { prisma, userPermissions, user } = ctx;
+
+    if (!verifyFromLabel('Widgets', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+    const guildId = user.selectedDiscordId;
+
+    const guildData = await prisma.guild.findUnique({
+      where: { id: guildId },
+      select: { widgets: true },
+    });
+
+    if (!guildData || !guildData.widgets) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+    const widgets = guildData?.widgets;
+
+    return widgets;
+  }),
+  updateWidget: managementProcedure
+    .input(
+      z.object({
+        field: widgetEnums,
+        newValue: z.string().min(1).or(z.null()),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma, userPermissions, user } = ctx;
+      const guildId = user.selectedDiscordId;
+      const { field, newValue } = input;
+
+      if (!verifyFromLabel('Widgets', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+      const values =
+        field.toLowerCase().includes('role') && newValue
+          ? await apiGetRoles({ guildId })
+          : await apiGetChannels({ guildId });
+
+      if (!values.success && newValue) {
+        return { error: true, message: 'Something went wrong!' };
+      }
+
+      const getLabel = values.data && values.data.find((entry) => entry.value === newValue)?.label;
+
+      if (!getLabel && newValue) {
+        return { error: true, message: 'Could not update the widget.' };
+      }
+
+      try {
+        await prisma.guild.update({
+          where: { id: user.selectedDiscordId },
+          data: {
+            widgets: {
+              update: {
+                [field]: newValue,
+              },
+            },
+          },
+        });
+      } catch {
+        return { error: true };
+      }
+
+      createPanelLog({
+        ...(newValue
+          ? {
+              content: `Updated ${translateWidgetEnum(field)} to "${getLabel}"`,
+            }
+          : {
+              content: `Reset ${translateWidgetEnum(field)}`,
+            }),
+        userDiscordId: user.discordId,
+        username: user.name!,
+        guildId: user.selectedDiscordId,
+      });
+
+      return { success: true, label: getLabel };
     }),
 });

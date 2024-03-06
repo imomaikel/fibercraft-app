@@ -17,10 +17,10 @@ export const NAV_LINKS = [
         permission: 'USE_WIDGETS' as ManagementPermission,
       },
       {
-        label: 'Server Restart',
-        path: '/management/server-restart',
+        label: 'Server Control',
+        path: '/management/server-control',
         description: 'Manage in-game servers here.',
-        permission: 'SERVER_RESTART' as ManagementPermission,
+        permission: 'SERVER_CONTROL' as ManagementPermission,
       },
       {
         label: 'Paired Accounts',
@@ -28,6 +28,12 @@ export const NAV_LINKS = [
         // prettier-ignore
         description: 'View users\' account connections with Steam and Discord.',
         permission: 'VIEW_PAIRED_ACCOUNTS' as ManagementPermission,
+      },
+      {
+        label: 'Widgets',
+        path: '/management/widgets',
+        description: 'Configure the most important widget settings.',
+        permission: 'USE_WIDGETS' as ManagementPermission,
       },
     ],
   },

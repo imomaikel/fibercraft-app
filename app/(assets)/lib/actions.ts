@@ -12,7 +12,7 @@ export const createPanelLog = async ({ content, userDiscordId, username, guildId
       await prisma.guild.update({
         where: { id: guildId },
         data: {
-          PanelLog: {
+          panelLog: {
             create: {
               content,
               userDiscordId,

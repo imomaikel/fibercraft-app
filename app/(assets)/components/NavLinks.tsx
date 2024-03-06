@@ -9,6 +9,8 @@ import {
 } from '@ui/navigation-menu';
 import { ManagementPermission } from '@prisma/client';
 import { NAV_LINKS } from '@assets/lib/constans';
+import { usePathname } from 'next/navigation';
+import { cn } from '@assets/lib/utils';
 import { useMemo } from 'react';
 
 type TNavLinks = {
@@ -16,6 +18,8 @@ type TNavLinks = {
   userSelectedGuildId: string | undefined;
 };
 const NavLinks = ({ userPermissions, userSelectedGuildId }: TNavLinks) => {
+  const pathname = usePathname();
+
   const navLinksWithAccess = useMemo(() => {
     return NAV_LINKS.map((parent) => {
       if (!parent.itemsOnHover) return parent;
@@ -50,7 +54,12 @@ const NavLinks = ({ userPermissions, userSelectedGuildId }: TNavLinks) => {
                   {entry.itemsOnHover.map((children) => {
                     if (!children) return null;
                     return (
-                      <NavigationMenuListItem key={children.label} title={children.label} href={children.path}>
+                      <NavigationMenuListItem
+                        key={children.label}
+                        title={children.label}
+                        href={children.path}
+                        className={cn(pathname.startsWith(children.path) && 'ring-1', 'h-full')}
+                      >
                         {children.description}
                       </NavigationMenuListItem>
                     );

@@ -1,8 +1,12 @@
+import { DefaultErrorData } from '@trpc/server/dist/error/formatter';
 import { ManagementPermission } from '@prisma/client';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { TAllNavLabels } from './types';
 import { NAV_LINKS } from './constans';
+import { Maybe } from '@trpc/server';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 export const getPort = () => {
   let port = process.env.PORT || 3000;
@@ -39,4 +43,28 @@ export const getPermissionFromPath = (path: string) => {
     label: child.label,
     description: child.description,
   };
+};
+
+export const widgetEnums = z.enum(['serverControlChannelId', 'serverControlRoleId', 'serverControlLogChannelId']);
+export const translateWidgetEnum = (widget: z.infer<typeof widgetEnums>) => {
+  if (widget === 'serverControlChannelId') {
+    return 'Server Control Channel';
+  } else if (widget === 'serverControlRoleId') {
+    return 'Server Control Role';
+  } else if (widget === 'serverControlLogChannelId') {
+    return 'Server Control Logs Channel';
+  }
+  return 'Unknown Widget';
+};
+
+export const errorToast = (errorCode?: undefined | Maybe<DefaultErrorData> | string) => {
+  let message = 'Something went wrong!';
+
+  if (typeof errorCode === 'string') {
+    message = errorCode;
+  } else if (errorCode?.code) {
+    message = errorCode.code;
+  }
+
+  toast.error(message);
 };

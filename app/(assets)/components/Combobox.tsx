@@ -21,6 +21,7 @@ type TCombobox = {
   notFoundText: string;
   className?: string;
   isLoading?: boolean;
+  isDisabled?: boolean;
 };
 
 const Combobox = ({
@@ -33,6 +34,7 @@ const Combobox = ({
   className,
   searchLabel,
   isLoading,
+  isDisabled,
 }: TCombobox) => {
   const data = useMemo(
     () => _data.map((entry) => ({ label: entry.label, value: `${entry.label}:${entry.value}` })),
@@ -58,6 +60,7 @@ const Combobox = ({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          disabled={isDisabled}
           variant="outline"
           role="combobox"
           aria-expanded={open}
@@ -75,7 +78,7 @@ const Combobox = ({
           <PiCaretUpDownBold className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      {!isLoading && (
+      {!isLoading && !isDisabled && (
         <PopoverContent className={cn('p-0', className)}>
           <Command>
             <CommandInput placeholder={searchLabel} />
@@ -110,10 +113,13 @@ const Combobox = ({
                     });
                   }}
                 >
-                  <FaCheck
-                    className={cn('mr-2 h-4 w-4', selected.value === entry.value ? 'opacity-100' : 'opacity-0')}
-                  />
                   {entry.label}
+                  <FaCheck
+                    className={cn(
+                      'w-4" ml-auto h-4',
+                      selected.value === entry.value.toLowerCase() ? 'opacity-100' : 'opacity-0',
+                    )}
+                  />
                 </CommandItem>
               ))}
             </CommandGroup>

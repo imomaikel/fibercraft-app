@@ -1,3 +1,4 @@
+import { ChannelType } from 'discord.js';
 import { client } from '../../client';
 
 type TApiGetChannels = {
@@ -13,10 +14,12 @@ export const _apiGetChannels = async ({ guildId }: TApiGetChannels) => {
   }
 
   const channels = await guild.channels.cache;
-  const data = channels.map((channel) => ({
-    label: channel.name,
-    value: channel.id,
-  }));
+  const data = channels
+    .filter((channel) => channel.type === ChannelType.GuildText)
+    .map((channel) => ({
+      label: channel.name,
+      value: channel.id,
+    }));
 
   return {
     success: true,
