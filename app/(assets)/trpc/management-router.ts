@@ -279,4 +279,32 @@ export const managementRouter = router({
 
       return { success: true, label: getLabel };
     }),
+  getPanelLogs: managementProcedure.query(async ({ ctx }) => {
+    const { prisma, userPermissions, user } = ctx;
+
+    if (!verifyFromLabel('Panel logs', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+    const logs = await prisma.panelLog.findMany({
+      where: {
+        OR: [
+          {
+            guildId: null,
+          },
+          {
+            guildId: user.selectedDiscordId,
+          },
+        ],
+      },
+      select: {
+        content: true,
+        createdAt: true,
+        username: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return logs;
+  }),
 });

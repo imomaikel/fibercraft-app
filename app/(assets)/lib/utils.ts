@@ -1,9 +1,11 @@
 import { DefaultErrorData } from '@trpc/server/dist/error/formatter';
 import { ManagementPermission } from '@prisma/client';
 import { type ClassValue, clsx } from 'clsx';
+import { formatRelative } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import { TAllNavLabels } from './types';
 import { NAV_LINKS } from './constans';
+import nl from 'date-fns/locale/nl';
 import { Maybe } from '@trpc/server';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -67,4 +69,22 @@ export const errorToast = (errorCode?: undefined | Maybe<DefaultErrorData> | str
   }
 
   toast.error(message);
+};
+
+/* eslint-disable */
+const formatRelativeLocale = {
+  lastWeek: "'Last' eeee 'at' p",
+  yesterday: "'Yesterday at' p",
+  today: "'Today at' p",
+  tomorrow: "'Tomorrow at' p",
+  nextWeek: "eeee 'at' p",
+  other: 'Pp',
+} as const;
+/* eslint-enable */
+type relative = keyof typeof formatRelativeLocale;
+export const relativeDate = (date: Date, baseDate?: Date) => {
+  const relative = formatRelative(date, baseDate ?? new Date(), {
+    locale: { ...nl, formatRelative: (token: relative) => formatRelativeLocale[token] },
+  });
+  return relative;
 };

@@ -122,6 +122,7 @@ enum ManagementPermission {
   SERVER_CONTROL       @map("Server Control")
   VIEW_PAIRED_ACCOUNTS @map("View Paired Accounts")
   USE_WIDGETS          @map("Use Widgets")
+  VIEW_LOGS            @map("View Logs")
 }
 
 model UserPermission {

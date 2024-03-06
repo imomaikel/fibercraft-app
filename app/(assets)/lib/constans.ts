@@ -35,6 +35,12 @@ export const NAV_LINKS = [
         description: 'Configure the most important widget settings.',
         permission: 'USE_WIDGETS' as ManagementPermission,
       },
+      {
+        label: 'Panel logs',
+        path: '/management/panel-logs',
+        description: 'View all panel actions taken by management.',
+        permission: 'VIEW_LOGS' as ManagementPermission,
+      },
     ],
   },
 ] as const;
