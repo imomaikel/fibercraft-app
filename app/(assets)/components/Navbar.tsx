@@ -15,7 +15,7 @@ const Navbar = () => {
   const showCartButton = !pathname.startsWith('/management');
 
   return (
-    <div className="fixed left-0 h-16 w-screen bg-background/40 px-1 backdrop-blur-sm sm:px-4">
+    <div className="fixed left-0 z-50 h-16 w-screen bg-background/40 px-1 backdrop-blur-sm sm:px-4">
       <div className="relative mx-auto flex h-full w-full max-w-screen-xl items-center border-b">
         <header className="w-full">
           <nav>

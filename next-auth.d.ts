@@ -1,5 +1,5 @@
-import { DefaultSession } from 'next-auth';
 import { ManagementPermission } from '@prisma/client';
+import { DefaultSession } from 'next-auth';
 
 interface NextAuthUser {
   id?: string;
@@ -20,6 +20,7 @@ declare module 'next-auth/core/types' {
 declare module 'next-auth/jwt' {
   interface JWT {
     discordId?: string;
+    selectedDiscordId?: string;
     uid?: string;
     permissions?: ManagementPermission[];
   }

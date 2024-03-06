@@ -1,11 +1,13 @@
+import { _apiGetPairedAccounts } from './get/paired-accounts';
 import { _apiGetChannels } from './get/channels';
+import { _apiGetMembers } from './get/members';
 import { _apiGetGuilds } from './get/guilds';
 import { _apiGetRoles } from './get/roles';
-import { _apiGetMembers } from './get/members';
 
 export {
-  _apiGetRoles as apiGetRoles,
+  _apiGetPairedAccounts as apiGetPairedAccounts,
   _apiGetChannels as apiGetChannels,
-  _apiGetGuilds as apiGetGuilds,
   _apiGetMembers as apiGetMembers,
+  _apiGetGuilds as apiGetGuilds,
+  _apiGetRoles as apiGetRoles,
 };

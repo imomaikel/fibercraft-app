@@ -5,3 +5,8 @@ export type TDbGetNewTribeLogs = {
   content: string;
   timestamp: Date;
 }[];
+
+export type TDbGetPairedAccounts = {
+  steamId: string;
+  playerName: string;
+}[];

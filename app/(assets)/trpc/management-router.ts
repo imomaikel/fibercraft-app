@@ -1,4 +1,4 @@
-import { apiGetChannels, apiGetGuilds, apiGetMembers, apiGetRoles } from '../../../bot/api/index';
+import { apiGetChannels, apiGetGuilds, apiGetMembers, apiGetPairedAccounts, apiGetRoles } from '../../../bot/api/index';
 import { ManagementPermissionValidator } from '../validators/custom';
 import { getPermissionFromLabel } from '../../(assets)/lib/utils';
 import { TAllNavLabels } from '../../(assets)/lib/types';
@@ -190,4 +190,16 @@ export const managementRouter = router({
 
     return guilds.data;
   }),
+  getPairedAccounts: managementProcedure
+    .input(z.object({ searchText: z.string().min(2) }))
+    .mutation(async ({ ctx, input }) => {
+      const { userPermissions } = ctx;
+      const { searchText } = input;
+
+      if (!verifyFromLabel('Paired Accounts', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+      const query = await apiGetPairedAccounts(searchText);
+
+      return query;
+    }),
 });
