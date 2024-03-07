@@ -1,8 +1,12 @@
 {
     "MySql": {
-        "hostWithoutPort": "127.0.0.1",
-        "username": "admin",
-        "password": "admin",
-        "schema":  "admin"
+        "hostWithPort": "",
+        "username": "",
+        "password": "",
+        "schema": ""
+    },
+    "Config": {
+        "Webhook": "",
+        "AdminIDS": []
     }
 }

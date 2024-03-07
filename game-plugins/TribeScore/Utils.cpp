@@ -23,7 +23,6 @@ namespace TribeScore::Utils {
         }
     }
 
-
     // Read structures
     void ReadStructures() {
         try {
@@ -56,9 +55,11 @@ namespace TribeScore::Utils {
         }
     }
 
-    bool sendMessage(std::string msg) {
+    // Send Discord webhook message
+    bool sendWebhookMessage(std::string message) {
         try {
             const auto& configuration = TribeScore::config["Config"];
+
             std::string url = configuration.value("Webhook", "");
             if (url == "") {
                 return false;
@@ -67,7 +68,7 @@ namespace TribeScore::Utils {
             const std::string cmd_1 = "curl -i -H \"Accept: application/json\" -H \"Content-Type:application/json\" -X POST --data \"{\\\"content\\\":\\\"";
             const std::string cmd_2 = "\\\"}\" ";
             try {
-                system((cmd_1 + msg + cmd_2 + url + ">nul 2>nul").c_str());
+                system((cmd_1 + message + cmd_2 + url + ">nul 2>nul").c_str());
                 return true;
             } catch (std::exception& error) {
                 Log::GetLog()->error(error.what());
@@ -80,7 +81,8 @@ namespace TribeScore::Utils {
         
     }
 
-    std::string getname(int tribeid) {
+    // Get tribe name by ide
+    std::string getTribeName(int tribeid) {
         auto result = FMemory::Malloc(GetStructSize<FTribeData>());
         TArray<FTribeData> tribesDataField = ArkApi::GetApiUtils().GetShooterGameMode()->TribesDataField();
 

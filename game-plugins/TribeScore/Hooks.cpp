@@ -13,10 +13,9 @@ namespace TribeScore::Hooks {
     DECLARE_HOOK(AShooterCharacter_Die, bool, AShooterCharacter*, float, FDamageEvent*, AController*, AActor*);
     DECLARE_HOOK(AShooterCharacter_ChangeActorTeam, void, AShooterCharacter*, int);
 
-    // Login Hook
+    // Player login hook
     void Hook_AShooterGameMode_StartNewShooterPlayer(AShooterGameMode* game, APlayerController* playerController, bool forceCreateNewPlayerData, bool isFromLogin, FPrimalPlayerCharacterConfigStruct* config, UPrimalPlayerData* data) {
         AShooterGameMode_StartNewShooterPlayer_original(game, playerController, forceCreateNewPlayerData, isFromLogin, config, data);
-        
         if (isFromLogin) {
             AShooterPlayerController* shooterPlayerController = static_cast<AShooterPlayerController*>(playerController);
             uint64 steamID = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
@@ -25,42 +24,43 @@ namespace TribeScore::Hooks {
             const int playerTribeId = shooterPlayerController->TargetingTeamField();
             TribeScore::database->CreateTribeData(playerTribeId);
 
-            bool isDisabled = TribeScore::database -> CheckIfSteamIdIsDisabled(textSteamId);
-            bool IsAdminDisabled = TribeScore::database->CheckIfAdminDisabled(textSteamId);
+            bool isDisabled = TribeScore::database -> IsPlayerFloatingTextDisabled(textSteamId);
+            bool IsAdminDisabled = TribeScore::database->IsAdminTribeScoreDisabled(textSteamId);
             if (isDisabled == true) {
-                TribeScore::Commands::DisableOnLogin(textSteamId);
+                TribeScore::Commands::DisablePlayerFloatingTextOnLogin(textSteamId);
             }
             if (IsAdminDisabled == true) {
-                TribeScore::Commands::AdminDisableOnLogin(textSteamId);
+                TribeScore::Commands::DisableAdminTribeScoreOnLogin(textSteamId);
             }
         }
     }
 
-
-    // Logout Hook
+    // Player logout hook
     void Hook_AShooterGameMode_Logout(AShooterGameMode* mode, AController* controller) {
         AShooterGameMode_Logout_original(mode, controller);
+
         if (controller) {
             AShooterPlayerController* player = static_cast<AShooterPlayerController*>(controller);
             uint64 steamID = ArkApi::GetApiUtils().GetSteamIdFromController(player);
             std::string textSteamId = std::to_string(steamID);
-            TribeScore::Commands::EraseOnLogout(textSteamId);
-            TribeScore::Commands::AdminEraseOnLogout(textSteamId);
+            TribeScore::Commands::ErasePlayerSteamIdOnLogout(textSteamId);
+            TribeScore::Commands::EraseAdminSteamIdOnLogout(textSteamId);
         }
     }
 
-    // Kill Player Hook
+    // Kill player hook
     bool Hook_AShooterCharacter_Die(AShooterCharacter* _this, float KillingDamage, FDamageEvent* DamageEvent, AController* Killer, AActor* DamageCauser) {
-        
         if (Killer && !Killer->IsLocalController() && Killer->IsA(AShooterPlayerController::GetPrivateStaticClass()) && _this->TargetingTeamField() != Killer->TargetingTeamField() && _this->GetPlayerData()) {
-            const int AttackerId = DamageCauser->TargetingTeamField();
-            const int DefenderId = _this->TargetingTeamField();
+            const int attackerId = DamageCauser->TargetingTeamField();
+            const int defenderId = _this->TargetingTeamField();
 
-            std::string attacker = std::to_string(AttackerId);
-            std::string defender = std::to_string(DefenderId);
+            std::string attackerIdText = std::to_string(attackerId);
+            std::string defenderIdText = std::to_string(defenderId);
 
-            TribeScore::database->UpdateTribeScore(attacker, defender, std::to_string(50));
+            TribeScore::database->UpdateTribeScore(attackerIdText, defenderIdText, "50");
+
             const auto& actorsInRange = ArkApi::GetApiUtils().GetAllActorsInRange(_this->RootComponentField()->RelativeLocationField(), 20000.0f, EServerOctreeGroup::PLAYERS_CONNECTED);
+            
             for (AActor* actorInRange : actorsInRange) {
                 const auto aController = actorInRange->GetInstigatorController();
                 AShooterPlayerController* playerController = reinterpret_cast<AShooterPlayerController*>(aController);
@@ -68,25 +68,25 @@ namespace TribeScore::Hooks {
                 FString floatingText;
 
                 const std::string textPoints = std::to_string(50);
-                if (actorInRange->TargetingTeamField() == DefenderId) {
-                    FString floatingText = FString("+ " + textPoints + " tribe score");
-                } else if (actorInRange->TargetingTeamField() == AttackerId) {
-                    FString floatingText = FString("- " + textPoints + " tribe score");
+                if (actorInRange->TargetingTeamField() == defenderId) {
+                    FString floatingText = FString(fmt::format("+ {} tribe score", textPoints));
+                } else if (actorInRange->TargetingTeamField() == attackerId) {
+                    FString floatingText = FString(fmt::format("- {} tribe score", textPoints));
                 } else {
-                    FString floatingText = FString("+ " + textPoints + " tribe score");
+                    FString floatingText = FString(fmt::format("+ {} tribe score", textPoints));
                 }
 
-                uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
-                std::string textSteamId = std::to_string(steamId);
-                const bool found = Commands::isSteamDisabled(textSteamId);
+                uint64 attackerSteamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
+                std::string textSteamId = std::to_string(attackerSteamId);
 
+                const bool isFloatingTextDisabled = Commands::IsPlayerFloatingScoreEnabled(textSteamId);
+                if (isFloatingTextDisabled) continue;
 
-                if (!playerController) return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
-                if (found == true) return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
+                if (!playerController) return AShooterCharacter_Die_original;
 
-                if (actorInRange->TargetingTeamField() == DefenderId) {
+                if (actorInRange->TargetingTeamField() == defenderId) {
                     playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 0, 0, 255), 0.6, 0.6, 6, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
-                } else if (actorInRange->TargetingTeamField() == AttackerId) {
+                } else if (actorInRange->TargetingTeamField() == attackerId) {
                     playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(0, 255, 0, 255), 0.6, 0.6, 6, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
                 } else {
                     playerController->ClientAddFloatingText(_this->RootComponentField()->RelativeLocationField(), &floatingText, FColor(255, 177, 0, 255), 0.6, 0.6, 6, FVector(0.2, 0.2, 0.2), 1, 0.5, 0.5);
@@ -94,10 +94,10 @@ namespace TribeScore::Hooks {
             }
 
         }
-        return AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
+        return AShooterCharacter_Die_original;
     }
 
-    // Structure die Hook
+    // Structure die hook
     bool Hook_APrimalStructure_Die(APrimalStructure* _this, float damage, FDamageEvent* damageEvent, AController* controller, AActor* actor) {
         APrimalStructure_Die_original(_this, damage, damageEvent, controller, actor);
 
@@ -131,23 +131,32 @@ namespace TribeScore::Hooks {
         uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
         std::string textSteamId = std::to_string(steamId);
 
-        const bool Adminfound = Commands::isAdminSteamDisabled(textSteamId);
+        const bool Adminfound = Commands::IsAdminTribeScoreEnabled(textSteamId);
         if (Adminfound) return APrimalStructure_Die_original;
 
         TribeScore::database->UpdateTribeScore(attacker, defender, std::to_string(score));
         
         const auto& actorsInRange = ArkApi::GetApiUtils().GetAllActorsInRange(_this->RootComponentField()->RelativeLocationField(), 20000.0f, EServerOctreeGroup::PLAYERS_CONNECTED);
+
         for (AActor* actorInRange : actorsInRange) {
             if (actorInRange != nullptr && actorInRange->IsA(AActor::GetPrivateStaticClass())) {
                 if (actor->IsA(APrimalStructure::GetPrivateStaticClass())) {
                     APrimalStructure* structure = reinterpret_cast<APrimalStructure*>(actor);
 
-                    std::string structure_name = structure->DescriptiveNameField().ToString();
-                    if (structure_name != "C4 Charge") {
-                        std::string defendertribename = TribeScore::Utils::getname(_this->TargetingTeamField());
-                        std::string attackertribename = TribeScore::Utils::getname(structure->TargetingTeamField());
-                        std::string msg = "Structure Name: " + _this->DescriptiveNameField().ToString() + " Tribe ID: " + std::to_string(_this->TargetingTeamField()) + " Tribe Name: " + defendertribename + " Got destroyed by: " + structure_name + " Tribe ID: " + std::to_string(structure->TargetingTeamField()) + " Tribe Name: " + attackertribename;
-                        TribeScore::Utils::sendMessage(msg);
+                    std::string structureName = structure->DescriptiveNameField().ToString();
+                    if (structureName != "C4 Charge") {
+                        std::string defenderTribeName = TribeScore::Utils::getTribeName(_this->TargetingTeamField());
+                        std::string attackerTribeName = TribeScore::Utils::getTribeName(structure->TargetingTeamField());
+                        std::string message = fmt::format(
+                            "Structure Name: {} Tribe ID: {} Tribe Name: {} Got destroyed by: {} Tribe ID: {} Tribe Name: {}",
+                            _this->DescriptiveNameField().ToString(),
+                            _this->TargetingTeamField(),
+                            defenderTribeName,
+                            structureName,
+                            structure->TargetingTeamField(),
+                            attackerTribeName
+                        );
+                        TribeScore::Utils::sendWebhookMessage(message);
                     }
                 }
 
@@ -158,21 +167,19 @@ namespace TribeScore::Hooks {
 
                 const std::string textPoints = std::to_string(score);
                 if (actorInRange->TargetingTeamField() == _this->TargetingTeamField()) {
-                    floatingText = FString("- " + textPoints + " tribe score");
+                    floatingText = FString(fmt::format("- {} tribe score", textPoints));
                 } else if (actorInRange->TargetingTeamField() == attackerId) {
-                    floatingText = FString("+ " + textPoints + " tribe score");
+                    floatingText = FString(fmt::format("+ {} tribe score", textPoints));
                 } else {
-                    floatingText = FString("+ " + textPoints + " tribe score");
+                    floatingText = FString(fmt::format("+ {} tribe score", textPoints));
                 }
 
-                if (floatingText.ToString().length() <= 4) floatingText = FString("? " + textPoints + " tribe score");
                 
                 uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
                 std::string textSteamId = std::to_string(steamId);
 
-                const bool found = Commands::isSteamDisabled(textSteamId);
-                if (found) continue;
-
+                const bool isFloatingTextDisabled = Commands::IsPlayerFloatingScoreEnabled(textSteamId);
+                if (isFloatingTextDisabled) continue;
 
                 if (!playerController) return APrimalStructure_Die_original;
 
@@ -185,13 +192,14 @@ namespace TribeScore::Hooks {
                 }
             }
         }
-        std::cout << std::endl;
         return APrimalStructure_Die_original;
     }
 
-
+    // Change tribe hook
     void Hook_AShooterCharacter_ChangeActorTeam(AShooterCharacter* _this, int NewTeam) {
         if (NewTeam != 0) {
+            const auto tribeName = TribeScore::Utils::getTribeName(NewTeam);
+
             TribeScore::database->CreateTribeData(NewTeam);
             TribeScore::database->UpdateTribeName(NewTeam);
         }
@@ -202,17 +210,17 @@ namespace TribeScore::Hooks {
 
     void Load() {
         ArkApi::GetHooks().SetHook("APrimalStructure.Die", &Hook_APrimalStructure_Die, &APrimalStructure_Die_original);
-        ArkApi::GetHooks().SetHook("AShooterGameMode.Logout", &Hook_AShooterGameMode_Logout, &AShooterGameMode_Logout_original);
-        ArkApi::GetHooks().SetHook("AShooterGameMode.StartNewShooterPlayer", &Hook_AShooterGameMode_StartNewShooterPlayer, &AShooterGameMode_StartNewShooterPlayer_original);
         ArkApi::GetHooks().SetHook("AShooterCharacter.Die", &Hook_AShooterCharacter_Die,&AShooterCharacter_Die_original);
+        ArkApi::GetHooks().SetHook("AShooterGameMode.Logout", &Hook_AShooterGameMode_Logout, &AShooterGameMode_Logout_original);
         ArkApi::GetHooks().SetHook("AShooterCharacter.ChangeActorTeam", &Hook_AShooterCharacter_ChangeActorTeam, &AShooterCharacter_ChangeActorTeam_original);
+        ArkApi::GetHooks().SetHook("AShooterGameMode.StartNewShooterPlayer", &Hook_AShooterGameMode_StartNewShooterPlayer, &AShooterGameMode_StartNewShooterPlayer_original);
     }
 
     void Unload() {
         ArkApi::GetHooks().DisableHook("APrimalStructure.Die", &Hook_APrimalStructure_Die);
-        ArkApi::GetHooks().DisableHook("AShooterGameMode.Logout", &Hook_AShooterGameMode_Logout);
-        ArkApi::GetHooks().DisableHook("AShooterGameMode.StartNewShooterPlayer", &Hook_AShooterGameMode_StartNewShooterPlayer);
         ArkApi::GetHooks().DisableHook("AShooterCharacter.Die", &Hook_AShooterCharacter_Die);
+        ArkApi::GetHooks().DisableHook("AShooterGameMode.Logout", &Hook_AShooterGameMode_Logout);
         ArkApi::GetHooks().DisableHook("AShooterCharacter.ChangeActorTeam", &Hook_AShooterCharacter_ChangeActorTeam);
+        ArkApi::GetHooks().DisableHook("AShooterGameMode.StartNewShooterPlayer", &Hook_AShooterGameMode_StartNewShooterPlayer);
     }
 }

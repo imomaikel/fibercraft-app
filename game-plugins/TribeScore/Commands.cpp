@@ -2,26 +2,27 @@
 #include "TribeScore.h"
 
 
-std::vector<std::string> disabledSteamIds;
-std::vector<std::string> disabledAdminsSteamIds;
+std::vector<std::string> floatingTextDisabledSteamIds;
+std::vector<std::string> tribeScoreDisabledSteamIds;
 
 namespace TribeScore::Commands {
 
-    void DisableTribescoreAdmin(AShooterPlayerController* playerController, FString* message, bool /*unused*/) {
+    void DisableAdminTribeScore(AShooterPlayerController* playerController, FString* message, bool /*unused*/) {
         try {
             auto configuration = TribeScore::config["Config"];
-            auto steamIDs = configuration["AdminIDS"];
-            uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
-            std::string textSteamId = std::to_string(steamId);
+            auto adminSteamIds = configuration["AdminIDS"];
+
+            uint64 playerSteamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
+            std::string textSteamId = std::to_string(playerSteamId);
+
             bool found = false;
-            if (steamIDs != "") {
-                for (const auto& id : steamIDs) {
+            if (adminSteamIds != "") {
+                for (const auto& id : adminSteamIds) {
                     if (id == textSteamId) {
                         found = true;
+                        break;
                     }
                 }
-            } else {
-                found = true;
             }
 
             if (found == false) {
@@ -29,70 +30,71 @@ namespace TribeScore::Commands {
                 return;
             }
 
-            auto it = std::find(disabledAdminsSteamIds.begin(), disabledAdminsSteamIds.end(), textSteamId);
-
-            const bool isDisabled = it != disabledAdminsSteamIds.end();
+            auto it = std::find(tribeScoreDisabledSteamIds.begin(), tribeScoreDisabledSteamIds.end(), textSteamId);
+            const bool isDisabled = it != tribeScoreDisabledSteamIds.end();
 
             ArkApi::GetApiUtils().SendChatMessage(playerController, "Getting Tribescore is ", isDisabled ? "ENABLED" : "DISABLED");
 
             if (isDisabled) {
-                disabledAdminsSteamIds.erase(it);
-                TribeScore::database->EnableAdminSteamId(textSteamId);
+                tribeScoreDisabledSteamIds.erase(it);
+                TribeScore::database->EnableAdminTribeScore(textSteamId);
             } else {
-                disabledAdminsSteamIds.push_back(textSteamId);
-                TribeScore::database->DisableAdminSteamId(textSteamId);
+                tribeScoreDisabledSteamIds.push_back(textSteamId);
+                TribeScore::database->DisableAdminTribeScore(textSteamId);
             }
 
         } catch (std::exception& error) {
-            Log::GetLog()->critical("error ocurred in DisableTribescoreAdmin function!, error:{}",error.what());
+            Log::GetLog()->critical("Anrror ocurred in DisableAdminTribeScore function! {}", error.what());
         }   
     }
 
-    void ToggleTribeScore(AShooterPlayerController* playerController, FString* message, bool /*unused*/) {
+    void ToggleFloatingText(AShooterPlayerController* playerController, FString* message, bool /*unused*/) {
         uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
         
         std::string textSteamId = std::to_string(steamId);
 
-        auto it = std::find(disabledSteamIds.begin(), disabledSteamIds.end(), textSteamId);
+        auto it = std::find(floatingTextDisabledSteamIds.begin(), floatingTextDisabledSteamIds.end(), textSteamId);
 
-        const bool isDisabled = it != disabledSteamIds.end();
+        const bool isDisabled = it != floatingTextDisabledSteamIds.end();
 
         ArkApi::GetApiUtils().SendChatMessage(playerController, "Floating Tribe Score", isDisabled ? "ENABLED" : "DISABLED");
 
         if (isDisabled) {
-            disabledSteamIds.erase(it);
-            TribeScore::database->EnableSteamId(textSteamId);
+            floatingTextDisabledSteamIds.erase(it);
+            TribeScore::database->EnableFloatingText(textSteamId);
         } else {
-            disabledSteamIds.push_back(textSteamId);
-            TribeScore::database->DisableSteamId(textSteamId);
+            floatingTextDisabledSteamIds.push_back(textSteamId);
+            TribeScore::database->DisableFloatingText(textSteamId);
         }
     }
 
-    void DisableOnLogin(std::string steamId) {
-        disabledSteamIds.push_back(steamId);
+    void DisablePlayerFloatingTextOnLogin(std::string steamId) {
+        floatingTextDisabledSteamIds.push_back(steamId);
     }
 
-    void AdminDisableOnLogin(std::string steamId) {
-        disabledAdminsSteamIds.push_back(steamId);
+    void DisableAdminTribeScoreOnLogin(std::string steamId) {
+        tribeScoreDisabledSteamIds.push_back(steamId);
     }
 
-    void EraseOnLogout(std::string steamId) {
-        disabledSteamIds.erase(std::remove(disabledSteamIds.begin(), disabledSteamIds.end(), steamId), disabledSteamIds.end());
+    void ErasePlayerSteamIdOnLogout(std::string steamId) {
+        floatingTextDisabledSteamIds.erase(std::remove(floatingTextDisabledSteamIds.begin(), floatingTextDisabledSteamIds.end(), steamId), floatingTextDisabledSteamIds.end());
     }
 
-    void AdminEraseOnLogout(std::string steamId) {
-        disabledAdminsSteamIds.erase(std::remove(disabledSteamIds.begin(), disabledSteamIds.end(), steamId), disabledSteamIds.end());
+    void EraseAdminSteamIdOnLogout(std::string steamId) {
+        tribeScoreDisabledSteamIds.erase(std::remove(tribeScoreDisabledSteamIds.begin(), tribeScoreDisabledSteamIds.end(), steamId), tribeScoreDisabledSteamIds.end());
     }
 
-    bool isSteamDisabled(std::string steamId) {
-        auto it = std::find(disabledSteamIds.begin(), disabledSteamIds.end(), steamId);
-        const bool isDisabled = it != disabledSteamIds.end();
+    bool IsPlayerFloatingScoreEnabled(std::string steamId) {
+        auto it = std::find(floatingTextDisabledSteamIds.begin(), floatingTextDisabledSteamIds.end(), steamId);
+        const bool isDisabled = it != floatingTextDisabledSteamIds.end();
+
         return isDisabled;
     }
 
-    bool isAdminSteamDisabled(std::string steamId) {
-        auto it = std::find(disabledAdminsSteamIds.begin(), disabledAdminsSteamIds.end(), steamId);
-        const bool isDisabled = it != disabledAdminsSteamIds.end();
+    bool IsAdminTribeScoreEnabled(std::string steamId) {
+        auto it = std::find(tribeScoreDisabledSteamIds.begin(), tribeScoreDisabledSteamIds.end(), steamId);
+        const bool isDisabled = it != tribeScoreDisabledSteamIds.end();
+
         return isDisabled;
     }
 
@@ -102,7 +104,7 @@ namespace TribeScore::Commands {
     }
 	
 	void Load() {
-        ArkApi::GetCommands().AddChatCommand("/ts", &ToggleTribeScore);
-        ArkApi::GetCommands().AddChatCommand("/dta", &DisableTribescoreAdmin);
+        ArkApi::GetCommands().AddChatCommand("/ts", &ToggleFloatingText);
+        ArkApi::GetCommands().AddChatCommand("/dta", &DisableAdminTribeScore);
 	}
 }

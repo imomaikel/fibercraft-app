@@ -5,10 +5,14 @@
 namespace TribeScore::Commands {
 	void Load();
 	void Unload();
-	void DisableOnLogin(std::string steamId);
-	void EraseOnLogout(std::string steamId);
-	bool isSteamDisabled(std::string steamId);
-	void AdminEraseOnLogout(std::string steamId);
-	void AdminDisableOnLogin(std::string steamId);
-	bool isAdminSteamDisabled(std::string steamId);
+	
+	// Player floating text disable command
+	void ErasePlayerSteamIdOnLogout(std::string steamId);
+	void DisablePlayerFloatingTextOnLogin(std::string steamId);
+	bool IsPlayerFloatingScoreEnabled(std::string steamId);
+
+	// Admin tribe score disable command
+	void EraseAdminSteamIdOnLogout(std::string steamId);
+	void DisableAdminTribeScoreOnLogin(std::string steamId);
+	bool IsAdminTribeScoreEnabled(std::string steamId);
 }
