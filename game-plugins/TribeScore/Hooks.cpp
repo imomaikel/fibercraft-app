@@ -146,7 +146,7 @@ namespace TribeScore::Hooks {
                     if (structure_name != "C4 Charge") {
                         std::string defendertribename = TribeScore::Utils::getname(_this->TargetingTeamField());
                         std::string attackertribename = TribeScore::Utils::getname(structure->TargetingTeamField());
-                        std::string msg = "Structure Name: " + _this->DescriptiveNameField().ToString() + " Tribe ID: " + std::to_string(_this->TargetingTeamField()) + " Tribe Name " + defendertribename + " Got destroyed by: " + structure_name + " Tribe ID: " + std::to_string(structure->TargetingTeamField());
+                        std::string msg = "Structure Name: " + _this->DescriptiveNameField().ToString() + " Tribe ID: " + std::to_string(_this->TargetingTeamField()) + " Tribe Name: " + defendertribename + " Got destroyed by: " + structure_name + " Tribe ID: " + std::to_string(structure->TargetingTeamField()) + " Tribe Name: " + attackertribename;
                         TribeScore::Utils::sendMessage(msg);
                     }
                 }
