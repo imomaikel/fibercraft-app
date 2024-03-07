@@ -9,15 +9,31 @@ namespace TribeScore::Commands {
 
     void DisableTribescoreAdmin(AShooterPlayerController* playerController, FString* message, bool /*unused*/) {
         try {
+            auto configuration = TribeScore::config["Config"];
+            auto steamIDs = configuration["AdminIDS"];
             uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
-
             std::string textSteamId = std::to_string(steamId);
+            bool found = false;
+            if (steamIDs != "") {
+                for (const auto& id : steamIDs) {
+                    if (id == textSteamId) {
+                        found = true;
+                    }
+                }
+            } else {
+                found = true;
+            }
+
+            if (found == false) {
+                ArkApi::GetApiUtils().SendChatMessage(playerController, "DISABLE TRIBESCORE" , "You are NOT allowed to use this command!");
+                return;
+            }
 
             auto it = std::find(disabledAdminsSteamIds.begin(), disabledAdminsSteamIds.end(), textSteamId);
 
             const bool isDisabled = it != disabledAdminsSteamIds.end();
 
-            ArkApi::GetApiUtils().SendChatMessage(playerController, "Getting Tribescore is: ", isDisabled ? "ENABLED" : "DISABLED");
+            ArkApi::GetApiUtils().SendChatMessage(playerController, "Getting Tribescore is ", isDisabled ? "ENABLED" : "DISABLED");
 
             if (isDisabled) {
                 disabledAdminsSteamIds.erase(it);

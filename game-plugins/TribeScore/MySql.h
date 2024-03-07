@@ -35,7 +35,7 @@ public:
                 Log::GetLog()->critical("Failed to create table disabledsteamid!");
             }
 
-            result = db_.query(fmt::format("CREATE TABLE IF NOT EXISTS tribescore (id BIGINT NOT NULL, score INT NOT NULL DEFAULT 0, PRIMARY KEY (id));"));
+            result = db_.query(fmt::format("CREATE TABLE IF NOT EXISTS tribescore (id BIGINT NOT NULL, tribename VARCHAR(32) NOT NULL, score INT NOT NULL DEFAULT 0, PRIMARY KEY (id));"));
             if (!result) {
                 Log::GetLog()->critical("Failed to create table tribescore!");
             }
@@ -50,9 +50,18 @@ public:
         }
     }
 
+    bool UpdateTribeName(const int tribeId) {
+        try {
+            return db_.query(fmt::format("UPDATE tribescore SET tribename = {}", TribeScore::Utils::getname(tribeId)));
+        } catch (const std::exception& exception) {
+            Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
+            return false;
+        }
+    }
+
     bool CreateTribeData(const int tribeId) {
         try {
-            return db_.query(fmt::format("INSERT IGNORE INTO tribescore (id, score) VALUES ({}, {})", tribeId, 0));
+            return db_.query(fmt::format("INSERT IGNORE INTO tribescore (id, tribename, score) VALUES ({}, {}, {})", tribeId, TribeScore::Utils::getname(tribeId), 0));
         } catch (const std::exception& exception) {
             Log::GetLog()->critical("Database Error({}, {}): {}", __FILE__, __FUNCTION__, exception.what());
             return false;
