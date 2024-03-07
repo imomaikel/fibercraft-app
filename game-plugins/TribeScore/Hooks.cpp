@@ -125,6 +125,13 @@ namespace TribeScore::Hooks {
         std::string attacker = std::to_string(attackerId);
         std::string defender = std::to_string(destroyedTribeId);
 
+        const auto aController = actor->GetInstigatorController();
+        AShooterPlayerController* playerController = reinterpret_cast<AShooterPlayerController*>(aController);
+        uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
+        std::string textSteamId = std::to_string(steamId);
+
+        const bool Adminfound = Commands::isAdminSteamDisabled(textSteamId);
+        if (Adminfound) return APrimalStructure_Die_original;
 
         TribeScore::database->UpdateTribeScore(attacker, defender, std::to_string(score));
         
@@ -160,6 +167,7 @@ namespace TribeScore::Hooks {
 
                 const bool found = Commands::isSteamDisabled(textSteamId);
                 if (found) continue;
+
 
                 if (!playerController) return APrimalStructure_Die_original;
 

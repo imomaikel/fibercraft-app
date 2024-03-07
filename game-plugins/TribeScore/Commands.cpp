@@ -4,6 +4,7 @@
 
 std::vector<std::string> disabledSteamIds;
 std::vector<std::string> disabledAdminsSteamIds;
+
 namespace TribeScore::Commands {
 
     void DisableTribescoreAdmin(AShooterPlayerController* playerController, FString* message, bool /*unused*/) {
@@ -16,11 +17,14 @@ namespace TribeScore::Commands {
 
             const bool isDisabled = it != disabledSteamIds.end();
 
-            ArkApi::GetApiUtils().SendChatMessage(playerController, "Floating Tribe Score", isDisabled ? "ENABLED" : "DISABLED");
+            ArkApi::GetApiUtils().SendChatMessage(playerController, "Getting Tribescore is: ", isDisabled ? "ENABLED" : "DISABLED");
 
             if (isDisabled) {
                 disabledAdminsSteamIds.erase(it);
-
+                TribeScore::database->EnableAdminSteamId(textSteamId);
+            } else {
+                disabledAdminsSteamIds.push_back(textSteamId);
+                TribeScore::database->DisableAdminSteamId(textSteamId);
             }
 
         } catch (std::exception& error) {
@@ -67,6 +71,12 @@ namespace TribeScore::Commands {
     bool isSteamDisabled(std::string steamId) {
         auto it = std::find(disabledSteamIds.begin(), disabledSteamIds.end(), steamId);
         const bool isDisabled = it != disabledSteamIds.end();
+        return isDisabled;
+    }
+
+    bool isAdminSteamDisabled(std::string steamId) {
+        auto it = std::find(disabledAdminsSteamIds.begin(), disabledAdminsSteamIds.end(), steamId);
+        const bool isDisabled = it != disabledAdminsSteamIds.end();
         return isDisabled;
     }
 
