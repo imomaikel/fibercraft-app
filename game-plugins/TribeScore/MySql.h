@@ -112,7 +112,7 @@ public:
         }
     }
 
-    bool EnableAdminSteamId(const std::string steamId) {
+    bool EnableAdmiwnSteamId(const std::string steamId) {
         try {
             return db_.query(fmt::format("DELETE FROM adminstribescoredisable WHERE id = {}", steamId));
         } catch (const std::exception& exception) {

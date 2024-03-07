@@ -79,4 +79,19 @@ namespace TribeScore::Utils {
         
         
     }
+
+    std::string getname(int tribeid) {
+        auto result = FMemory::Malloc(GetStructSize<FTribeData>());
+        TArray<FTribeData> tribesDataField = ArkApi::GetApiUtils().GetShooterGameMode()->TribesDataField();
+
+        for (FTribeData tribedata : tribesDataField) {
+            ArkApi::GetApiUtils().GetShooterGameMode()->GetOrLoadTribeData(tribedata.TribeIDField(), &tribedata);
+            if (tribedata.TribeIDField() == tribeid) {
+                return tribedata.TribeNameField().ToString();
+            }
+        }
+
+        FMemory::Free(result);
+        return "";
+    }
 }
