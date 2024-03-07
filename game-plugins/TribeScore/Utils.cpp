@@ -55,4 +55,28 @@ namespace TribeScore::Utils {
             return 0; 
         }
     }
+
+    bool sendMessage(std::string msg) {
+        try {
+            const auto& configuration = TribeScore::config["Config"];
+            std::string url = configuration["Webhook"];
+            if (url == "") {
+                return false;
+            }
+
+            const std::string cmd_1 = "curl -i -H \"Accept: application/json\" -H \"Content-Type:application/json\" -X POST --data \"{\\\"content\\\":\\\"";
+            const std::string cmd_2 = "\\\"}\" ";
+            try {
+                system((cmd_1 + msg + cmd_2 + url + ">nul 2>nul").c_str());
+                return true;
+            } catch (std::exception& error) {
+                Log::GetLog()->error(error.what());
+                return false;
+            }
+        } catch (std::exception& error) {
+            return false;
+        }
+        
+        
+    }
 }

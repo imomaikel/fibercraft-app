@@ -15,7 +15,7 @@ namespace TribeScore::Hooks {
     // Login Hook
     void Hook_AShooterGameMode_StartNewShooterPlayer(AShooterGameMode* game, APlayerController* playerController, bool forceCreateNewPlayerData, bool isFromLogin, FPrimalPlayerCharacterConfigStruct* config, UPrimalPlayerData* data) {
         AShooterGameMode_StartNewShooterPlayer_original(game, playerController, forceCreateNewPlayerData, isFromLogin, config, data);
-
+        
         if (isFromLogin) {
             AShooterPlayerController* shooterPlayerController = static_cast<AShooterPlayerController*>(playerController);
             uint64 steamID = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
@@ -135,8 +135,8 @@ namespace TribeScore::Hooks {
                     APrimalStructure* structure = reinterpret_cast<APrimalStructure*>(actor);
 
                     std::string structure_name = structure->DescriptiveNameField().ToString();
-
-                    std::cout << "Structure Name: " << _this->DescriptiveNameField().ToString() << " Tribe ID: " << _this->TargetingTeamField() << " Got destroyed by: " << structure_name << " Tribe ID: " << structure->TargetingTeamField() << std::endl;
+                    std::string msg = "Structure Name: " + _this->DescriptiveNameField().ToString() + " Tribe ID: " + std::to_string(_this->TargetingTeamField()) + " Got destroyed by: " + structure_name + " Tribe ID: " + std::to_string(structure->TargetingTeamField());
+                    TribeScore::Utils::sendMessage(msg);
                 }
 
                 const auto aController = actorInRange->GetInstigatorController();

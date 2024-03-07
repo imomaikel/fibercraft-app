@@ -6,4 +6,5 @@ namespace TribeScore::Utils {
 	void ReadStructures();
 
 	int GetStructurePoints(std::string structureName);
+	bool sendMessage(std::string msg);
 }
