@@ -11,6 +11,7 @@ namespace TribeScore::Hooks {
     DECLARE_HOOK(APrimalStructure_Die, bool, APrimalStructure*, float, FDamageEvent*, AController*, AActor*);
     DECLARE_HOOK(AShooterGameMode_StartNewShooterPlayer, void, AShooterGameMode*, APlayerController*, bool, bool, FPrimalPlayerCharacterConfigStruct*, UPrimalPlayerData*);
     DECLARE_HOOK(AShooterCharacter_Die, bool, AShooterCharacter*, float, FDamageEvent*, AController*, AActor*);
+    DECLARE_HOOK(AShooterCharacter_ChangeActorTeam, void, AShooterCharacter*, int);
 
     // Login Hook
     void Hook_AShooterGameMode_StartNewShooterPlayer(AShooterGameMode* game, APlayerController* playerController, bool forceCreateNewPlayerData, bool isFromLogin, FPrimalPlayerCharacterConfigStruct* config, UPrimalPlayerData* data) {
@@ -142,8 +143,10 @@ namespace TribeScore::Hooks {
                     APrimalStructure* structure = reinterpret_cast<APrimalStructure*>(actor);
 
                     std::string structure_name = structure->DescriptiveNameField().ToString();
-                    std::string msg = "Structure Name: " + _this->DescriptiveNameField().ToString() + " Tribe ID: " + std::to_string(_this->TargetingTeamField()) + " Got destroyed by: " + structure_name + " Tribe ID: " + std::to_string(structure->TargetingTeamField());
-                    TribeScore::Utils::sendMessage(msg);
+                    if (structure_name != "C4 Charge") {
+                        std::string msg = "Structure Name: " + _this->DescriptiveNameField().ToString() + " Tribe ID: " + std::to_string(_this->TargetingTeamField()) + " Got destroyed by: " + structure_name + " Tribe ID: " + std::to_string(structure->TargetingTeamField());
+                        TribeScore::Utils::sendMessage(msg);
+                    }
                 }
 
                 const auto aController = actorInRange->GetInstigatorController();
@@ -185,11 +188,21 @@ namespace TribeScore::Hooks {
     }
 
 
+    void Hook_AShooterCharacter_ChangeActorTeam(AShooterCharacter* _this, int NewTeam) {
+        if (NewTeam != 0) {
+            TribeScore::database->CreateTribeData(NewTeam);
+        }
+
+        return AShooterCharacter_ChangeActorTeam_original(_this, NewTeam);
+    }
+
+
     void Load() {
         ArkApi::GetHooks().SetHook("APrimalStructure.Die", &Hook_APrimalStructure_Die, &APrimalStructure_Die_original);
         ArkApi::GetHooks().SetHook("AShooterGameMode.Logout", &Hook_AShooterGameMode_Logout, &AShooterGameMode_Logout_original);
         ArkApi::GetHooks().SetHook("AShooterGameMode.StartNewShooterPlayer", &Hook_AShooterGameMode_StartNewShooterPlayer, &AShooterGameMode_StartNewShooterPlayer_original);
         ArkApi::GetHooks().SetHook("AShooterCharacter.Die", &Hook_AShooterCharacter_Die,&AShooterCharacter_Die_original);
+        ArkApi::GetHooks().SetHook("AShooterCharacter.ChangeActorTeam", &Hook_AShooterCharacter_ChangeActorTeam, &AShooterCharacter_ChangeActorTeam_original);
     }
 
     void Unload() {
@@ -197,5 +210,6 @@ namespace TribeScore::Hooks {
         ArkApi::GetHooks().DisableHook("AShooterGameMode.Logout", &Hook_AShooterGameMode_Logout);
         ArkApi::GetHooks().DisableHook("AShooterGameMode.StartNewShooterPlayer", &Hook_AShooterGameMode_StartNewShooterPlayer);
         ArkApi::GetHooks().DisableHook("AShooterCharacter.Die", &Hook_AShooterCharacter_Die);
+        ArkApi::GetHooks().DisableHook("AShooterCharacter.ChangeActorTeam", &Hook_AShooterCharacter_ChangeActorTeam);
     }
 }

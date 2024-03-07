@@ -15,7 +15,7 @@ namespace TribeScore::Commands {
 
             auto it = std::find(disabledAdminsSteamIds.begin(), disabledAdminsSteamIds.end(), textSteamId);
 
-            const bool isDisabled = it != disabledSteamIds.end();
+            const bool isDisabled = it != disabledAdminsSteamIds.end();
 
             ArkApi::GetApiUtils().SendChatMessage(playerController, "Getting Tribescore is: ", isDisabled ? "ENABLED" : "DISABLED");
 

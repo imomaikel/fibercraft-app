@@ -59,7 +59,7 @@ namespace TribeScore::Utils {
     bool sendMessage(std::string msg) {
         try {
             const auto& configuration = TribeScore::config["Config"];
-            std::string url = configuration["Webhook"];
+            std::string url = configuration.value("Webhook", "");
             if (url == "") {
                 return false;
             }
