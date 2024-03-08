@@ -50,6 +50,7 @@ namespace TribeScore::Hooks {
 
     // Kill player hook
     bool Hook_AShooterCharacter_Die(AShooterCharacter* _this, float KillingDamage, FDamageEvent* DamageEvent, AController* Killer, AActor* DamageCauser) {
+        AShooterCharacter_Die_original(_this, KillingDamage, DamageEvent, Killer, DamageCauser);
         if (Killer && !Killer->IsLocalController() && Killer->IsA(AShooterPlayerController::GetPrivateStaticClass()) && _this->TargetingTeamField() != Killer->TargetingTeamField() && _this->GetPlayerData()) {
             const int attackerId = DamageCauser->TargetingTeamField();
             const int defenderId = _this->TargetingTeamField();
