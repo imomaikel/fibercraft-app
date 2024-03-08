@@ -79,7 +79,7 @@ export const dbGetPairedAccounts = async (searchText: string) => {
 };
 
 export const dbGetFiberServers = async () => {
-  const query = await db('SELECT * from webapp.server WHERE serverName = `Fiber`;');
+  const query = await db('SELECT * from webapp.server WHERE serverName LIKE "%Fiber%";');
 
   return query ? (query as TDbGetFiberServers) : [];
 };

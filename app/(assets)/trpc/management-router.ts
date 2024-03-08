@@ -7,6 +7,7 @@ import {
   apiGetServers,
 } from '../../../bot/api/index';
 import { getPermissionFromLabel, translateWidgetEnum, widgetEnums } from '../../(assets)/lib/utils';
+import { serverControlApi } from '../../../bot/plugins/server-control';
 import { ManagementPermissionValidator } from '../validators/custom';
 import { TAllNavLabels } from '../../(assets)/lib/types';
 import { ManagementPermission } from '@prisma/client';
@@ -320,6 +321,26 @@ export const managementRouter = router({
     if (!verifyFromLabel('Server Control', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
     const servers = await apiGetServers();
-    return servers;
+    const sortedServers = servers.sort((a, b) => b.lastPlayers - a.lastPlayers);
+
+    return sortedServers;
   }),
+  controlServers: managementProcedure
+    .input(
+      z.object({ method: z.enum(['START', 'STOP', 'RESTART', 'REFRESH']), serverId: z.number().or(z.literal('all')) }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userPermissions } = ctx;
+      const { method, serverId } = input;
+
+      if (!verifyFromLabel('Server Control', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+      const action = await serverControlApi(method, { serverId });
+
+      const { response } = action;
+
+      if (action.error || !response) return { error: true };
+
+      return { success: true, response };
+    }),
 });
