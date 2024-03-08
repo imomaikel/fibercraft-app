@@ -49,6 +49,26 @@
     "xstring": "cpp",
     "xtr1common": "cpp",
     "xutility": "cpp",
-    "vector": "cpp"
+    "vector": "cpp",
+    "algorithm": "cpp",
+    "array": "cpp",
+    "deque": "cpp",
+    "functional": "cpp",
+    "iostream": "cpp",
+    "list": "cpp",
+    "map": "cpp",
+    "mutex": "cpp",
+    "numeric": "cpp",
+    "optional": "cpp",
+    "queue": "cpp",
+    "ranges": "cpp",
+    "ratio": "cpp",
+    "span": "cpp",
+    "stop_token": "cpp",
+    "string": "cpp",
+    "thread": "cpp",
+    "unordered_map": "cpp",
+    "xhash": "cpp",
+    "xtree": "cpp"
   }
 }

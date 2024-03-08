@@ -1,9 +1,9 @@
 'use client';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@ui/dialog';
 import { ManagementPermission } from '@prisma/client';
+import { cn, errorToast } from '@assets/lib/utils';
 import { CgSpinnerTwo } from 'react-icons/cg';
 import { useMemo, useState } from 'react';
-import { cn } from '@assets/lib/utils';
 import { Button } from '@ui/button';
 import { trpc } from '@trpc/index';
 import { Badge } from '@ui/badge';
@@ -52,7 +52,7 @@ const AddPermission = ({ isOpen, handleClose, userId, username }: TAddPermission
         userDiscordId: userId,
       },
       {
-        onError: () => toast.error('Something went wrong!'),
+        onError: (error) => errorToast(error.data),
         onSuccess: ({ error, success }) => {
           if (error) return toast.error('Something went wrong!');
           if (success) return toast.success('Permissions updated!');

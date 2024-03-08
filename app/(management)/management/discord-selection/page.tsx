@@ -3,6 +3,7 @@ import ManagementPageWrapper from '../components/ManagementPageWrapper';
 import { useCurrentUser } from '@assets/hooks/useCurrentUser';
 import ItemWrapper from '../components/ItemWrapper';
 import Combobox from '@assets/components/Combobox';
+import { errorToast } from '@assets/lib/utils';
 import { trpc } from '@trpc/index';
 import { toast } from 'sonner';
 
@@ -21,9 +22,9 @@ const ManagementDiscordSelectionPage = () => {
     selectGuild(
       { guildId: value },
       {
-        onError: () => toast.error('Something went wrong!'),
+        onError: (error) => errorToast(error.data),
         onSuccess: ({ error, message, success }) => {
-          if (error) return toast.error(message);
+          if (error) return errorToast(message);
           if (success) {
             toast.info(`Selected "${label}"`);
 

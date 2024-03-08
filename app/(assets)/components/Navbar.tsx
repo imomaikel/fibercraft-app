@@ -30,6 +30,7 @@ const Navbar = () => {
                     <Image
                       alt="logo"
                       src="/fiber.webp"
+                      quality={100}
                       width={54}
                       height={54}
                       className="absolute -z-10 -translate-x-2 -translate-y-1 md:-translate-x-4"
