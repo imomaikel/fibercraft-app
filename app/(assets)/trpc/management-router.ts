@@ -1,4 +1,11 @@
-import { apiGetChannels, apiGetGuilds, apiGetMembers, apiGetPairedAccounts, apiGetRoles } from '../../../bot/api/index';
+import {
+  apiGetChannels,
+  apiGetGuilds,
+  apiGetMembers,
+  apiGetPairedAccounts,
+  apiGetRoles,
+  apiGetServers,
+} from '../../../bot/api/index';
 import { getPermissionFromLabel, translateWidgetEnum, widgetEnums } from '../../(assets)/lib/utils';
 import { ManagementPermissionValidator } from '../validators/custom';
 import { TAllNavLabels } from '../../(assets)/lib/types';
@@ -306,5 +313,13 @@ export const managementRouter = router({
     });
 
     return logs;
+  }),
+  getServers: managementProcedure.query(async ({ ctx }) => {
+    const { userPermissions } = ctx;
+
+    if (!verifyFromLabel('Server Control', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+    const servers = await apiGetServers();
+    return servers;
   }),
 });

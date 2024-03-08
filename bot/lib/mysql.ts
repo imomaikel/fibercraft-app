@@ -1,4 +1,4 @@
-import { TDbGetNewTribeLogs, TDbGetPairedAccounts } from './types';
+import { TDbGetFiberServers, TDbGetNewTribeLogs, TDbGetPairedAccounts } from './types';
 import { getEnv } from '../utils/env';
 import mysql from 'mysql';
 
@@ -76,4 +76,10 @@ export const dbGetPairedAccounts = async (searchText: string) => {
 
   const results = [...byId, ...byName];
   return results;
+};
+
+export const dbGetFiberServers = async () => {
+  const query = await db('SELECT * from webapp.server WHERE serverName = `Fiber`;');
+
+  return query ? (query as TDbGetFiberServers) : [];
 };

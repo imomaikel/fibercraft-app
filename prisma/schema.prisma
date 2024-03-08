@@ -7,56 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Temp
-// TODO
-model Server {
-  id          Int     @id @default(autoincrement())
-  mapName     String  @db.VarChar(45)
-  path        String  @db.VarChar(200)
-  gameMode    String  @db.VarChar(45)
-  gameType    String  @db.VarChar(45)
-  autoRestart Int     @db.TinyInt
-  customName  String? @db.VarChar(45)
-  multiHome   String? @db.VarChar(45)
-  queryPort   Int
-  rconPort    Int
-  lastStatus  String  @default("offline") @db.VarChar(45)
-  lastPlayers Int     @default(0) @db.TinyInt
-  position    Int     @default(1) @db.TinyInt
-}
-
-// 
-
-enum TribePosition {
-  PROMOTE
-  DEMOTE
-  SAME
-}
-
-model Tribe {
-  tribeId      Int           @id
-  tribeName    String        @db.TinyText
-  points       Int           @default(0)
-  position     Int?
-  newScoreMode TribePosition @default(PROMOTE)
-}
-
-model TribeLog {
-  id             BigInt   @id
-  tribeId        Int
-  tribeName      String
-  content        String
-  possiblePoints Boolean
-  timestamp      DateTime
-}
-
-model Building {
-  id Int @id @default(autoincrement())
-
-  label  String
-  points Int?
-}
-
 model Widget {
   id Int @id @default(autoincrement())
 
@@ -74,6 +24,14 @@ model Widget {
   guildId String @unique
 }
 
+model TribeLog {
+  id        BigInt   @id
+  tribeId   Int
+  tribeName String
+  content   String
+  timestamp DateTime
+}
+
 model Guild {
   id String @id @unique
 
@@ -89,7 +47,9 @@ model Guild {
 model Config {
   id Int @id @default(autoincrement())
 
-  rconPassword String @default("")
+  rconPassword                 String   @default("")
+  tribeScoreUpdateDelayMinutes Int      @default(60)
+  tribeScoreLastUpdate         DateTime @default(now())
 }
 
 model RconLog {
@@ -171,14 +131,27 @@ model User {
   createdAt DateTime @default(now())
 }
 
-model TribeScore {
-  id    BigInt @id
-  score Int    @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// In-Game plugin
+enum TribeScorePosition {
+  PROMOTE
+  DEMOTE
+  KEEP
 }
 
-model DisabledSteamId {
-  id String @id
+model TribeScore {
+  tribeId   BigInt             @id
+  tribeName String             @db.VarChar(64)
+  score     Int                @default(0)
+  oldScore  Int                @default(0)
+  position  Int                @default(0)
+  progress  Int                @default(0)
+  mode      TribeScorePosition @default(PROMOTE)
+}
+
+model TribeScoreAdminDisabledId {
+  steamId String @id @db.VarChar(32)
+}
+
+model TribeScorePlayerDisabledId {
+  steamId String @id @db.VarChar(32)
 }

@@ -3,26 +3,31 @@ import { EmbedBuilder, time } from 'discord.js';
 import { client } from '../../client';
 import prisma from '../../lib/prisma';
 
-// TODO
 export const _sendTribeScore = async () => {
-  const tribes = await prisma.tribe.findMany({
-    orderBy: {
-      points: 'desc',
-    },
-    take: 10,
-  });
+  const [tribes, config] = await Promise.all([
+    prisma.tribeScore.findMany({
+      orderBy: {
+        score: 'desc',
+      },
+      take: 10,
+    }),
+    prisma.config.findFirst(),
+  ]);
+
+  if (!config) return;
+  const { tribeScoreUpdateDelayMinutes } = config;
 
   const longestNameLength = tribes.slice().sort((a, b) => b.tribeName.length - a.tribeName.length)[0].tribeName.length;
 
   const content = tribes.map((tribe, index) => {
     const position = index + 1;
-    const mode = tribe.newScoreMode === 'DEMOTE' ? '-' : tribe.newScoreMode === 'PROMOTE' ? '+' : ' ';
-    const modeIcon = tribe.newScoreMode === 'DEMOTE' ? '🡻' : tribe.newScoreMode === 'PROMOTE' ? '🡹' : ' ';
-    const points = tribe.points.toLocaleString('de-DE');
+    const mode = tribe.mode === 'DEMOTE' ? '-' : tribe.mode === 'PROMOTE' ? '+' : ' ';
+    const points = tribe.score.toLocaleString('de-DE');
     const positionSpace = position <= 9 ? ' ' : '';
     const tribeSpace = ' '.repeat(longestNameLength - tribe.tribeName.length + 4);
+    const positiveProgress = tribe.progress >= 0;
 
-    const line = `${mode} ${position}.${positionSpace} ${tribe.tribeName}${tribeSpace} ${modeIcon} ${points}`;
+    const line = `${mode} ${position}.${positionSpace}  ${tribe.tribeName}${tribeSpace} ${points} (${positiveProgress ? '+' : '-'}${Math.abs(tribe.progress)} score)`;
     return line;
   });
 
@@ -43,12 +48,12 @@ export const _sendTribeScore = async () => {
     .setColor(colors.purple)
     .setDescription(`**Last update: ** ${time(new Date(), 'R')}`)
     .setFooter({
-      text: `${extraSigns.zap} Auto update every 30 minutes`,
+      text: `${extraSigns.zap} Auto update every ${tribeScoreUpdateDelayMinutes} minutes.`,
     })
     .addFields({
       name: 'How is it calculated?',
       value:
-        'Each structure in game has its certain points. Every time you destroy a structure you get points, as well as minus points when someone destroys your structure.',
+        'Each structure in the game has its certain points. Every time **you destroy** a structure you get points, as well as minus points when someone **destroys your** structure. Furthermore, collapsed structures are also tallied in the scoring system.',
     });
 
   for await (const _guild of guilds) {
@@ -64,9 +69,14 @@ export const _sendTribeScore = async () => {
 
     const message = msgId ? await channel.messages.fetch(msgId) : null;
 
+    const title = 'PLACE | TRIBE NAME | POINTS (PROGRESS)\n';
+
     if (!message) {
       try {
-        const newMessage = await channel.send({ embeds: [embed], content: `\`\`\`diff\n${content.join('\n')}\`\`\`` });
+        const newMessage = await channel.send({
+          embeds: [embed],
+          content: `\`\`\`diff\n${title + content.join('\n')}\`\`\``,
+        });
         if (!newMessage.id) continue;
         await prisma.guild.update({
           where: { id: guild.id },
@@ -80,7 +90,9 @@ export const _sendTribeScore = async () => {
         });
       } catch {}
     } else {
-      await message.edit({ embeds: [embed], content: `\`\`\`diff\n${content.join('\n')}\`\`\`` }).catch(() => {});
+      await message
+        .edit({ embeds: [embed], content: `\`\`\`diff\n${title + content.join('\n')}\`\`\`` })
+        .catch(() => {});
     }
   }
 };

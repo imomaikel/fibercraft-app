@@ -17,14 +17,11 @@ export const _fetchNewTribeLogs = async () => {
       .replace(/<\/>/gi, '')
       .replace(/[0-9]{6,12}/gi, '');
 
-    const possiblePoints = content.includes('destroyed their') || content.includes('destroyed your') ? true : false;
-
     if (log.tribeName) {
       logsToCreate.push({
         timestamp: log.timestamp,
         tribeId: log.tribeId,
         tribeName: log.tribeName,
-        possiblePoints,
         id: BigInt(log.id),
         content,
       });
@@ -35,5 +32,6 @@ export const _fetchNewTribeLogs = async () => {
   await prisma.tribeLog.createMany({
     data: logsToCreate,
   });
+
   await dbUpdateTribeLogs(logsToUpdate);
 };

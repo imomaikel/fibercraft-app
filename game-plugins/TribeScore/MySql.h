@@ -33,7 +33,7 @@ public:
                 Log::GetLog()->critical("Failed to create table TribeScorePlayerDisabledId!");
             }
 
-            result = db_.query("CREATE TABLE IF NOT EXISTS TribeScore (tribeId BIGINT NOT NULL, tribeName VARCHAR(64) NOT NULL, score INT NOT NULL DEFAULT 0, oldScore INT NOT NULL DEFAULT 0, position ENUM('PROMOTE', 'DEMOTE', 'KEEP') DEFAULT 'PROMOTE', PRIMARY KEY (tribeId));");
+            result = db_.query("CREATE TABLE IF NOT EXISTS TribeScore (tribeId BIGINT NOT NULL, tribeName VARCHAR(64) NOT NULL, score INT NOT NULL DEFAULT 0, oldScore INT NOT NULL DEFAULT 0, progress INT NOT NULL DEFAULT 0, position INT NOT NULL DEFAULT 0, mode ENUM('PROMOTE', 'DEMOTE', 'KEEP') NOT NULL DEFAULT 'PROMOTE', PRIMARY KEY (tribeId));");
             if (!result) {
                 Log::GetLog()->critical("Failed to create table TribeScore!");
             }
