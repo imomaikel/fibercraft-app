@@ -6,6 +6,11 @@ import prisma from '../../lib/prisma';
 export const _sendTribeScore = async () => {
   const [tribes, config] = await Promise.all([
     prisma.tribeScore.findMany({
+      where: {
+        tribeName: {
+          not: '',
+        },
+      },
       orderBy: {
         score: 'desc',
       },
