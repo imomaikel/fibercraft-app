@@ -149,13 +149,15 @@ namespace TribeScore::Hooks {
                         std::string defenderTribeName = TribeScore::Utils::getTribeName(_this->TargetingTeamField());
                         std::string attackerTribeName = TribeScore::Utils::getTribeName(structure->TargetingTeamField());
                         std::string message = fmt::format(
-                            "Structure Name: {} Tribe ID: {} Tribe Name: {} Got destroyed by: {} Tribe ID: {} Tribe Name: {}",
+                            "Structure Location: {} Structure Location: {} Structure Name: {} Tribe ID: {} Tribe Name: {} Got destroyed by: {} Tribe ID: {} Tribe Name: {} Structure Location: {}",
+                            _this->RootComponentField()->RelativeLocationField().ToString().ToString(),
                             _this->DescriptiveNameField().ToString(),
                             _this->TargetingTeamField(),
                             defenderTribeName,
                             structureName,
                             structure->TargetingTeamField(),
-                            attackerTribeName
+                            attackerTribeName,
+                            structure->RootComponentField()->RelativeLocationField().ToString().ToString()
                         );
                         TribeScore::Utils::sendWebhookMessage(message);
                     }
