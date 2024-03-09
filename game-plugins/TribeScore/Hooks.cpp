@@ -143,24 +143,29 @@ namespace TribeScore::Hooks {
             if (actorInRange != nullptr && actorInRange->IsA(AActor::GetPrivateStaticClass())) {
                 if (actor->IsA(APrimalStructure::GetPrivateStaticClass())) {
                     APrimalStructure* structure = reinterpret_cast<APrimalStructure*>(actor);
-
-                    std::string structureName = structure->DescriptiveNameField().ToString();
-                    if (structureName != "C4 Charge") {
-                        std::string defenderTribeName = TribeScore::Utils::getTribeName(_this->TargetingTeamField());
-                        std::string attackerTribeName = TribeScore::Utils::getTribeName(structure->TargetingTeamField());
-                        std::string message = fmt::format(
-                            "Structure Location: {} Structure Location: {} Structure Name: {} Tribe ID: {} Tribe Name: {} Got destroyed by: {} Tribe ID: {} Tribe Name: {} Structure Location: {}",
-                            _this->RootComponentField()->RelativeLocationField().ToString().ToString(),
-                            _this->DescriptiveNameField().ToString(),
-                            _this->TargetingTeamField(),
-                            defenderTribeName,
-                            structureName,
-                            structure->TargetingTeamField(),
-                            attackerTribeName,
-                            structure->RootComponentField()->RelativeLocationField().ToString().ToString()
-                        );
-                        TribeScore::Utils::sendWebhookMessage(message);
+                    try {
+                        std::string structureName = structure->DescriptiveNameField().ToString();
+                        if (structureName != "C4 Charge") {
+                            std::string defenderTribeName = TribeScore::Utils::getTribeName(_this->TargetingTeamField());
+                            std::string attackerTribeName = TribeScore::Utils::getTribeName(structure->TargetingTeamField());
+                            FString result;
+                            auto map_name = ArkApi::GetApiUtils().GetShooterGameMode()->GetMapName(&result);
+                            std::string message = fmt::format(
+                                "MAP NAME: {} Structure Location: {} Tribe ID: {} Tribe Name: {} Got destroyed by: {} Tribe ID: {} Tribe Name: {}",
+                                map_name->ToString(),
+                                _this->RootComponentField()->RelativeLocationField().ToString().ToString(),
+                                _this->TargetingTeamField(),
+                                defenderTribeName,
+                                structureName,
+                                structure->TargetingTeamField(),
+                                attackerTribeName
+                            );
+                            TribeScore::Utils::sendWebhookMessage(message);
+                        }
+                    } catch (std::exception& error) {
+                        Log::GetLog()->critical("Error in turret raiding detection!: {}", error.what());
                     }
+                    
                 }
 
                 const auto aController = actorInRange->GetInstigatorController();
