@@ -147,7 +147,7 @@ namespace TribeScore::Hooks {
                     APrimalStructure* structure = reinterpret_cast<APrimalStructure*>(actor);
                     try {
                         std::string structureName = structure->DescriptiveNameField().ToString();
-                        if (structureName != "C4 Charge") {
+                        if (structureName != "C4 Charge" and structureName != "Eggsplosive Basket") {
                             std::string defenderTribeName = TribeScore::Utils::getTribeName(_this->TargetingTeamField());
                             std::string attackerTribeName = TribeScore::Utils::getTribeName(structure->TargetingTeamField());
                             FString result;
