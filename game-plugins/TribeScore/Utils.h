@@ -8,6 +8,7 @@ namespace TribeScore::Utils {
 	int GetStructurePoints(std::string structureName);
 
 	bool sendWebhookMessage(std::string message);
+	bool isAlliance(int baseTribeId, int tribeIdToCheck);
 
 	std::string getTribeName(int tribeId);
 }

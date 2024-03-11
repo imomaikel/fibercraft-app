@@ -51,7 +51,7 @@ namespace TribeScore::Utils {
 
         } catch (std::exception& error) {
             Log::GetLog()->error(error.what());
-            return 0; 
+            return 0;
         }
     }
 
@@ -77,8 +77,8 @@ namespace TribeScore::Utils {
         } catch (std::exception& error) {
             return false;
         }
-        
-        
+
+
     }
 
     // Get tribe name by ide
@@ -92,5 +92,29 @@ namespace TribeScore::Utils {
 
         FMemory::Free(result);
         return tribeName;
+    }
+
+    // Check if tribes are allianced
+    bool isAlliance(int baseTribeId, int tribeIdToCheck) {
+        FTribeData* result = (FTribeData*)FMemory::Malloc(GetStructSize<FTribeData>());
+        RtlSecureZeroMemory(result, GetStructSize<FTribeData>());
+        ArkApi::GetApiUtils().GetShooterGameMode()->GetOrLoadTribeData(baseTribeId, result);
+
+        TArray<FTribeAlliance> alliances = result->TribeAlliancesField();
+
+        bool isAllied = false;
+
+        for (FTribeAlliance ally : alliances) {
+            for (const auto tribeId : ally.MembersTribeIDField) {
+                if (tribeId == tribeIdToCheck) {
+                    isAllied = true;
+                    break;
+                }
+            }
+            if (isAllied) break;
+        }
+
+        FMemory::Free(result);
+        return isAllied;
     }
 }
