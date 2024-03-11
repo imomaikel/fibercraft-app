@@ -123,7 +123,9 @@ namespace TribeScore::Hooks {
         int score = TribeScore::Utils::GetStructurePoints(destroyedStructureName);
         if (score == 0) return APrimalStructure_Die_original;
 
-       
+        bool IsAlly = TribeScore::Utils::isAlliance(destroyedTribeId, attackerTribeId);
+        if (IsAlly) return APrimalStructure_Die_original;
+
         std::string attacker = std::to_string(attackerId);
         std::string defender = std::to_string(destroyedTribeId);
 
