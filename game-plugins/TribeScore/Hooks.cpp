@@ -55,6 +55,9 @@ namespace TribeScore::Hooks {
             const int attackerId = DamageCauser->TargetingTeamField();
             const int defenderId = _this->TargetingTeamField();
 
+            bool allied = TribeScore::Utils::isAlliance(defenderId, attackerId);
+            if (allied == true) return AShooterCharacter_Die_original;
+
             std::string attackerIdText = std::to_string(attackerId);
             std::string defenderIdText = std::to_string(defenderId);
 
