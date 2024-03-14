@@ -1,23 +1,19 @@
 import { colors, extraSigns } from '../../constans';
+import { getTopTribeScore } from '../../lib/mysql';
 import { EmbedBuilder, time } from 'discord.js';
 import { client } from '../../client';
 import prisma from '../../lib/prisma';
 
 export const _sendTribeScore = async () => {
-  const [tribes, config] = await Promise.all([
-    prisma.tribeScore.findMany({
-      where: {
-        tribeName: {
-          not: '',
-        },
-      },
-      orderBy: {
-        score: 'desc',
-      },
-      take: 10,
-    }),
-    prisma.config.findFirst(),
-  ]);
+  const tribes = await getTopTribeScore();
+
+  if (!tribes || tribes.length <= 0) {
+    _sendTribeScore();
+    console.log('Send Tribe Score Return');
+    return;
+  }
+
+  const config = await prisma.config.findFirst();
 
   if (!config) return;
   const { tribeScoreUpdateDelayMinutes } = config;

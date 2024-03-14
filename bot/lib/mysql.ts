@@ -1,4 +1,5 @@
-import { TDbGetFiberServers, TDbGetNewTribeLogs, TDbGetPairedAccounts } from './types';
+import { TDbGetFiberServers, TDbGetNewTribeLogs, TDbGetPairedAccounts, TDbGetTopTribeScore } from './types';
+import { TribeScorePosition } from '@prisma/client';
 import { getEnv } from '../utils/env';
 import mysql from 'mysql';
 
@@ -82,4 +83,35 @@ export const dbGetFiberServers = async () => {
   const query = await db('SELECT * from webapp.server WHERE serverName LIKE "%Fiber%";');
 
   return query ? (query as TDbGetFiberServers) : [];
+};
+
+export const getTopTribeScore = async () => {
+  const query = await db(
+    // eslint-disable-next-line quotes
+    `SELECT * FROM fibercraft.tribescore WHERE TribeName NOT LIKE '' ORDER BY score DESC LIMIT 10;`,
+  );
+
+  return query ? (query as TDbGetTopTribeScore) : [];
+};
+export const getAllTribeScore = async () => {
+  const query = await db(
+    // eslint-disable-next-line quotes
+    `SELECT * FROM fibercraft.tribescore WHERE TribeName NOT LIKE '';`,
+  );
+
+  return query ? (query as TDbGetTopTribeScore) : [];
+};
+export const updateTribeScore = async (
+  tribeId: bigint,
+  progress: number,
+  oldScore: number,
+  position: number,
+  mode: TribeScorePosition,
+) => {
+  await db(
+    // eslint-disable-next-line quotes
+    `UPDATE fibercraft.tribescore SET progress = ${progress}, oldScore = ${oldScore}, mode = '${mode}', position = ${position} WHERE TribeID = ${tribeId};`,
+  );
+
+  return;
 };

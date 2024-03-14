@@ -1,3 +1,5 @@
+import { TribeScorePosition } from '@prisma/client';
+
 export type TDbGetNewTribeLogs = {
   id: number;
   tribeId: number;
@@ -26,4 +28,14 @@ export type TDbGetFiberServers = {
   lastPlayers: number;
   position: number;
   serverName: string;
+}[];
+
+export type TDbGetTopTribeScore = {
+  tribeId: bigint;
+  tribeName: string;
+  score: number;
+  oldScore: number;
+  position: number;
+  progress: number;
+  mode: TribeScorePosition;
 }[];
