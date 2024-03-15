@@ -3,41 +3,55 @@ import { TribeScorePosition } from '@prisma/client';
 import { getEnv } from '../utils/env';
 import mysql from 'mysql';
 
-const db = async (query: string, values?: string[]) => {
-  try {
-    const connection = mysql.createConnection({
-      host: getEnv('DATABASE_HOST'),
-      user: getEnv('DATABASE_USER'),
-      password: getEnv('DATABASE_PASSWORD'),
-      supportBigNumbers: true,
-      connectTimeout: 5_000,
-    });
+const pool = mysql.createPool({
+  connectionLimit: 50,
+  host: getEnv('DATABASE_HOST'),
+  user: getEnv('DATABASE_USER'),
+  password: getEnv('DATABASE_PASSWORD'),
+  supportBigNumbers: true,
+  connectTimeout: 5_000,
+});
 
-    const result = await new Promise((resolve, reject) => {
-      connection.query(
-        {
-          sql: query,
-          ...(values && {
-            values: values,
-          }),
-        },
-        (err, res) => {
-          if (err) {
-            console.log(err);
+const db = async (query: string, values?: string[]) => {
+  const result = await new Promise((resolve, reject) => {
+    try {
+      pool.getConnection(async (err, connection) => {
+        if (err) {
+          console.log('DB Pool awaiting');
+          setTimeout(() => {
+            db(query, values);
+            return;
+          }, 2000);
+        } else {
+          try {
+            connection.query(
+              {
+                sql: query,
+                ...(values && {
+                  values: values,
+                }),
+              },
+              (error, res) => {
+                if (error) {
+                  console.log(error);
+                  reject(null);
+                }
+                if (res && res[0]) return resolve(res);
+                return reject(null);
+              },
+            );
+            connection.release();
+          } catch (error) {
+            console.log('Mysql Error', error);
             reject(null);
           }
-          if (res && res[0]) return resolve(res);
-          return reject();
-        },
-      );
-    }).catch(() => null);
-
-    connection.end();
-
-    return result || null;
-  } catch {
-    return null;
-  }
+        }
+      });
+    } catch {
+      reject(null);
+    }
+  }).catch(() => null);
+  return result;
 };
 
 export const dbCheckForFetchedTribesColumn = async () => {
@@ -96,7 +110,7 @@ export const getTopTribeScore = async () => {
 export const getAllTribeScore = async () => {
   const query = await db(
     // eslint-disable-next-line quotes
-    `SELECT * FROM fibercraft.tribescore WHERE TribeName NOT LIKE '';`,
+    `SELECT * FROM fibercraft.tribescore WHERE TribeName NOT LIKE '' ORDER BY SCORE DESC;`,
   );
 
   return query ? (query as TDbGetTopTribeScore) : [];

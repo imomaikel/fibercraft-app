@@ -4,7 +4,6 @@ export const _calculateTribePoints = async () => {
   const tribes = await getAllTribeScore();
 
   if (!tribes || tribes.length <= 0) {
-    console.log('Send Tribe Score Return (2)');
     _calculateTribePoints();
     return;
   }
