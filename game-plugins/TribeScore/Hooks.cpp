@@ -15,6 +15,7 @@ namespace TribeScore::Hooks {
 
     // Player login hook
     void Hook_AShooterGameMode_StartNewShooterPlayer(AShooterGameMode* game, APlayerController* playerController, bool forceCreateNewPlayerData, bool isFromLogin, FPrimalPlayerCharacterConfigStruct* config, UPrimalPlayerData* data) {
+        
         AShooterGameMode_StartNewShooterPlayer_original(game, playerController, forceCreateNewPlayerData, isFromLogin, config, data);
         if (isFromLogin) {
             AShooterPlayerController* shooterPlayerController = static_cast<AShooterPlayerController*>(playerController);
@@ -104,7 +105,7 @@ namespace TribeScore::Hooks {
     // Structure die hook
     bool Hook_APrimalStructure_Die(APrimalStructure* _this, float damage, FDamageEvent* damageEvent, AController* controller, AActor* actor) {
         APrimalStructure_Die_original(_this, damage, damageEvent, controller, actor);
-
+        
         if (_this == nullptr || actor == nullptr || !actor->IsA(AActor::GetPrivateStaticClass())) return APrimalStructure_Die_original;
         
         const std::string destroyedStructureName = _this->DescriptiveNameField().ToString();
@@ -121,6 +122,9 @@ namespace TribeScore::Hooks {
             
         // Untamed dinos
         if (attackerId < 100) return APrimalStructure_Die_original;
+
+        // Vault bug giving you tribescore fix
+        if ( _this->ReplicatedHealthField() > 0) return APrimalStructure_Die_original;
 
         // Get points for the structure
         int score = TribeScore::Utils::GetStructurePoints(destroyedStructureName);
