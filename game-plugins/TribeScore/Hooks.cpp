@@ -123,9 +123,6 @@ namespace TribeScore::Hooks {
         // Untamed dinos
         if (attackerId < 100) return APrimalStructure_Die_original;
 
-        // Vault bug giving you tribescore fix
-        if ( _this->ReplicatedHealthField() > 0) return APrimalStructure_Die_original;
-
         // Get points for the structure
         int score = TribeScore::Utils::GetStructurePoints(destroyedStructureName);
         if (score == 0) return APrimalStructure_Die_original;
