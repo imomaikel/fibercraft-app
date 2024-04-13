@@ -25,8 +25,7 @@ export const NAV_LINKS = [
       {
         label: 'Paired Accounts',
         path: '/management/paired-accounts',
-        // prettier-ignore
-        description: 'View users\' account connections with Steam and Discord.',
+        description: 'Search for in-game names or Steam IDs',
         permission: 'VIEW_PAIRED_ACCOUNTS' as ManagementPermission,
       },
       {
