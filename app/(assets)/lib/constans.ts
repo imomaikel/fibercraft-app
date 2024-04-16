@@ -43,3 +43,5 @@ export const NAV_LINKS = [
     ],
   },
 ] as const;
+
+export const TEBEX_FOOTER_PATHS: `/${string}`[] = ['/dashboard'];
