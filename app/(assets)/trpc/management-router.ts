@@ -341,6 +341,6 @@ export const managementRouter = router({
 
       if (action.error || !response) return { error: true };
 
-      return { success: true, response };
+      return { success: true, data: { ...response, method } };
     }),
 });

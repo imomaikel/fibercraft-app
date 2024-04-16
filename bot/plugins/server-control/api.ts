@@ -5,13 +5,13 @@ type TServerControlApi = {
 };
 export const _serverControlApi = async <T extends TApiMethods>(method: T, { serverId }: TServerControlApi) => {
   try {
-    const response = (await fetch('http://127.0.0.1/api/manager', {
+    const response = (await fetch('http://127.0.0.1:3201/api/manager', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        command: method,
+        command: method.toLowerCase(),
         ...(method !== 'REFRESH' &&
           typeof serverId === 'number' && {
             serverId,

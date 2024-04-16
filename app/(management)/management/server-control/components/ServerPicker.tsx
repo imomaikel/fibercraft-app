@@ -45,14 +45,12 @@ const ServerPicker = ({ open, onClose, servers, method }: TServerPicker) => {
         serverId: toExecute,
       },
       {
-        onSuccess: ({ error, response: apiData }) => {
-          setIsResponseOpen(true);
-          setResponse([{ serverId: 1, status: 'error' }]);
-          if (error) return errorToast();
-          if (apiData?.method === method) {
-            apiData.response[0].status;
+        onSuccess: (data) => {
+          if (data.error) return errorToast();
+          if (data.data?.method === method) {
             setIsResponseOpen(true);
-            setResponse(apiData.response);
+            // TODO RMEOVE TEMP DATA
+            setResponse([{ serverId: 1, status: 'success' }]);
           }
         },
         onError: (error) => errorToast(error.data),
