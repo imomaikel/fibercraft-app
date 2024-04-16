@@ -1,25 +1,29 @@
+import { dbGetFiberServers } from '../../lib/mysql';
 import { COMMANDS } from '../../constans';
 import prisma from '../../lib/prisma';
 import { Rcon } from 'rcon-client';
 
 type TExecuteRconCommand = {
-  serverId?: number;
+  serverMapName?: string | undefined;
   command: (typeof COMMANDS)[number];
   args: string;
   executedBy: string;
 };
-export const _executeRconCommand = async ({ command, serverId, args, executedBy }: TExecuteRconCommand) => {
+export const _executeRconCommand = async ({ command, serverMapName, args, executedBy }: TExecuteRconCommand) => {
   if (!COMMANDS.includes(command) || !args) {
     return { error: true, message: 'Invalid request!' };
   }
 
-  const servers = await prisma.server.findMany({
-    ...(typeof serverId == 'number' && {
-      where: {
-        id: serverId,
-      },
-    }),
-  });
+  let servers = await dbGetFiberServers();
+
+  if (typeof serverMapName === 'string') {
+    const singleServer = servers.find((server) => server.mapName.toLowerCase().includes(serverMapName.toLowerCase()));
+    if (!singleServer) {
+      return { error: true, message: 'Could not find the server' };
+    }
+    servers = [singleServer];
+  }
+
   const config = await prisma.config.findFirst();
 
   if (!config?.rconPassword) {

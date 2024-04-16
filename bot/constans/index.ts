@@ -20,4 +20,4 @@ export const extraSigns = {
   zap: '⚡️',
 };
 
-export const COMMANDS = ['aac.ban', 'aac.removeban', 'broadcast', 'kmute', 'kunmute'] as const;
+export const COMMANDS = ['aac.ban', 'aac.removeban', 'punishment.advert.rcon', 'kmute', 'kunmute'] as const;
