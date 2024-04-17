@@ -16,7 +16,7 @@ export const _executeRconCommand = async ({ command, serverMapName, args, execut
 
   let servers = await dbGetFiberServers();
 
-  if (typeof serverMapName === 'string') {
+  if (typeof serverMapName === 'string' && serverMapName.length >= 2) {
     const singleServer = servers.find((server) => server.mapName.toLowerCase().includes(serverMapName.toLowerCase()));
     if (!singleServer) {
       return { error: true, message: 'Could not find the server' };

@@ -17,7 +17,7 @@ const handle = async (request: Request) => {
 
     const hash = data.hash;
     const args = data.args;
-    const mapName = data?.map.toString() || '';
+    const mapName = data?.map?.toString() || '';
 
     if (typeof hash !== 'string' || typeof args !== 'string') {
       return new Response('Missing args or hash!', { status: 400 });
