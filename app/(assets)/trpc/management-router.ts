@@ -321,13 +321,29 @@ export const managementRouter = router({
     if (!verifyFromLabel('Server Control', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
     const servers = await apiGetServers();
+    const request = await serverControlApi('getStatuses', { serverId: 'all' });
+
+    if (request.success && request.statuses) {
+      for (let i = 0; i < servers.length; i++) {
+        const getStatus = request.statuses.find((entry) => entry.serverId === servers[i].id);
+        if (!getStatus) continue;
+
+        const currentStatus = getStatus.currentStatus;
+        servers[i].lastStatus = currentStatus;
+        servers[i].lastPlayers = 0;
+      }
+    }
+
     const sortedServers = servers.sort((a, b) => b.lastPlayers - a.lastPlayers);
 
     return sortedServers;
   }),
   controlServers: managementProcedure
     .input(
-      z.object({ method: z.enum(['START', 'STOP', 'RESTART', 'REFRESH']), serverId: z.number().or(z.literal('all')) }),
+      z.object({
+        method: z.enum(['start', 'stop', 'restart', 'getStatuses']),
+        serverId: z.number().or(z.literal('all')),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userPermissions } = ctx;
@@ -337,10 +353,11 @@ export const managementRouter = router({
 
       const action = await serverControlApi(method, { serverId });
 
-      const { response } = action;
+      if (action.error || !action.success) return { error: true };
 
-      if (action.error || !response) return { error: true };
-
-      return { success: true, data: { ...response, method } };
+      if (action.responses) {
+        return { success: true, responses: action.responses };
+      }
+      return { success: true, statuses: action.statuses };
     }),
 });

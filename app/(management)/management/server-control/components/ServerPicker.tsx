@@ -3,9 +3,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { managementRouter } from '@trpc/management-router';
 import { cn, errorToast } from '@assets/lib/utils';
 import { inferRouterOutputs } from '@trpc/server';
+import { useEffect, useState } from 'react';
 import { Button } from '@ui/button';
 import { trpc } from '@trpc/index';
-import { useEffect, useState } from 'react';
 import { Badge } from '@ui/badge';
 
 type TServers = inferRouterOutputs<typeof managementRouter>['getServers'];
@@ -14,11 +14,12 @@ type TServerPicker = {
   open: boolean;
   onClose: () => void;
   servers: TServers;
-  method: 'START' | 'STOP' | 'RESTART';
+  method: 'start' | 'stop' | 'restart';
+  refresh: () => void;
 };
-const ServerPicker = ({ open, onClose, servers, method }: TServerPicker) => {
+const ServerPicker = ({ open, onClose, servers, method, refresh }: TServerPicker) => {
   const possibleServers =
-    method === 'START'
+    method === 'start'
       ? servers.filter((server) => server.lastStatus === 'offline')
       : servers.filter((server) => server.lastStatus === 'online');
   const [toExecute, setToExecute] = useState<number | 'all' | null>(null);
@@ -45,12 +46,14 @@ const ServerPicker = ({ open, onClose, servers, method }: TServerPicker) => {
         serverId: toExecute,
       },
       {
-        onSuccess: (data) => {
-          if (data.error) return errorToast();
-          if (data.data?.method === method) {
+        onSuccess: ({ error, success, responses }) => {
+          if (error || !success) return errorToast();
+
+          if (responses) {
+            setResponse(responses);
             setIsResponseOpen(true);
-            // TODO RMEOVE TEMP DATA
-            setResponse([{ serverId: 1, status: 'success' }]);
+            onClose();
+            refresh();
           }
         },
         onError: (error) => errorToast(error.data),

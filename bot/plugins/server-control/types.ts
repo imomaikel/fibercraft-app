@@ -6,7 +6,7 @@ export type TGetStatusesResponse = {
   serverId: number;
   currentStatus: 'online' | 'offline';
 };
-export type TApiMethods = 'START' | 'STOP' | 'RESTART' | 'REFRESH';
-export type TApiReturn<T> = T extends 'REFRESH'
-  ? { response: TGetStatusesResponse[]; method: T }
-  : { response: TServerControlResponse[]; method: T };
+export type TApiMethods = 'start' | 'stop' | 'restart' | 'getStatuses';
+export type TApiReturn<T extends TApiMethods> = T extends 'getStatuses'
+  ? { data: TGetStatusesResponse[]; key: T }
+  : { data: TServerControlResponse[]; key: T };

@@ -1,7 +1,7 @@
 import { TDbGetFiberServers, TDbGetNewTribeLogs, TDbGetPairedAccounts, TDbGetTopTribeScore } from './types';
 import { TribeScorePosition } from '@prisma/client';
 import { getEnv } from '../utils/env';
-import mysql from 'mysql';
+import mysql from 'mysql2';
 
 const pool = mysql.createPool({
   connectionLimit: 50,
@@ -36,7 +36,7 @@ const db = async (query: string, values?: string[]) => {
                   console.log(error);
                   reject(null);
                 }
-                if (res && res[0]) return resolve(res);
+                if (res) return resolve(res);
                 return reject(null);
               },
             );

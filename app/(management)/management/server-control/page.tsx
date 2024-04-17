@@ -10,7 +10,7 @@ import { Badge } from '@ui/badge';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-const METHODS = ['START', 'STOP', 'RESTART'] as const;
+const METHODS = ['start', 'stop', 'restart'] as const;
 type TMethod = (typeof METHODS)[number];
 
 const ManagementServerControlPage = () => {
@@ -95,7 +95,7 @@ const ManagementServerControlPage = () => {
                   className="w-[200px] uppercase"
                   variant="positive"
                   disabled={isLoading}
-                  onClick={() => handleDialog('START')}
+                  onClick={() => handleDialog('start')}
                 >
                   Start
                 </Button>
@@ -105,7 +105,7 @@ const ManagementServerControlPage = () => {
                   className="w-[200px] uppercase"
                   variant="destructive"
                   disabled={isLoading}
-                  onClick={() => handleDialog('STOP')}
+                  onClick={() => handleDialog('stop')}
                 >
                   Stop
                 </Button>
@@ -115,7 +115,7 @@ const ManagementServerControlPage = () => {
                   className="w-[200px] uppercase"
                   variant="default"
                   disabled={isLoading}
-                  onClick={() => handleDialog('RESTART')}
+                  onClick={() => handleDialog('restart')}
                 >
                   Restart
                 </Button>
@@ -135,7 +135,13 @@ const ManagementServerControlPage = () => {
         </div>
       </ManagementPageWrapper>
       {method && servers && (
-        <ServerPicker onClose={() => setIsDialogOpen(false)} open={isDialogOpen} method={method} servers={servers} />
+        <ServerPicker
+          onClose={() => setIsDialogOpen(false)}
+          open={isDialogOpen}
+          method={method}
+          servers={servers}
+          refresh={handleRefresh}
+        />
       )}
     </>
   );
