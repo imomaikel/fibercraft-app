@@ -11,11 +11,10 @@ export const _serverControlApi = async <T extends TApiMethods>(method: T, { serv
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        command: method.toLowerCase(),
-        ...(method !== 'getStatuses' &&
-          typeof serverId === 'number' && {
-            serverId,
-          }),
+        command: method,
+        ...(method !== 'getStatuses' && {
+          serverId,
+        }),
       }),
     }).then((res) => res.json())) as TApiReturn<T>;
     request.key = method;
