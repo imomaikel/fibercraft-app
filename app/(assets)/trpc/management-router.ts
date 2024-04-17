@@ -329,8 +329,10 @@ export const managementRouter = router({
         if (!getStatus) continue;
 
         const currentStatus = getStatus.currentStatus;
-        servers[i].lastStatus = currentStatus;
-        servers[i].lastPlayers = 0;
+        if (currentStatus !== servers[i].lastStatus) {
+          servers[i].lastStatus = currentStatus;
+          servers[i].lastPlayers = 0;
+        }
       }
     }
 
