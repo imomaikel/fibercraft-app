@@ -40,6 +40,12 @@ export const NAV_LINKS = [
         description: 'View all panel actions taken by management.',
         permission: 'VIEW_LOGS' as ManagementPermission,
       },
+      {
+        label: 'Advanced Search',
+        path: '/management/advanced-search',
+        description: 'Locate anyone using any means possible.',
+        permission: 'ADVANCED_SEARCH',
+      },
     ],
   },
 ] as const;

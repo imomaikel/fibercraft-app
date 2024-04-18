@@ -12,7 +12,7 @@ const pool = mysql.createPool({
   connectTimeout: 5_000,
 });
 
-const db = async (query: string, values?: string[]) => {
+export const db = async (query: string, values?: string[]) => {
   const result = await new Promise((resolve, reject) => {
     try {
       pool.getConnection(async (err, connection) => {

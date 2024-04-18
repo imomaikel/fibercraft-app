@@ -83,6 +83,7 @@ enum ManagementPermission {
   VIEW_PAIRED_ACCOUNTS @map("View Paired Accounts")
   USE_WIDGETS          @map("Use Widgets")
   VIEW_LOGS            @map("View Logs")
+  ADVANCED_SEARCH      @map("Advanced Search")
 }
 
 model UserPermission {
