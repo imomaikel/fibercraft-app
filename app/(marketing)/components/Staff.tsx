@@ -3,7 +3,7 @@ import { AnimatedTooltip } from '@ui/animated-tooltip';
 
 const Staff = () => {
   return (
-    <MarketingSectionWrapper theme="GRAY" description="See who is in the team" title="Our staff">
+    <MarketingSectionWrapper theme="GRAY" description="See who makes it all happen" title="Meet our team">
       <div className="mx-auto w-fit pr-4">
         <AnimatedTooltip items={TEMP_STAFF.items} />
       </div>
