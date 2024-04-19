@@ -9,6 +9,7 @@ import {
 import { getPermissionFromLabel, translateWidgetEnum, widgetEnums } from '../../(assets)/lib/utils';
 import { serverControlApi } from '../../../bot/plugins/server-control';
 import { ManagementPermissionValidator } from '../validators/custom';
+import { advancedSearch } from '../../(assets)/lib/advanced-search';
 import { TAllNavLabels } from '../../(assets)/lib/types';
 import { ManagementPermission } from '@prisma/client';
 import { managementProcedure, router } from './trpc';
@@ -361,5 +362,32 @@ export const managementRouter = router({
         return { success: true, responses: action.responses };
       }
       return { success: true, statuses: action.statuses };
+    }),
+  advancedSearch: managementProcedure
+    .input(
+      z.object({
+        method: z.enum(['Steam ID', 'Player ID', 'Discord ID', 'Character', 'Tribe']),
+        searchString: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { searchString, method } = input;
+      const { userPermissions } = ctx;
+
+      if (!verifyFromLabel('Advanced Search', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+      if (method === 'Character') {
+        return await advancedSearch('Character', searchString);
+      } else if (method === 'Discord ID') {
+        return await advancedSearch('Discord ID', searchString);
+      } else if (method === 'Player ID') {
+        return await advancedSearch('Player ID', searchString);
+      } else if (method === 'Steam ID') {
+        return await advancedSearch('Steam ID', searchString);
+      } else if (method === 'Tribe') {
+        return await advancedSearch('Tribe', searchString);
+      }
+
+      return null;
     }),
 });

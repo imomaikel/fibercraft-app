@@ -1,12 +1,217 @@
 'use client';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import ManagementPageWrapper from '../components/ManagementPageWrapper';
+import { Tabs, TabsList, TabsTrigger } from '@ui/tabs';
 import ItemWrapper from '../components/ItemWrapper';
+import { relativeDate } from '@assets/lib/utils';
+import { useEventListener } from 'usehooks-ts';
+import DataEntry from './components/DataEntry';
+import { useEffect, useState } from 'react';
+import { secondsToHours } from 'date-fns';
+import { Separator } from '@ui/separator';
+import { motion } from 'framer-motion';
+import { Button } from '@ui/button';
+import { trpc } from '@trpc/index';
+import { Input } from '@ui/input';
+
+const METHODS = ['Steam ID', 'Player ID', 'Discord ID', 'Character', 'Tribe'] as const;
 
 const ManagementAdvancedSearch = () => {
+  const [data, setData] = useState<
+    {
+      characterName?: string | undefined;
+      lastLogin?: number | undefined;
+      map?: string | undefined;
+      playerId?: number | undefined;
+      playTime?: number | undefined;
+      steamId?: string | undefined;
+      tribeId?: number | undefined | null;
+      tribeName?: string | undefined | null;
+      discordId?: string | undefined | null;
+      members?: {
+        characterName?: string | undefined;
+        playerId?: number | undefined;
+        steamId?: string | undefined;
+        tribeName?: string | undefined;
+        playTime?: number | undefined;
+        lastLogin?: number | undefined;
+        map?: string | undefined;
+        tribeId?: number | undefined;
+      }[];
+    }[]
+  >();
+  const [index, setIndex] = useState<{ count: number; active: number } | null>(null);
+  const [method, setMethod] = useState<(typeof METHODS)[number]>('Steam ID');
+  const [searchString, setSearchString] = useState('');
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    const param = searchParams.get('method');
+    if (!param) return;
+
+    const valid = METHODS.some((entry) => entry === param);
+    if (!valid) return;
+
+    setMethod(param as (typeof METHODS)[number]);
+  }, [searchParams]);
+
+  const { mutate: advancedSearch, isLoading } = trpc.management.advancedSearch.useMutation();
+
+  const handleSearch = () => {
+    advancedSearch(
+      { method, searchString },
+      {
+        onSuccess: (searchData) => {
+          if (!searchData) return;
+          setIndex({
+            active: 0,
+            count: searchData.result.length,
+          });
+          setData(searchData.result);
+        },
+      },
+    );
+  };
+
+  useEventListener('keydown', (event) => {
+    if (event.key === 'Enter') handleSearch();
+  });
+
+  const handleMethodChange = (newMethod: string) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('method', newMethod);
+    router.replace(`${pathname}?${params}`);
+
+    setMethod(newMethod as (typeof METHODS)[number]);
+  };
+
   return (
     <ManagementPageWrapper pageLabel="Advanced Search">
-      <ItemWrapper title="Server selection" description="Select the server where all of the widgets will be sent.">
-        <p>todo</p>
+      <ItemWrapper title="Search method" description="Choose a methodology for exploration">
+        <Tabs value={method} onValueChange={handleMethodChange}>
+          <div className="max-w-[90vw] overflow-x-auto rounded-lg pb-1">
+            <TabsList>
+              {METHODS.map((entry) => (
+                <TabsTrigger value={entry} key={entry}>
+                  {entry}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+          <div className="mt-4 flex max-w-sm items-center space-x-2">
+            <Input
+              placeholder="Enter something to search..."
+              type="text"
+              value={searchString}
+              onChange={(e) => setSearchString(e.target.value)}
+              disabled={isLoading}
+            />
+            <Button onClick={handleSearch} disabled={isLoading}>
+              Search
+            </Button>
+          </div>
+          {index && (
+            <div className="my-12 flex max-w-xs flex-col">
+              <span className="text-lg font-semibold">
+                Found {index.count} result{index.count >= 2 && 's'}
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  disabled={index.active - 1 <= -1}
+                  onClick={() =>
+                    setIndex({
+                      active: index.active - 1,
+                      count: index.count,
+                    })
+                  }
+                >
+                  Previous
+                </Button>
+                <Button
+                  disabled={index.active + 1 >= index.count}
+                  onClick={() =>
+                    setIndex({
+                      active: index.active + 1,
+                      count: index.count,
+                    })
+                  }
+                >
+                  Next
+                </Button>
+              </div>
+              <span className="mt-2 text-center font-medium tracking-wide">
+                Page {index.active + 1} / {index.count}
+              </span>
+            </div>
+          )}
+          {data &&
+            data.length >= 1 &&
+            data.map((entry, idx) => {
+              if (!index) return null;
+              if (idx !== index.active) return null;
+              const members = entry.members || [];
+              const playerPlayTime = entry?.playTime || 0;
+              const playerPlayerId = entry.playerId || null;
+
+              return (
+                <motion.div
+                  initial={{
+                    opacity: 0,
+                  }}
+                  animate={{
+                    opacity: 1,
+                  }}
+                  transition={{
+                    duration: 0.5,
+                  }}
+                  viewport={{ once: true }}
+                  key={`data-${idx}`}
+                >
+                  <div className="flex flex-wrap gap-4">
+                    {entry?.characterName && <DataEntry value={entry.characterName} title="Character name" />}
+                    {entry?.lastLogin && (
+                      <DataEntry value={relativeDate(new Date(entry.lastLogin * 1000))} title="Last login" />
+                    )}
+                    {entry?.map && <DataEntry value={entry.map} title="Last map" />}
+                    {playerPlayerId && <DataEntry value={playerPlayerId} title="Player ID" />}
+                    {playerPlayTime >= 1 && (
+                      <DataEntry value={`${secondsToHours(playerPlayTime)} hours`} title="Play time" />
+                    )}
+                    {entry?.steamId && <DataEntry value={entry.steamId} title="Steam ID" />}
+                    {entry?.tribeId && <DataEntry value={entry.tribeId} title="Tribe ID" />}
+                    {entry?.tribeName && <DataEntry value={entry.tribeName} title="Tribe Name" />}
+                    {entry?.discordId && <DataEntry value={entry.discordId} title="Discord ID" />}
+                  </div>
+                  <div className="mt-4 flex flex-col space-y-6">
+                    {members.length >= 1 && (
+                      <p className="text-lg font-semibold">
+                        Member list: <span>({members.length})</span>
+                      </p>
+                    )}
+                    {members.length >= 1 &&
+                      members.map((member, memberIndex) => {
+                        const playTime = member.playTime || 0;
+                        return (
+                          <div key={`${entry.tribeId}${memberIndex}`} className="flex flex-wrap items-center gap-4">
+                            {member?.characterName && <DataEntry value={member.characterName} title="Character name" />}
+                            {member?.playerId && <DataEntry value={member.playerId} title="Player ID" />}
+                            {member?.steamId && <DataEntry value={member.steamId} title="Steam ID" />}
+                            <DataEntry value={`${secondsToHours(playTime)} hours`} title="Play time" />
+                            {member?.lastLogin && (
+                              <DataEntry value={relativeDate(new Date(member.lastLogin * 1000))} title="Last login" />
+                            )}
+                            {member?.map && <DataEntry value={member.map} title="Last map" />}
+                            <Separator />
+                          </div>
+                        );
+                      })}
+                  </div>
+                </motion.div>
+              );
+            })}
+        </Tabs>
       </ItemWrapper>
     </ManagementPageWrapper>
   );

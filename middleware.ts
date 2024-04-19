@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 export default withAuth(
   function middleware(req) {
-    const path = req.url.substring(req.url.indexOf('/management')).split('/').slice(0, 3).join('/');
+    const path = req.url.substring(req.url.indexOf('/management')).split('/').slice(0, 3).join('/').split('?')[0];
     const pathData = getPermissionFromPath(path);
     const userPermissions = req.nextauth.token?.permissions;
 
