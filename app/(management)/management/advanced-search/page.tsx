@@ -2,6 +2,7 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import ManagementPageWrapper from '../components/ManagementPageWrapper';
 import { Tabs, TabsList, TabsTrigger } from '@ui/tabs';
+import CommandEntry from './components/CommandEntry';
 import ItemWrapper from '../components/ItemWrapper';
 import { relativeDate } from '@assets/lib/utils';
 import { useEventListener } from 'usehooks-ts';
@@ -40,6 +41,7 @@ const ManagementAdvancedSearch = () => {
       }[];
     }[]
   >();
+  const [punishmentCommand, setPunishmentCommand] = useState<null | { command: string; error: null | string }>();
   const [index, setIndex] = useState<{ count: number; active: number } | null>(null);
   const [method, setMethod] = useState<(typeof METHODS)[number]>('Steam ID');
   const [searchString, setSearchString] = useState('');
@@ -75,6 +77,25 @@ const ManagementAdvancedSearch = () => {
     );
   };
 
+  const generatePunishmentCommand = () => {
+    if (method !== 'Tribe' || index === null || !data) return;
+    const members = (data[index.active].members || []).filter(
+      (member) => member.characterName && member.characterName.length >= 1,
+    );
+
+    const diffMembers = (data[index.active].members || []).length - members.length;
+
+    const names = members.map((member) => member.characterName).join(' | ');
+    const ids = members.map((member) => member.steamId).join(' | ');
+    const tribeName = data[index.active].tribeName;
+    const command = `/punishment names:${names} ids:${ids} tribename:${tribeName} reason: punishment: warning_type: warnings: proof:`;
+
+    setPunishmentCommand({
+      command,
+      error: diffMembers !== 0 ? `Failed to get character name of ${diffMembers} players!` : null,
+    });
+  };
+
   useEventListener('keydown', (event) => {
     if (event.key === 'Enter') handleSearch();
   });
@@ -85,6 +106,27 @@ const ManagementAdvancedSearch = () => {
     router.replace(`${pathname}?${params}`);
 
     setMethod(newMethod as (typeof METHODS)[number]);
+  };
+
+  const nextPage = () => {
+    if (!index) return;
+    setIndex({
+      active: index.active + 1,
+      count: index.count,
+    });
+    if (punishmentCommand) {
+      setPunishmentCommand(null);
+    }
+  };
+  const previousPage = () => {
+    if (!index) return;
+    setIndex({
+      active: index.active - 1,
+      count: index.count,
+    });
+    if (punishmentCommand) {
+      setPunishmentCommand(null);
+    }
   };
 
   return (
@@ -118,26 +160,10 @@ const ManagementAdvancedSearch = () => {
                 Found {index.count} result{index.count >= 2 && 's'}
               </span>
               <div className="grid grid-cols-2 gap-2">
-                <Button
-                  disabled={index.active - 1 <= -1}
-                  onClick={() =>
-                    setIndex({
-                      active: index.active - 1,
-                      count: index.count,
-                    })
-                  }
-                >
+                <Button disabled={index.active - 1 <= -1} onClick={previousPage}>
                   Previous
                 </Button>
-                <Button
-                  disabled={index.active + 1 >= index.count}
-                  onClick={() =>
-                    setIndex({
-                      active: index.active + 1,
-                      count: index.count,
-                    })
-                  }
-                >
+                <Button disabled={index.active + 1 >= index.count} onClick={nextPage}>
                   Next
                 </Button>
               </div>
@@ -207,6 +233,21 @@ const ManagementAdvancedSearch = () => {
                           </div>
                         );
                       })}
+
+                    {members.length >= 1 && (
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-lg font-semibold">Punishment command</p>
+                        <Button onClick={generatePunishmentCommand} className="max-w-xs">
+                          Generate
+                        </Button>
+                        {punishmentCommand?.error && (
+                          <span className="!my-2 text-lg font-semibold text-destructive">
+                            {punishmentCommand.error}
+                          </span>
+                        )}
+                        {punishmentCommand?.command && <CommandEntry value={punishmentCommand.command} />}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               );
