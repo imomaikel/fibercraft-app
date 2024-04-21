@@ -10,6 +10,7 @@ import { getPermissionFromLabel, translateWidgetEnum, widgetEnums } from '../../
 import { serverControlApi } from '../../../bot/plugins/server-control';
 import { ManagementPermissionValidator } from '../validators/custom';
 import { advancedSearch } from '../../(assets)/lib/advanced-search';
+import { dbGetFiberServers } from '../../../bot/lib/mysql';
 import { TAllNavLabels } from '../../(assets)/lib/types';
 import { ManagementPermission } from '@prisma/client';
 import { managementProcedure, router } from './trpc';
@@ -349,14 +350,35 @@ export const managementRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { userPermissions } = ctx;
+      const { userPermissions, user } = ctx;
       const { method, serverId } = input;
 
-      if (!verifyFromLabel('Server Control', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
+      if (!verifyFromLabel('Server Control', userPermissions) || !user.name) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
 
       const action = await serverControlApi(method, { serverId });
 
       if (action.error || !action.success) return { error: true };
+
+      if (method !== 'getStatuses' && action.success && action.responses) {
+        const servers = await dbGetFiberServers();
+        const serverNames: string[] = [];
+        for (const entry of action.responses) {
+          const serverName = servers.find(({ id }) => id === entry.serverId)?.mapName;
+          if (serverName) {
+            serverNames.push(serverName);
+          }
+        }
+
+        const methodLog = method === 'restart' ? 'Restarted' : method === 'start' ? 'Started' : 'Stopped';
+
+        createPanelLog({
+          content: `${methodLog} servers: ${serverNames.join(', ')}`,
+          userDiscordId: user.discordId,
+          username: user.name,
+        });
+      }
 
       if (action.responses) {
         return { success: true, responses: action.responses };
