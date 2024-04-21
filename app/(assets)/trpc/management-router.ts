@@ -1,4 +1,5 @@
 import {
+  apiGetAvatar,
   apiGetChannels,
   apiGetGuilds,
   apiGetMembers,
@@ -412,4 +413,84 @@ export const managementRouter = router({
 
       return null;
     }),
+  addStaffMember: managementProcedure
+    .input(
+      z.object({
+        designation: z.string().min(1),
+        image: z.string().optional(),
+        name: z.string().min(1),
+        joinedAt: z.date(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { designation, joinedAt, name, image } = input;
+      const { prisma, userPermissions, user } = ctx;
+
+      if (!verifyFromLabel('Website Control', userPermissions) || !user.name) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+
+      if (image && image.length >= 4) {
+        if (!image.startsWith('https://cdn.discordapp.com')) {
+          throw new TRPCError({ code: 'BAD_REQUEST' });
+        }
+      }
+
+      try {
+        await prisma.staff.create({
+          data: {
+            designation,
+            joinedAt,
+            name,
+            image: image || '/logo.webp',
+          },
+        });
+
+        createPanelLog({
+          content: `Added staff member: ${name}`,
+          userDiscordId: user.discordId,
+          username: user.name,
+        });
+
+        return { success: true };
+      } catch {
+        return { error: true };
+      }
+    }),
+  removeStaffMember: managementProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
+    const { prisma, userPermissions, user } = ctx;
+    const { id } = input;
+
+    if (!verifyFromLabel('Website Control', userPermissions) || !user.name) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+
+    try {
+      const member = await prisma.staff.delete({
+        where: {
+          id,
+        },
+      });
+
+      createPanelLog({
+        content: `Removed staff member: ${member.name}`,
+        userDiscordId: user.discordId,
+        username: user.name,
+      });
+
+      return { success: true };
+    } catch {
+      return { error: true };
+    }
+  }),
+  findAvatar: managementProcedure.input(z.object({ username: z.string().min(1) })).mutation(async ({ ctx, input }) => {
+    const { userPermissions } = ctx;
+    const { username } = input;
+
+    if (!verifyFromLabel('Website Control', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+    const avatar = await apiGetAvatar({ username });
+
+    return avatar;
+  }),
 });

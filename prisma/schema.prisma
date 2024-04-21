@@ -84,6 +84,7 @@ enum ManagementPermission {
   USE_WIDGETS          @map("Use Widgets")
   VIEW_LOGS            @map("View Logs")
   ADVANCED_SEARCH      @map("Advanced Search")
+  WEBSITE_CONTROL      @map("Website Control")
 }
 
 model UserPermission {
@@ -130,6 +131,15 @@ model User {
   selectedDiscordId String?
 
   createdAt DateTime @default(now())
+}
+
+model Staff {
+  id Int @id @default(autoincrement())
+
+  designation String   @db.TinyText
+  image       String?
+  name        String   @db.TinyText
+  joinedAt    DateTime
 }
 
 // In-Game plugin

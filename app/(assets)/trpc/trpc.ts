@@ -38,7 +38,14 @@ const checkManagementAccess = middleware(async ({ ctx, next }) => {
   });
 });
 
-// TODO procedures
+const publicProcedureContext = middleware(async ({ next }) => {
+  return next({
+    ctx: {
+      prisma,
+    },
+  });
+});
+
 export const router = t.router;
-export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure.use(publicProcedureContext);
 export const managementProcedure = t.procedure.use(checkManagementAccess);

@@ -1,5 +1,5 @@
-import Staff from './components/Staff';
 import Testimonials from './components/Testimonials';
+import Staff from './components/Staff';
 
 const MarketingPage = () => {
   return (
