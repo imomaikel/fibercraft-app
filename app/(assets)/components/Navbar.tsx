@@ -25,7 +25,9 @@ const Navbar = () => {
                 <div className="md:hidden" role="button" aria-labelledby="open sidebar" onClick={openMobileNav}>
                   <GiHamburgerMenu className="h-8 w-8" />
                 </div>
-                <Link href="/dashboard">
+                <Link
+                  href={pathname.startsWith('/') ? '/shop' : pathname.startsWith('/dashboard') ? '/shop' : '/dashboard'}
+                >
                   <div className="group flex items-center">
                     <Image
                       alt="logo"

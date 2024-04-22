@@ -22,6 +22,7 @@
       "@ui/*": ["./app/(assets)/components/ui/*"],
       "@trpc/*": ["./app/(assets)/trpc/*"],
       "@/*": ["./app/(dashboard)/*"],
+      "@shop/*": ["./app/(shop)/*"],
       "@assets/*": ["./app/(assets)/*"],
       "@management/*": ["./app/(management)/components/*"]
     }
