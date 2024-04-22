@@ -4,6 +4,7 @@ import { db } from '../../../bot/lib/mysql';
 type TMethods = {
   'Steam ID': {
     characterName: string;
+    characterNameFallback: string;
     playerId: number;
     tribeId: number | null;
     tribeName: string | null;
@@ -14,6 +15,7 @@ type TMethods = {
   }[];
   'Player ID': {
     characterName: string;
+    characterNameFallback: string;
     steamId: string;
     tribeId: number | null;
     tribeName: string | null;
@@ -24,6 +26,7 @@ type TMethods = {
   }[];
   'Discord ID': {
     characterName: string;
+    characterNameFallback: string;
     steamId: string;
     tribeId: number | null;
     tribeName: string | null;
@@ -50,6 +53,7 @@ type TMethods = {
       tribeName: string;
       tribeId: number;
       characterName: string;
+      characterNameFallback: string;
       playerId: number;
       steamId: string;
       playTime: number;
@@ -82,6 +86,7 @@ export const advancedSearch = async <T extends TMethod>(
     query = `
       SELECT 
           s.CharacterName AS characterName,
+          n.player_name AS characterNameFallback,
           s.PlayerID AS playerId,
           s.TribeID AS tribeId,
           s.LastMap AS map,
@@ -104,6 +109,7 @@ export const advancedSearch = async <T extends TMethod>(
     query = `
       SELECT 
           s.CharacterName AS characterName,
+          n.player_name AS characterNameFallback,
           n.steam_id AS steamId,
           s.TribeID AS tribeId,
           s.LastMap AS map,
@@ -149,6 +155,7 @@ export const advancedSearch = async <T extends TMethod>(
     query = `
       SELECT 
           s.CharacterName AS characterName,
+          n.player_name AS characterNameFallback,
           n.steam_id AS steamId,
           s.TribeID AS tribeId,
           r.TribeName AS tribeName,
@@ -173,6 +180,7 @@ export const advancedSearch = async <T extends TMethod>(
           n.TribeName AS tribeName,
           n.TribeID AS tribeId,
           s.CharacterName AS characterName,
+          t.player_name AS characterNameFallback,
           s.PlayerID AS playerId,
           s.SteamID AS steamId,
           t.play_time as playTime,

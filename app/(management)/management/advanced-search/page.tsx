@@ -22,6 +22,7 @@ const ManagementAdvancedSearch = () => {
   const [data, setData] = useState<
     {
       characterName?: string | undefined;
+      characterNameFallback?: string | undefined;
       lastLogin?: number | undefined;
       map?: string | undefined;
       playerId?: number | undefined;
@@ -32,6 +33,7 @@ const ManagementAdvancedSearch = () => {
       discordId?: string | undefined | null;
       members?: {
         characterName?: string | undefined;
+        characterNameFallback?: string | undefined;
         playerId?: number | undefined;
         steamId?: string | undefined;
         tribeName?: string | undefined;
@@ -72,12 +74,23 @@ const ManagementAdvancedSearch = () => {
   const generatePunishmentCommand = () => {
     if (method !== 'Tribe' || index === null || !data) return;
     const members = (data[index.active].members || []).filter(
-      (member) => member.characterName && member.characterName.length >= 1,
+      (member) =>
+        (member.characterName && member.characterName.length >= 1) ||
+        (member.characterNameFallback && member.characterNameFallback.length >= 1),
     );
 
     const diffMembers = (data[index.active].members || []).length - members.length;
 
-    const names = members.map((member) => member.characterName).join(' | ');
+    const names = members
+      .map((member) => {
+        if (member.characterName && member.characterName.length >= 1) {
+          return member.characterName;
+        } else if (member.characterNameFallback && member.characterNameFallback.length >= 1) {
+          return member.characterNameFallback;
+        }
+        return '';
+      })
+      .join(' | ');
     const ids = members.map((member) => member.steamId).join(' | ');
     const tribeName = data[index.active].tribeName;
     const command = `/punishment names:${names} ids:${ids} tribename:${tribeName} reason: punishment: warning_type: warnings: proof:`;
@@ -196,6 +209,10 @@ const ManagementAdvancedSearch = () => {
                   >
                     <div className="flex flex-wrap gap-4">
                       {entry?.characterName && <DataEntry value={entry.characterName} title="Character name" />}
+                      {!entry?.characterName && entry?.characterNameFallback && (
+                        <DataEntry value={entry.characterNameFallback} title="Character name" />
+                      )}
+
                       {entry?.lastLogin && (
                         <DataEntry value={relativeDate(new Date(entry.lastLogin * 1000))} title="Last login" />
                       )}
@@ -222,6 +239,9 @@ const ManagementAdvancedSearch = () => {
                             <div key={`${entry.tribeId}${memberIndex}`} className="flex flex-wrap items-center gap-4">
                               {member?.characterName && (
                                 <DataEntry value={member.characterName} title="Character name" />
+                              )}
+                              {!member?.characterName && member?.characterNameFallback && (
+                                <DataEntry value={member.characterNameFallback} title="Character name" />
                               )}
                               {member?.playerId && <DataEntry value={member.playerId} title="Player ID" />}
                               {member?.steamId && <DataEntry value={member.steamId} title="Steam ID" />}
