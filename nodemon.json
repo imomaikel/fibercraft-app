@@ -4,6 +4,7 @@
     "watch": [
         "./server/**/*",
         "./bot/**/*",
-        "./app/(assets)/trpc/*"
+        "./app/(assets)/trpc/*",
+        "./tebex/**/*"
     ]
 }

@@ -1,5 +1,6 @@
+import { hoursToMilliseconds, minutesToMilliseconds } from 'date-fns';
 import { updateTribeScore } from '../plugins/tribe-score';
-import { hoursToMilliseconds } from 'date-fns';
+import { refetchTebexCategories } from '../../tebex';
 import { event } from '../utils/events';
 import prisma from '../lib/prisma';
 
@@ -36,6 +37,11 @@ export default event('ready', async (client) => {
       updateTribeScore();
     }, hoursToMilliseconds(6));
   }
+
+  setInterval(() => {
+    refetchTebexCategories();
+  }, minutesToMilliseconds(2.5));
+  refetchTebexCategories();
 
   console.log(`Discord client started. (${client.user?.username})`);
 });
