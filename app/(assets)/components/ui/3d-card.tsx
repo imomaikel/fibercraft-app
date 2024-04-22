@@ -27,6 +27,14 @@ export const CardContainer = ({
     containerRef.current.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
   };
 
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const { left, top, width, height } = containerRef.current.getBoundingClientRect();
+    const x = (e.touches[0].clientX - left - width / 2) / 25;
+    const y = (e.touches[0].clientY - top - height / 2) / 25;
+    containerRef.current.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+  };
+
   const handleMouseEnter = () => {
     setIsMouseEntered(true);
     if (!containerRef.current) return;
@@ -40,7 +48,7 @@ export const CardContainer = ({
   return (
     <MouseEnterContext.Provider value={[isMouseEntered, setIsMouseEntered]}>
       <div
-        className={cn('flex items-center justify-center', containerClassName)}
+        className={cn('flex select-none items-center justify-center', containerClassName)}
         style={{
           perspective: '1000px',
         }}
@@ -50,6 +58,9 @@ export const CardContainer = ({
           onMouseEnter={handleMouseEnter}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
+          onTouchStart={handleMouseEnter}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleMouseLeave}
           className={cn('relative flex items-center justify-center transition-all duration-200 ease-linear', className)}
           style={{
             transformStyle: 'preserve-3d',
