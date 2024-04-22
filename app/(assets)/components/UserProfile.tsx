@@ -38,7 +38,7 @@ const UserProfile = () => {
             <div>
               <HiChevronDoubleDown className="transition-transform group-data-[state=open]:rotate-180" />
             </div>
-            <div className="max-w-[84px] sm:max-w-[128px]">
+            <div className="max-w-[84px] sm:max-w-[128px] lg:max-w-[200px]">
               <p className="truncate font-semibold">{user.name}</p>
             </div>
             <div>

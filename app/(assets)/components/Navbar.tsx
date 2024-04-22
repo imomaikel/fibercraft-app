@@ -16,7 +16,7 @@ const Navbar = () => {
   const showCartButton = !pathname.startsWith('/management');
 
   return (
-    <div className="fixed left-0 z-50 h-16 w-screen bg-background/40 px-1 backdrop-blur-sm sm:px-4">
+    <div className="fixed left-0 z-50 h-20 w-screen bg-background/50 px-1 backdrop-blur-sm sm:px-4">
       <div className="relative mx-auto flex h-full w-full max-w-screen-2xl items-center border-b">
         <header className="w-full">
           <nav>
@@ -28,18 +28,19 @@ const Navbar = () => {
                 <Link
                   href={pathname.startsWith('/') ? '/shop' : pathname.startsWith('/dashboard') ? '/shop' : '/dashboard'}
                 >
-                  <div className="group flex items-center">
+                  <div className="group relative flex h-16 items-center md:px-4">
                     <Image
                       alt="logo"
                       src="/fiber.webp"
+                      className="hidden md:block"
                       quality={100}
-                      width={54}
-                      height={54}
-                      className="absolute -z-10 -translate-x-2 -translate-y-1 md:-translate-x-4"
+                      width={48}
+                      height={48}
                     />
-                    <h1 className="ml-4 text-xl font-bold antialiased sm:tracking-wide md:ml-2 md:text-3xl">
-                      Fibercraft
+                    <h1 className="text-xl font-extrabold antialiased sm:tracking-wide md:ml-4 md:text-3xl">
+                      FiberCraft
                     </h1>
+                    <div className="absolute inset-0 -z-10 hidden rounded-full bg-gradient-to-l from-muted/50 to-primary/50 opacity-50 md:block" />
                   </div>
                 </Link>
                 <div className="hidden md:block">

@@ -49,7 +49,7 @@ const NavLinks = ({ userPermissions, userSelectedGuildId }: TNavLinks) => {
           return (
             <NavigationMenuItem key={entry.label}>
               <NavigationMenuTrigger>{entry.label}</NavigationMenuTrigger>
-              <NavigationMenuContent className="max-w-[calc(100vw-48px)] md:w-auto">
+              <NavigationMenuContent className="max-h-[80vh] max-w-[calc(100vw-48px)] overflow-y-auto md:w-auto">
                 <ul className="grid w-[400px] max-w-[calc(100vw-48px)] gap-3 p-4 md:w-[500px] md:max-w-none md:grid-cols-2 lg:w-[600px]">
                   {entry.itemsOnHover.map((children) => {
                     if (!children) return null;
