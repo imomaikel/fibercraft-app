@@ -38,7 +38,7 @@ const Product = ({ description, id, name, image, totalPrice }: TProduct) => {
       viewport={{ once: true }}
     >
       <CardContainer>
-        <CardBody className="group/card relative h-auto  w-auto rounded-xl border border-black/[0.1] bg-gray-50 p-6 dark:border-white/[0.2] dark:bg-black dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] sm:w-[30rem]  ">
+        <CardBody className="group/card relative h-auto  w-auto rounded-xl border border-black/[0.1] bg-gray-50 p-6 dark:border-white/[0.2] dark:bg-black/50 dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] sm:w-[30rem]  ">
           <CardItem translateZ="50" className="text-xl font-bold text-neutral-600 dark:text-white">
             {name}
           </CardItem>

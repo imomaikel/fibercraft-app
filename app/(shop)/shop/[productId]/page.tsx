@@ -75,7 +75,7 @@ const ProductPage = () => {
             <h2 className="text-4xl font-bold">{product.name}</h2>
             <p className="text-muted-foreground">{product.category.name} category</p>
           </div>
-          <div className="relative max-h-96 w-auto shrink-0">
+          <div className="relative max-h-96 w-auto shrink-0 md:max-w-[400px] lg:max-w-[500px] xl:max-w-[600px]">
             <Image
               src={product.image || '/empty.png'}
               height="1000"

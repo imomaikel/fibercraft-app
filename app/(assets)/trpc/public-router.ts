@@ -24,8 +24,14 @@ export const publicRouter = router({
 
     return staffWithDays;
   }),
-  getCategories: publicProcedure.query(async () => {
-    const categories = await getTebexCategories();
+  getCategories: publicProcedure.input(z.object({ oneCategoryId: z.number().optional() })).query(async ({ input }) => {
+    const { oneCategoryId } = input;
+
+    let categories = await getTebexCategories();
+
+    if (oneCategoryId) {
+      categories = categories.filter((category) => category.id === oneCategoryId);
+    }
 
     return categories;
   }),
