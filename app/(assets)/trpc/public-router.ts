@@ -46,4 +46,13 @@ export const publicRouter = router({
 
       return { products, categoryList };
     }),
+  getProduct: publicProcedure.input(z.object({ productId: z.number() })).query(async ({ input }) => {
+    const { productId } = input;
+
+    const products = (await getTebexCategories()).map((category) => category.packages).flat();
+
+    const product = products.find((entry) => entry.id === productId);
+
+    return product;
+  }),
 });
