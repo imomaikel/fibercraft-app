@@ -192,6 +192,7 @@ const ManagementAdvancedSearch = () => {
                 const members = entry.members || [];
                 const playerPlayTime = entry?.playTime || 0;
                 const playerPlayerId = entry.playerId || null;
+                const playerTribeId = entry.tribeId || null;
 
                 return (
                   <motion.div
@@ -222,7 +223,7 @@ const ManagementAdvancedSearch = () => {
                         <DataEntry value={`${secondsToHours(playerPlayTime)} hours`} title="Play time" />
                       )}
                       {entry?.steamId && <DataEntry value={entry.steamId} title="Steam ID" />}
-                      {entry?.tribeId && <DataEntry value={entry.tribeId} title="Tribe ID" />}
+                      {playerTribeId && <DataEntry value={playerTribeId} title="Tribe ID" />}
                       {entry?.tribeName && <DataEntry value={entry.tribeName} title="Tribe Name" />}
                       {entry?.discordId && <DataEntry value={entry.discordId} title="Discord ID" />}
                     </div>

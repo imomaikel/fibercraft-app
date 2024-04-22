@@ -45,6 +45,7 @@ type TMethods = {
     lastLogin: number;
     playTime: number;
     characterName: string;
+    characterNameFallback: string;
   }[];
   Tribe: {
     tribeName: string;
@@ -139,7 +140,8 @@ export const advancedSearch = async <T extends TMethod>(
           n.play_time AS playTime,
           r.TribeName AS tribeName,
           t.DiscordId AS discordId,
-          s.CharacterName as characterName
+          s.CharacterName AS characterName,
+          n.player_name AS characterNameFallback
       FROM
           statisticsfiber.personal_stats n
               RIGHT JOIN
@@ -149,8 +151,9 @@ export const advancedSearch = async <T extends TMethod>(
               LEFT JOIN
           kalcrosschatfiber.discordsteamlinks t ON n.steam_id = t.SteamId
       WHERE
-          s.CharacterName LIKE ?;
-    `;
+          s.CharacterName LIKE ?
+              OR n.player_name LIKE ?
+        `;
   } else if (method === 'Discord ID') {
     query = `
       SELECT 
@@ -225,7 +228,13 @@ export const advancedSearch = async <T extends TMethod>(
     return { method, result: tribes as SearchReturn<T> };
   }
 
-  const result = (await db(query, [input])) as SearchReturn<T>;
+  let result;
+
+  if (method === 'Character') {
+    result = (await db(query, [`%${input}%`, `%${input}%`])) as SearchReturn<T>;
+  } else {
+    result = (await db(query, [input])) as SearchReturn<T>;
+  }
 
   if (!result || result.length <= 0) return { method, result: [] };
 
