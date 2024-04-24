@@ -1,20 +1,20 @@
 'use client';
-import ManagementPageWrapper from '../components/ManagementPageWrapper';
 import { ReadonlyURLSearchParams, usePathname, useRouter } from 'next/navigation';
+import ManagementPageWrapper from '../components/ManagementPageWrapper';
 import { Tabs, TabsList, TabsTrigger } from '@ui/tabs';
 import CommandEntry from './components/CommandEntry';
 import ItemWrapper from '../components/ItemWrapper';
 import { relativeDate } from '@assets/lib/utils';
 import { useEventListener } from 'usehooks-ts';
 import DataEntry from './components/DataEntry';
+import { Suspense, useState } from 'react';
 import { secondsToHours } from 'date-fns';
+import SearchParams from './SearchParams';
 import { Separator } from '@ui/separator';
 import { motion } from 'framer-motion';
 import { Button } from '@ui/button';
 import { trpc } from '@trpc/index';
 import { Input } from '@ui/input';
-import { Suspense, useState } from 'react';
-import SearchParams from './SearchParams';
 
 const METHODS = ['Steam ID', 'Player ID', 'Discord ID', 'Character', 'Tribe'] as const;
 
@@ -65,6 +65,7 @@ const ManagementAdvancedSearch = () => {
             active: 0,
             count: searchData.result.length,
           });
+          setPunishmentCommand(null);
           setData(searchData.result);
         },
       },

@@ -1,8 +1,8 @@
 'use client';
 import { HiClipboardCopy } from 'react-icons/hi';
+import { useEffect, useState } from 'react';
 import { Textarea } from '@ui/textarea';
 import { Button } from '@ui/button';
-import { useState } from 'react';
 import { toast } from 'sonner';
 
 type TCommandEntry = {
@@ -10,6 +10,10 @@ type TCommandEntry = {
 };
 const CommandEntry = ({ value }: TCommandEntry) => {
   const [textValue, setTextValue] = useState(value);
+
+  useEffect(() => {
+    setTextValue(value);
+  }, [value]);
 
   const handleCopy = () => {
     window.navigator.clipboard
