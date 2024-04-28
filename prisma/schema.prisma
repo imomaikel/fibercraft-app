@@ -47,6 +47,10 @@ model Guild {
 model Config {
   id Int @id @default(autoincrement())
 
+  lastWipe        DateTime @default(now())
+  nextWipe        DateTime @default(now())
+  wipeDelayInDays Int      @default(14)
+
   rconPassword                 String   @default("")
   tribeScoreUpdateDelayMinutes Int      @default(60)
   tribeScoreLastUpdate         DateTime @default(now())

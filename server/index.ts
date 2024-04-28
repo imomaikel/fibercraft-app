@@ -17,6 +17,7 @@ export type ExpressContext = inferAsyncReturnType<typeof expressContext>;
 
 // Initialize app and server
 (() => {
+  process.env.TZ = 'Europe/Berlin';
   // Build the app
   if (process.env.NEXT_BUILD) {
     app.listen(PORT, async () => {

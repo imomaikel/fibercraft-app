@@ -19,7 +19,6 @@ const Discord = () => {
           src="https://discord.com/widget?id=924291148019793980&theme=dark"
           width="350"
           height="500"
-          allowTransparency={true}
           sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
         ></iframe>
       </div>
