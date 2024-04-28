@@ -18,6 +18,7 @@ export const colors = {
 
 export const extraSigns = {
   zap: '⚡️',
+  bookmark: '📑',
 };
 
 export const COMMANDS = ['aac.ban', 'aac.removeban', 'punishment.advert.rcon', 'kmute', 'kunmute'] as const;

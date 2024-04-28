@@ -20,8 +20,31 @@ model Widget {
   serverControlMessageId    String? @db.TinyText
   serverControlRoleId       String? @db.TinyText
 
+  // Testimonials
+  testimonialsChannelId String? @db.TinyText
+  testimonialsMessageId String? @db.TinyText
+  testimonialsRoleId    String? @db.TinyText
+
   guild   Guild  @relation(fields: [guildId], references: [id])
   guildId String @unique
+}
+
+enum TestimonialStatus {
+  WAITING
+  APPROVED
+  REJECTED
+}
+
+model Testimonial {
+  id Int @id @default(autoincrement())
+
+  messageId       String            @unique
+  discordId       String            @db.TinyText
+  discordUsername String            @db.TinyText
+  content         String            @db.Text
+  status          TestimonialStatus @default(WAITING)
+
+  createdAt DateTime @default(now())
 }
 
 model TribeLog {

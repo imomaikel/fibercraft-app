@@ -1,4 +1,5 @@
 import { hoursToMilliseconds, minutesToMilliseconds } from 'date-fns';
+import { fetchOldReactions } from '../plugins/testimonials';
 import { updateTribeScore } from '../plugins/tribe-score';
 import { refetchTebexCategories } from '../../tebex';
 import { event } from '../utils/events';
@@ -30,6 +31,9 @@ export default event('ready', async (client) => {
       console.log(`Added a new guild: ${guild.name}`);
     } catch {}
   }
+
+  // Fetch old reaction
+  fetchOldReactions();
 
   // TODO
   if (process.env.NODE_ENV === 'production') {
