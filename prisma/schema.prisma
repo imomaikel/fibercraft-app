@@ -51,6 +51,8 @@ model Config {
   nextWipe        DateTime @default(now())
   wipeDelayInDays Int      @default(14)
 
+  serverIp String @default("103.214.68.111")
+
   rconPassword                 String   @default("")
   tribeScoreUpdateDelayMinutes Int      @default(60)
   tribeScoreLastUpdate         DateTime @default(now())
