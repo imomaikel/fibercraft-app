@@ -61,4 +61,19 @@ export const publicRouter = router({
 
     return product;
   }),
+  getTestimonials: publicProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const testimonials = await prisma.testimonial.findMany({
+      where: {
+        status: 'APPROVED',
+      },
+      select: {
+        content: true,
+        discordUsername: true,
+      },
+    });
+
+    return testimonials;
+  }),
 });

@@ -11,9 +11,8 @@ export const InfiniteMovingCards = ({
   className,
 }: {
   items: {
-    quote: string;
-    name: string;
-    title: string;
+    content: string;
+    discordUsername: string;
   }[];
   direction?: 'left' | 'right';
   speed?: 'fast' | 'normal' | 'slow';
@@ -88,18 +87,17 @@ export const InfiniteMovingCards = ({
             style={{
               background: 'linear-gradient(180deg, var(--slate-800), var(--slate-900)',
             }}
-            key={item.name}
+            key={item.discordUsername}
           >
             <blockquote>
               <div
                 aria-hidden="true"
                 className="user-select-none -z-1 pointer-events-none absolute -left-0.5 -top-0.5 h-[calc(100%_+_4px)] w-[calc(100%_+_4px)]"
               ></div>
-              <span className=" relative z-20 text-sm font-normal leading-[1.6] text-gray-100">{item.quote}</span>
+              <span className="relative z-20 text-sm font-normal leading-[1.6] text-gray-100">{item.content}</span>
               <div className="relative z-20 mt-6 flex flex-row items-center">
                 <span className="flex flex-col gap-1">
-                  <span className=" text-sm font-normal leading-[1.6] text-gray-400">{item.name}</span>
-                  <span className=" text-sm font-normal leading-[1.6] text-gray-400">{item.title}</span>
+                  <span className=" text-sm font-normal leading-[1.6] text-gray-400">{item.discordUsername}</span>
                 </span>
               </div>
             </blockquote>

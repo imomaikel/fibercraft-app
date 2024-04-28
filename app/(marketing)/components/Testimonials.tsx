@@ -2,16 +2,25 @@
 import { InfiniteMovingCards } from '@ui/infinite-moving-cards';
 import MarketingSectionWrapper from './MarketingSectionWrapper';
 import { IoMdSpeedometer } from 'react-icons/io';
+import { trpc } from '@trpc/index';
 import { useState } from 'react';
 
 const Testimonials = () => {
   const [speed, setSpeed] = useState<'slow' | 'normal' | 'fast'>('slow');
+
+  const { data: testimonials, isLoading } = trpc.publicRouter.getTestimonials.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
 
   const onSpeedChange = () => {
     if (speed === 'slow') return setSpeed('normal');
     if (speed === 'normal') return setSpeed('fast');
     setSpeed('slow');
   };
+
+  // TODO Skeleton
+  if (isLoading) return null;
+  if (!testimonials || testimonials.length === 0) return null;
 
   return (
     <MarketingSectionWrapper
@@ -20,8 +29,8 @@ const Testimonials = () => {
       title="Testimonials"
       className="!mb-96"
     >
-      <div className="absolute left-1/2 right-1/2 h-full w-screen -translate-x-1/2">
-        <div className="relative flex h-fit w-full flex-col items-center justify-center overflow-hidden bg-background antialiased">
+      <div className="absolute left-1/2 right-1/2 w-screen -translate-x-1/2">
+        <div className="relative flex h-fit w-full flex-col items-center justify-center bg-background antialiased">
           <InfiniteMovingCards items={testimonials} direction="right" speed={speed} />
         </div>
         <div className="mx-auto flex max-w-screen-2xl justify-center">
@@ -44,35 +53,3 @@ const Testimonials = () => {
 };
 
 export default Testimonials;
-
-const testimonials = [
-  {
-    quote:
-      'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair.',
-    name: 'Charles Dickens',
-    title: 'A Tale of Two Cities',
-  },
-  {
-    quote:
-      'To be, or not to be, that is the question: Whether tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take Arms against a Sea of troubles, And by opposing end them: to die, to sleep.',
-    name: 'William Shakespeare',
-    title: 'Hamlet',
-  },
-  {
-    quote: 'All that we see or seem is but a dream within a dream.',
-    name: 'Edgar Allan Poe',
-    title: 'A Dream Within a Dream',
-  },
-  {
-    quote:
-      'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.',
-    name: 'Jane Austen',
-    title: 'Pride and Prejudice',
-  },
-  {
-    quote:
-      'Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.',
-    name: 'Herman Melville',
-    title: 'Moby-Dick',
-  },
-];
