@@ -1,5 +1,4 @@
 'use server';
-import { dbGetFiberServers } from '../../bot/lib/mysql';
 import Testimonials from './components/Testimonials';
 import Leaderboard from './components/Leaderboard';
 import WipeTime from './components/WipeTime';
@@ -9,16 +8,7 @@ import Discord from './components/Discord';
 import Staff from './components/Staff';
 
 const MarketingPage = async () => {
-  const [config, dbServers] = await Promise.all([prisma.config.findFirst(), dbGetFiberServers()]);
-
-  const servers = dbServers
-    ? dbServers.map((server) => ({
-        mapName: server.mapName,
-        lastStatus: server.lastStatus as 'online' | 'offline',
-        lastPlayers: server.lastPlayers,
-        queryPort: server.queryPort,
-      }))
-    : [];
+  const config = await prisma.config.findFirst();
 
   if (!config) return 'Database error';
 
@@ -30,7 +20,7 @@ const MarketingPage = async () => {
         <WipeTime lastWipe={lastWipe} nextWipe={nextWipe} wipeDelayInDays={wipeDelayInDays} />
       </section>
       <section>
-        <Servers servers={servers} ipAddress={config.serverIp} />
+        <Servers ipAddress={config.serverIp} />
       </section>
       <section>
         <Leaderboard />

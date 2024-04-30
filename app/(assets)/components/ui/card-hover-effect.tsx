@@ -7,7 +7,7 @@ export const HoverEffect = ({
   className,
 }: {
   items: {
-    title: string;
+    title: React.ReactNode;
     description: React.ReactNode;
     extraContent?: React.ReactNode;
   }[];
@@ -70,7 +70,7 @@ export const CardTitle = ({ className, children }: { className?: string; childre
   return <h4 className={cn('mt-4 font-bold tracking-wide text-zinc-100', className)}>{children}</h4>;
 };
 export const CardContent = ({ children }: { children: React.ReactNode }) => {
-  return <div className={cn('mt-8 text-zinc-400')}>{children}</div>;
+  return <div className={cn('mt-4 text-zinc-400')}>{children}</div>;
 };
 
 // https://ui.aceternity.com/components/card-hover-effect

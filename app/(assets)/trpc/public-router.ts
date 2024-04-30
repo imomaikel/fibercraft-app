@@ -1,4 +1,4 @@
-import { getTopTribeScore } from '../../../bot/lib/mysql';
+import { dbGetFiberServers, getTopTribeScore } from '../../../bot/lib/mysql';
 import { getTebexCategories } from '../../../tebex';
 import { publicProcedure, router } from './trpc';
 import { millisecondsToHours } from 'date-fns';
@@ -68,6 +68,22 @@ export const publicRouter = router({
     const tribes = data.map(({ tribeId, tribeName, score, position }) => ({ tribeId, tribeName, score, position }));
 
     return tribes;
+  }),
+  getServers: publicProcedure.query(async () => {
+    const dbServers = await dbGetFiberServers();
+
+    const servers = (
+      dbServers
+        ? dbServers.map((server) => ({
+            mapName: server.mapName,
+            lastStatus: server.lastStatus as 'online' | 'offline',
+            lastPlayers: server.lastPlayers,
+            queryPort: server.queryPort,
+          }))
+        : []
+    ).sort((a, b) => b.lastPlayers - a.lastPlayers);
+
+    return servers;
   }),
   getTestimonials: publicProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
