@@ -12,7 +12,7 @@ const Staff = () => {
   if (isLoading || !staff || !staff.length) return null;
 
   return (
-    <MarketingSectionWrapper theme="GRAY" description="See who makes it all happen" title="Meet our team">
+    <MarketingSectionWrapper theme="DARK" description="See who makes it all happen" title="Meet our team">
       <div className="mx-auto w-fit pr-4">
         <AnimatedTooltip items={staff} />
       </div>

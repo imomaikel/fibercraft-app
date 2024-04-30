@@ -1,3 +1,4 @@
+import MarketingSectionWrapper from './MarketingSectionWrapper';
 import { Button } from '@ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -5,24 +6,35 @@ import React from 'react';
 
 const Discord = () => {
   return (
-    <div className="flex items-center justify-center space-x-6">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold">Our Discord</h1>
-        <p className="text-muted-foreground">A quick way to join the FiberCraft community.</p>
-        <Image src="/dino-group.webp" width={600} height={600} alt="dino group" className="my-2 h-96 w-96 rounded-lg" />
-        <Button className="mt-2 w-full" asChild>
-          <Link href="https://discord.gg/friendly-fibercraft">Join</Link>
-        </Button>
+    <MarketingSectionWrapper
+      title="Our Discord"
+      description="A quick way to join the FiberCraft community."
+      theme="DARK"
+    >
+      <div className="flex flex-col items-center justify-center space-y-6 md:flex-row md:space-x-6 md:space-y-0">
+        <div className="text-center">
+          <h3 className="text-2xl font-medium tracking-wide">Let&apos;s talk</h3>
+          <Image
+            src="/dino-group.webp"
+            width={384}
+            height={384}
+            alt="dino group"
+            className="my-2 h-96 w-96 rounded-lg"
+          />
+          <Button className="mt-2 w-full" asChild>
+            <Link href="https://discord.gg/friendly-fibercraft">Join</Link>
+          </Button>
+        </div>
+        <div>
+          <iframe
+            src="https://discord.com/widget?id=924291148019793980&theme=dark"
+            width="350"
+            height="500"
+            sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+          ></iframe>
+        </div>
       </div>
-      <div>
-        <iframe
-          src="https://discord.com/widget?id=924291148019793980&theme=dark"
-          width="350"
-          height="500"
-          sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-        ></iframe>
-      </div>
-    </div>
+    </MarketingSectionWrapper>
   );
 };
 
