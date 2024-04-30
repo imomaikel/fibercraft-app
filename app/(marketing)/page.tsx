@@ -1,53 +1,24 @@
 'use server';
 import { dbGetFiberServers } from '../../bot/lib/mysql';
 import Testimonials from './components/Testimonials';
+import Leaderboard from './components/Leaderboard';
 import WipeTime from './components/WipeTime';
 import prisma from '../(assets)/lib/prisma';
 import Servers from './components/Servers';
 import Discord from './components/Discord';
 import Staff from './components/Staff';
 
-const TEMP_SERVERS: {
-  mapName: string;
-  lastStatus: string;
-  lastPlayers: number;
-  queryPort: number;
-}[] = [
-  {
-    lastPlayers: 2,
-    lastStatus: 'online',
-    mapName: 'The Island',
-    queryPort: 1,
-  },
-  {
-    lastPlayers: 33,
-    lastStatus: 'online',
-    mapName: 'The Center',
-    queryPort: 2,
-  },
-  {
-    lastPlayers: 44,
-    mapName: 'Ragnarok',
-    lastStatus: 'online',
-    queryPort: 3,
-  },
-  {
-    lastPlayers: 12,
-    lastStatus: 'online',
-    mapName: 'Genesis',
-    queryPort: 4,
-  },
-  {
-    lastPlayers: 0,
-    lastStatus: 'offline',
-    mapName: 'Test',
-    queryPort: 5,
-  },
-];
-
 const MarketingPage = async () => {
-  const [config] = await Promise.all([prisma.config.findFirst()]);
-  // const [config, servers] = await Promise.all([prisma.config.findFirst(), dbGetFiberServers()]);
+  const [config, dbServers] = await Promise.all([prisma.config.findFirst(), dbGetFiberServers()]);
+
+  const servers = dbServers
+    ? dbServers.map((server) => ({
+        mapName: server.mapName,
+        lastStatus: server.lastStatus as 'online' | 'offline',
+        lastPlayers: server.lastPlayers,
+        queryPort: server.queryPort,
+      }))
+    : [];
 
   if (!config) return 'Database error';
 
@@ -59,13 +30,15 @@ const MarketingPage = async () => {
         <WipeTime lastWipe={lastWipe} nextWipe={nextWipe} wipeDelayInDays={wipeDelayInDays} />
       </section>
       <section>
-        <Servers servers={TEMP_SERVERS} ipAddress={config.serverIp} />
+        <Servers servers={servers} ipAddress={config.serverIp} />
+      </section>
+      <section>
+        <Leaderboard />
       </section>
       <section>
         <Discord />
       </section>
       <section>
-        {/* TODO Fix overflow */}
         <Testimonials />
       </section>
       <section>

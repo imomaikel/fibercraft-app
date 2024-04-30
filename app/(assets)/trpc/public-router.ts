@@ -1,3 +1,4 @@
+import { getTopTribeScore } from '../../../bot/lib/mysql';
 import { getTebexCategories } from '../../../tebex';
 import { publicProcedure, router } from './trpc';
 import { millisecondsToHours } from 'date-fns';
@@ -60,6 +61,13 @@ export const publicRouter = router({
     const product = products.find((entry) => entry.id === productId);
 
     return product;
+  }),
+  getTopTribeScore: publicProcedure.query(async () => {
+    const data = await getTopTribeScore();
+
+    const tribes = data.map(({ tribeId, tribeName, score, position }) => ({ tribeId, tribeName, score, position }));
+
+    return tribes;
   }),
   getTestimonials: publicProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;

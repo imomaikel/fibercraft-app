@@ -12,15 +12,17 @@ const pool = mysql.createPool({
   connectTimeout: 5_000,
 });
 
-export const db = async (query: string, values?: string[]) => {
+export const db = async (query: string, values?: string[], timeout?: number) => {
   const result = await new Promise((resolve, reject) => {
     try {
       pool.getConnection(async (err, connection) => {
         if (err) {
+          if (typeof timeout === 'number' && timeout <= 0) {
+            return reject(null);
+          }
           console.log('DB Pool awaiting');
           setTimeout(() => {
-            db(query, values);
-            return;
+            return db(query, values, timeout ? timeout - 2000 : undefined);
           }, 2000);
         } else {
           try {
@@ -93,16 +95,18 @@ export const dbGetPairedAccounts = async (searchText: string) => {
   return results;
 };
 
-export const dbGetFiberServers = async () => {
-  const query = await db('SELECT * from webapp.server WHERE serverName LIKE "%Fiber%";');
+export const dbGetFiberServers = async (timeout: number = 2000) => {
+  const query = await db('SELECT * from webapp.server WHERE serverName LIKE "%Fiber%";', undefined, timeout);
 
   return query ? (query as TDbGetFiberServers) : [];
 };
 
-export const getTopTribeScore = async () => {
+export const getTopTribeScore = async (timeout: number = 2000) => {
   const query = await db(
     // eslint-disable-next-line quotes
     `SELECT * FROM fibercraft.tribescore WHERE TribeName NOT LIKE '' ORDER BY score DESC LIMIT 10;`,
+    undefined,
+    timeout,
   );
 
   return query ? (query as TDbGetTopTribeScore) : [];
