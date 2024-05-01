@@ -5,36 +5,39 @@
 std::vector<std::string> floatingTextDisabledSteamIds;
 std::vector<std::string> tribeScoreDisabledSteamIds;
 
+bool SendWebhookMessage(std::string url, std::string playername, std::string steamid, bool Enabled) {
+    std::string enable;
+    if (Enabled) {
+        enable = "true";
+    } else {
+        enable = "false";
+    }
+    std::string execute = "powershell.exe -Command \"$url = '" + url + "'; $body = '{\\\"content\\\": null,\\\"embeds\\\": [{\\\"title\\\": \\\"DTA Logger\\\",\\\"description\\\": \\\"\\\",\\\"color\\\": 5814783,\\\"fields\\\": [{\\\"name\\\": \\\"Playername\\\",\\\"value\\\": \\\"" + playername + "\\\", \\\"inline\\\": true},{\\\"name\\\": \\\"SteamID\\\",\\\"value\\\": \\\"" + steamid + "\\\", \\\"inline\\\": true},{\\\"name\\\": \\\"Enabled?\\\",\\\"value\\\": \\\"" + enable + "\\\", \\\"inline\\\": true}]}],\\\"attachments\\\": []}'; Invoke-RestMethod -Uri $url -Method Post -ContentType \\\"application/json\\\" -Body $body\"";
+    try {
+        system((execute).c_str());
+        return true;
+    } catch (std::exception& error) {
+        return false;
+    }
+}
+
 namespace TribeScore::Commands {
 
     void DisableAdminTribeScore(AShooterPlayerController* playerController, FString* message, bool /*unused*/) {
         try {
-            auto configuration = TribeScore::config["Config"];
-            auto adminSteamIds = configuration["AdminIDS"];
-
-            uint64 playerSteamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
-            std::string textSteamId = std::to_string(playerSteamId);
-
-            bool found = false;
-            if (adminSteamIds != "") {
-                for (const auto& id : adminSteamIds) {
-                    if (id == textSteamId) {
-                        found = true;
-                        break;
-                    }
-                }
-            }
-
+            bool found = playerController->bIsAdmin().Get();
+           
             if (found == false) {
                 ArkApi::GetApiUtils().SendChatMessage(playerController, "DISABLE TRIBESCORE" , "You are NOT allowed to use this command!");
                 return;
             }
-
+            std::string textSteamId = std::to_string(ArkApi::GetApiUtils().GetSteamIdFromController(playerController));
+            FString Name = ArkApi::GetApiUtils().GetCharacterName(playerController);
             auto it = std::find(tribeScoreDisabledSteamIds.begin(), tribeScoreDisabledSteamIds.end(), textSteamId);
             const bool isDisabled = it != tribeScoreDisabledSteamIds.end();
 
             ArkApi::GetApiUtils().SendChatMessage(playerController, "Getting Tribescore is ", isDisabled ? "ENABLED" : "DISABLED");
-
+            SendWebhookMessage(TribeScore::config["Config"]["Webhook"], Name.ToString(), textSteamId, isDisabled);
             if (isDisabled) {
                 tribeScoreDisabledSteamIds.erase(it);
                 TribeScore::database->EnableAdminTribeScore(textSteamId);
@@ -49,6 +52,7 @@ namespace TribeScore::Commands {
     }
 
     void ToggleFloatingText(AShooterPlayerController* playerController, FString* message, bool /*unused*/) {
+        
         uint64 steamId = ArkApi::GetApiUtils().GetSteamIdFromController(playerController);
         
         std::string textSteamId = std::to_string(steamId);
@@ -94,7 +98,7 @@ namespace TribeScore::Commands {
     bool IsAdminTribeScoreEnabled(std::string steamId) {
         auto it = std::find(tribeScoreDisabledSteamIds.begin(), tribeScoreDisabledSteamIds.end(), steamId);
         const bool isDisabled = it != tribeScoreDisabledSteamIds.end();
-
+        
         return isDisabled;
     }
 
