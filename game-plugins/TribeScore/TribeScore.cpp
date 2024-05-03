@@ -40,9 +40,8 @@ void Load() {
     TribeScore::Commands::Load();
 }
 
-
 // Unload plugin
-void Unload() {
+void Unload(){
     // Unload hooks
     TribeScore::Hooks::Unload();
 
