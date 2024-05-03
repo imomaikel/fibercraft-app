@@ -5,7 +5,7 @@ import { formatRelative } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import { TAllNavLabels } from './types';
 import { NAV_LINKS } from './constans';
-import nl from 'date-fns/locale/nl';
+import en from 'date-fns/locale/en-GB';
 import { Maybe } from '@trpc/server';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -84,7 +84,7 @@ const formatRelativeLocale = {
 type relative = keyof typeof formatRelativeLocale;
 export const relativeDate = (date: Date, baseDate?: Date) => {
   const relative = formatRelative(date, baseDate ?? new Date(), {
-    locale: { ...nl, formatRelative: (token: relative) => formatRelativeLocale[token] },
+    locale: { ...en, formatRelative: (token: relative) => formatRelativeLocale[token] },
   });
   return relative;
 };
