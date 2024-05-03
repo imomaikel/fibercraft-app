@@ -59,7 +59,7 @@ const Leaderboard = () => {
                             : '',
                     )}
                   >
-                    <TableCell className="w-[100px]">{tribe.position}</TableCell>
+                    <TableCell className="w-[100px]">{idx + 1}</TableCell>
                     <TableCell>{tribe.tribeName}</TableCell>
                     <TableCell>{tribe.score.toLocaleString('de-DE')}</TableCell>
                     <TableCell className="w-0 p-0">

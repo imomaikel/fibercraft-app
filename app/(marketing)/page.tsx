@@ -1,4 +1,5 @@
 'use server';
+import StorePreview from './components/StorePreview';
 import Testimonials from './components/Testimonials';
 import Leaderboard from './components/Leaderboard';
 import WipeTime from './components/WipeTime';
@@ -21,6 +22,9 @@ const MarketingPage = async () => {
       </section>
       <section>
         <Servers ipAddress={config.serverIp} />
+      </section>
+      <section>
+        <StorePreview />
       </section>
       <section>
         <Leaderboard />

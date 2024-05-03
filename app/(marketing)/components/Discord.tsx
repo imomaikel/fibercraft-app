@@ -9,7 +9,7 @@ const Discord = () => {
     <MarketingSectionWrapper
       title="Our Discord"
       description="A quick way to join the FiberCraft community."
-      theme="DARK"
+      theme="GRAY"
     >
       <div className="flex flex-col items-center justify-center space-y-6 md:flex-row md:space-x-6 md:space-y-0">
         <div className="text-center">

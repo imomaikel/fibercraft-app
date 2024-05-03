@@ -2,6 +2,7 @@ import { dbGetFiberServers, getTopTribeScore } from '../../../bot/lib/mysql';
 import { getTebexCategories } from '../../../tebex';
 import { publicProcedure, router } from './trpc';
 import { millisecondsToHours } from 'date-fns';
+import { Package } from 'tebex_headless';
 import { z } from 'zod';
 
 export const publicRouter = router({
@@ -77,7 +78,7 @@ export const publicRouter = router({
         ? dbServers.map((server) => ({
             mapName: server.mapName,
             lastStatus: server.lastStatus as 'online' | 'offline',
-            lastPlayers: server.lastPlayers,
+            lastPlayers: server.lastStatus === 'online' ? server.lastPlayers : 0,
             queryPort: server.queryPort,
           }))
         : []
@@ -99,5 +100,22 @@ export const publicRouter = router({
     });
 
     return testimonials;
+  }),
+  getRandomProducts: publicProcedure.query(async () => {
+    const products = (await getTebexCategories()).map((category) => category.packages).flat();
+
+    const randomProducts: Package[] = [];
+    const ids: number[] = [];
+
+    if (products.length >= 5) {
+      while (randomProducts.length < 5) {
+        const rnd = products[Math.floor(Math.random() * products.length)];
+        if (ids.includes(rnd.id)) continue;
+        ids.push(rnd.id);
+        randomProducts.push(rnd);
+      }
+    }
+
+    return randomProducts;
   }),
 });
