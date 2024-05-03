@@ -37,8 +37,8 @@ const Product = ({ description, id, name, image, totalPrice }: TProduct) => {
       }}
       viewport={{ once: true }}
     >
-      <CardContainer>
-        <CardBody className="group/card relative h-auto  w-auto rounded-xl border border-black/[0.1] bg-gray-50 p-6 dark:border-white/[0.2] dark:bg-black/50 dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] sm:w-[30rem]  ">
+      <CardContainer containerClassName="h-full" className="h-full">
+        <CardBody className="group/card relative flex h-full w-auto flex-col justify-around rounded-xl border border-black/[0.1] bg-gray-50 p-6 dark:border-white/[0.2] dark:bg-black/50 dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] sm:w-[30rem]">
           <CardItem translateZ="50" className="text-xl font-bold text-neutral-600 dark:text-white">
             {name}
           </CardItem>
@@ -54,17 +54,17 @@ const Product = ({ description, id, name, image, totalPrice }: TProduct) => {
               alt={`${name} image`}
             />
           </CardItem>
-          <div className="mt-20 flex items-center justify-between">
+          <div className="mt-8 flex items-center justify-between space-x-6">
             <CardItem translateZ={20} as={Link} href={`/shop/${id}`}>
               <Button variant="ghost">
-                See the full product <MdKeyboardArrowRight className="h-6 w-6" />
+                See the full product <MdKeyboardArrowRight className="h-8 w-8" />
               </Button>
             </CardItem>
-            <CardItem translateZ={20} as="p" className="font-semibold">
+            <CardItem translateZ={20} as="p" className="text-xl font-semibold">
               {formatPrice(totalPrice)}
             </CardItem>
             <CardItem translateZ={20} as="button">
-              <Button className="px-6">Add to Cart</Button>
+              <Button>Add to Cart</Button>
             </CardItem>
           </div>
         </CardBody>

@@ -34,9 +34,14 @@ const Products = () => {
   return (
     <div>
       <Suspense>
-        {categoryList.length >= 1 && (
-          <ProductFilters categoryList={categoryList} setCategoryList={(items) => setCategoryList(items)} />
-        )}
+        <div className="mb-6">
+          <span className="font-semibold">Product Filters</span>
+          <div className="mt-1">
+            {categoryList.length >= 1 && (
+              <ProductFilters categoryList={categoryList} setCategoryList={(items) => setCategoryList(items)} />
+            )}
+          </div>
+        </div>
       </Suspense>
 
       <motion.div

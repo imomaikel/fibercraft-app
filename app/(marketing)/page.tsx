@@ -20,7 +20,7 @@ const MarketingPage = async () => {
       <section>
         <WipeTime lastWipe={lastWipe} nextWipe={nextWipe} wipeDelayInDays={wipeDelayInDays} />
       </section>
-      <section>
+      <section id="join-links">
         <Servers ipAddress={config.serverIp} />
       </section>
       <section>
@@ -29,7 +29,7 @@ const MarketingPage = async () => {
       <section>
         <Leaderboard />
       </section>
-      <section>
+      <section id="discord">
         <Discord />
       </section>
       <section>
