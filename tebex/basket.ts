@@ -1,5 +1,13 @@
 'use server';
-import { CreateBasket, GetBasket, GetBasketAuthUrl, SetPrivateKey, SetWebstoreIdentifier } from 'tebex_headless';
+import {
+  AuthUrl,
+  CreateBasket,
+  GetBasket,
+  GetBasketAuthUrl,
+  SetPrivateKey,
+  SetWebstoreIdentifier,
+} from 'tebex_headless';
+import prisma from '../app/(assets)/lib/prisma';
 
 type TGetBasket = {
   basketIdent: string | null;
@@ -14,6 +22,15 @@ export const _getBasket = async ({ basketIdent, ipAddress }: TGetBasket) => {
     if (!basket || !basket.ident) {
       const { authUrl, newBasket } = await createBasket(ipAddress);
       return { authUrl, newBasket };
+    }
+
+    if (!basket.links.checkout && basketIdent) {
+      const user = await prisma.user.findUnique({
+        where: { basketIdent },
+      });
+      if (user) {
+        return { authUrl: [{ name: 'Auth Url', url: user.basketAuthUrl }] as AuthUrl[] };
+      }
     }
 
     return { basket };

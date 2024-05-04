@@ -1,5 +1,5 @@
 import { dbGetFiberServers, getTopTribeScore } from '../../../bot/lib/mysql';
-import { getTebexCategories } from '../../../tebex';
+import { getTebexCategories, getTebexProducts } from '../../../tebex';
 import { publicProcedure, router } from './trpc';
 import { millisecondsToHours } from 'date-fns';
 import { Package } from 'tebex_headless';
@@ -42,17 +42,22 @@ export const publicRouter = router({
     .query(async ({ input }) => {
       const { categoryFilter } = input;
 
-      let categories = await getTebexCategories();
+      if (categoryFilter) {
+        let categories = await getTebexCategories();
 
-      const categoryList = categories.map((entry) => entry.name);
+        const categoryList = categories.map((entry) => entry.name);
 
-      if (categoryFilter && categoryFilter.length >= 1) {
-        categories = categories.filter((category) => categoryFilter.includes(category.name));
+        if (categoryFilter && categoryFilter.length >= 1) {
+          categories = categories.filter((category) => categoryFilter.includes(category.name));
+        }
+
+        const products = categories.map((entry) => entry.packages).flat();
+
+        return { products, categoryList };
+      } else {
+        const products = await getTebexProducts();
+        return { products, categoryList: [] };
       }
-
-      const products = categories.map((entry) => entry.packages).flat();
-
-      return { products, categoryList };
     }),
   getProduct: publicProcedure.input(z.object({ productId: z.number() })).query(async ({ input }) => {
     const { productId } = input;

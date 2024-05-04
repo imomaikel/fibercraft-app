@@ -27,8 +27,15 @@ const authOptions: NextAuthOptions = {
         include: { permissions: true },
       });
 
+      session.user.basketIdent = getUserData?.basketIdent || null;
+      session.user.basketAuthUrl = getUserData?.basketAuthUrl || null;
+
       if (getUserData?.discordId) {
         session.user.discordId = getUserData.discordId;
+      }
+
+      if (!session.user.id) {
+        session.user.id = token.uid;
       }
 
       if (!getUserData?.discordId) {

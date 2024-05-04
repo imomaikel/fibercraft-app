@@ -1,3 +1,4 @@
+import AuthorizeDialog from '@assets/components/cart/AuthorizeDialog';
 import SessionWrapper from '@assets/components/SessionWrapper';
 import MobileNavbar from '@assets/components/MobileNavbar';
 import { Provider } from '@assets/trpc/Provider';
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="px-2 md:px-6">{children}</div>
             </div>
             <Footer />
+            <AuthorizeDialog />
           </SessionWrapper>
         </Provider>
       </body>

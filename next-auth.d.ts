@@ -4,6 +4,8 @@ import { DefaultSession } from 'next-auth';
 interface NextAuthUser {
   id?: string;
   discordId?: string;
+  basketIdent?: string | null;
+  basketAuthUrl?: string | null;
   selectedDiscordId?: string;
   permissions?: ManagementPermission[];
 }

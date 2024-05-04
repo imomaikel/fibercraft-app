@@ -156,6 +156,8 @@ model User {
   email         String?          @unique
   emailVerified DateTime?
   permissions   UserPermission[]
+  basketIdent   String?          @unique
+  basketAuthUrl String?          @db.Text
 
   selectedDiscordId String?
 

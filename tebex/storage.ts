@@ -1,7 +1,8 @@
 'use server';
-import { SetWebstoreIdentifier, GetCategories, Category } from 'tebex_headless';
+import { SetWebstoreIdentifier, GetCategories, Category, Package } from 'tebex_headless';
 
 let tebexCategories: Category[] = [];
+let tebexProducts: Package[] = [];
 
 const _refetchTebexCategories = async () => {
   SetWebstoreIdentifier(process.env.TEBEX_PUBLIC_TOKEN!);
@@ -10,17 +11,19 @@ const _refetchTebexCategories = async () => {
     const categories = (await GetCategories(true)).filter((category) => category.packages.length >= 1);
     tebexCategories = categories;
 
-    return tebexCategories;
+    const products = categories.map((entry) => entry.packages).flat();
+    tebexProducts = products;
+
+    return { tebexCategories, tebexProducts };
   } catch {
-    return [];
+    return null;
   }
 };
 
 const _getTebexCategories = async () => {
   try {
     if (tebexCategories.length <= 0) {
-      const categories = await _refetchTebexCategories();
-      return categories;
+      await _refetchTebexCategories();
     }
 
     return tebexCategories;
@@ -30,4 +33,16 @@ const _getTebexCategories = async () => {
   }
 };
 
-export { _getTebexCategories, _refetchTebexCategories };
+const _getTebexProducts = async () => {
+  try {
+    if (tebexProducts.length <= 0) {
+      await _refetchTebexCategories();
+    }
+    return tebexProducts;
+  } catch (err) {
+    console.log('TEBEX: Failed to get products', err);
+    return [];
+  }
+};
+
+export { _getTebexCategories, _refetchTebexCategories, _getTebexProducts };
