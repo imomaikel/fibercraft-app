@@ -3,9 +3,9 @@ import { useMobileNavbar } from '@assets/hooks/useMobileNavbar';
 import NavbarLinksAccess from './NavbarLinksAccess';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { usePathname } from 'next/navigation';
+import CartButton from './cart/CartButton';
 import { Separator } from '@ui/separator';
 import UserProfile from './UserProfile';
-import CartButton from './CartButton';
 import Image from 'next/image';
 import Link from 'next/link';
 

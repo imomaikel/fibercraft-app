@@ -1,5 +1,6 @@
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { create } from 'zustand';
+import { toast } from 'sonner';
 
 type TCart = {
   isCartOpen: boolean;
@@ -12,9 +13,9 @@ type TCart = {
   closeAuthorizeDialog: () => void;
 
   cartItemsData: { [key: number]: number };
-  addCartItem: (id: number, quantity: number) => void;
-  removeCartItem: (id: number) => void;
-  setCartItemQuantity: (id: number, quantity: number) => void;
+  addCartItem: (id: number, itemName: string, quantity: number, disabledQuantity?: boolean) => void;
+  removeCartItem: (id: number, itemName: string) => void;
+  setCartItemQuantity: (id: number, itemName: string, quantity: number, disabledQuantity?: boolean) => void;
 };
 
 const useCartStorage = create<TCart>()(
@@ -30,18 +31,23 @@ const useCartStorage = create<TCart>()(
       closeAuthorizeDialog: () => set({ isAuthorizeDialogOpen: false }),
 
       cartItemsData: {},
-      addCartItem: (id) => {
+      addCartItem: (id, itemName, quantity, disabledQuantity) => {
         const data = get().cartItemsData;
         const item = data[id];
         if (item !== undefined) {
-          data[id] = data[id] + 1;
+          if (disabledQuantity && data[id] + quantity >= 1) {
+            toast.error('Product quantity limit reached!');
+            return;
+          }
+          data[id] = data[id] + quantity;
           set({ cartItemsData: data });
         } else {
           data[id] = 1;
           set({ cartItemsData: data });
         }
+        toast.success(`Added "${itemName}" to the basket!`);
       },
-      removeCartItem: (id) => {
+      removeCartItem: (id, itemName) => {
         const data = get().cartItemsData;
         const item = data[id];
         if (item !== undefined) {
@@ -52,10 +58,22 @@ const useCartStorage = create<TCart>()(
           }
         }
         set({ cartItemsData: data });
+        toast.success(`Removed "${itemName}" from the basket!`);
       },
-      setCartItemQuantity: (id, quantity) => {
+      setCartItemQuantity: (id, itemName, quantity, disabledQuantity) => {
         const data = get().cartItemsData;
+        if (disabledQuantity && quantity >= 1) {
+          toast.error('Product quantity limit reached!');
+          return;
+        }
+
         data[id] = quantity;
+        if (quantity <= 0) {
+          delete data[id];
+          toast.success(`Removed "${itemName}" from the basket!`);
+        } else {
+          toast.success(`Updated "${itemName}" quantity!`);
+        }
         set({ cartItemsData: data });
       },
     }),

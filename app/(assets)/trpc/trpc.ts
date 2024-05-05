@@ -45,7 +45,9 @@ const checkSession = middleware(async ({ ctx, next }) => {
   if (!session || !session.user.id || !session.user.discordId) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
   const ipAddress =
-    process.env.NODE_ENV === 'development' ? (process.env.PRIVATE_IP as string) : req.headers['x-real-ip'];
+    process.env.NODE_ENV === 'development' || process.env.FORCE_PRIVATE_IP_IMPORTANT === 'true'
+      ? (process.env.PRIVATE_IP as string)
+      : req.headers['x-real-ip'];
   if (!ipAddress || typeof ipAddress !== 'string') throw new TRPCError({ code: 'UNAUTHORIZED' });
 
   const { user } = session;

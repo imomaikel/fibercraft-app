@@ -2,6 +2,7 @@ import AuthorizeDialog from '@assets/components/cart/AuthorizeDialog';
 import SessionWrapper from '@assets/components/SessionWrapper';
 import MobileNavbar from '@assets/components/MobileNavbar';
 import { Provider } from '@assets/trpc/Provider';
+import Cart from '@assets/components/cart/Cart';
 import Navbar from '@assets/components/Navbar';
 import { Inter } from 'next/font/google';
 import { cn } from '@assets/lib/utils';
@@ -24,10 +25,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Provider>
           <SessionWrapper>
             <div className="mx-auto max-w-screen-2xl pb-16">
-              <Navbar />
-              <MobileNavbar />
+              <Cart>
+                <Navbar />
+                <MobileNavbar />
+                <div className="px-2 md:px-6">{children}</div>
+              </Cart>
               <Toaster richColors position="bottom-right" />
-              <div className="px-2 md:px-6">{children}</div>
             </div>
             <Footer />
             <AuthorizeDialog />

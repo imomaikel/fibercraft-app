@@ -10,6 +10,7 @@ type TActionResponse =
       status: 'error';
       message: 'Something went wrong!';
     }
+  | { status: 'error'; message: 'Product quantity limit reached!' }
   | {
       status: 'error';
       message: 'Basket not authorized';
@@ -108,6 +109,8 @@ export const userRouter = router({
             userId: user.id!,
             basketIdent: user.basketIdent,
           });
+        } else if (action.message === 'Product quantity limit reached!') {
+          return { status: 'error', message: 'Product quantity limit reached!' };
         }
         return { status: 'error', message: 'Something went wrong!' };
       }
@@ -186,6 +189,8 @@ export const userRouter = router({
             userId: user.id!,
             basketIdent: user.basketIdent,
           });
+        } else if (action.message === 'Product quantity limit reached!') {
+          return { status: 'error', message: 'Product quantity limit reached!' };
         }
         return { status: 'error', message: 'Something went wrong!' };
       }

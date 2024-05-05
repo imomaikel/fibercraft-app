@@ -1,4 +1,5 @@
 'use client';
+import AddToCartWrapper from '@assets/components/cart/AddToCartWrapper';
 import { MdOutlineKeyboardBackspace } from 'react-icons/md';
 import { MovingBorderButton } from '@ui/moving-border';
 import { useParams, useRouter } from 'next/navigation';
@@ -85,13 +86,15 @@ const ProductPage = () => {
             />
             <div className="absolute bottom-1/4 -z-10 h-[40%] w-full -rotate-45 bg-gradient-to-r from-blue-700 via-blue-800 to-gray-900 opacity-75 blur-[200px]" />
           </div>
-          <MovingBorderButton
-            containerClassName="w-full sm:w-1/2 md:w-full flex mx-auto group"
-            borderClassName="transition-colors group-hover:bg-[radial-gradient(#2ecc71_40%,transparent_60%)]"
-            className="text-lg font-bold tracking-wide transition-colors group-hover:text-primary"
-          >
-            Add to Cart
-          </MovingBorderButton>
+          <AddToCartWrapper itemId={product.id} itemName={product.name} disabledQuantity={product.disable_quantity}>
+            <MovingBorderButton
+              containerClassName="w-full sm:w-1/2 md:w-full flex mx-auto group"
+              borderClassName="transition-colors group-hover:bg-[radial-gradient(#2ecc71_40%,transparent_60%)]"
+              className="text-lg font-bold tracking-wide transition-colors group-hover:text-primary"
+            >
+              Add to Cart
+            </MovingBorderButton>
+          </AddToCartWrapper>
           <div className="relative flex items-center justify-center">
             <span className="relative -z-20 bg-background px-6">OR</span>
             <div className="absolute -z-30 h-px w-full bg-muted" />
