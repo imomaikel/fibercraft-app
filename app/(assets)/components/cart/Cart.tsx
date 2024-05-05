@@ -31,6 +31,7 @@ const Cart = ({ children }: { children: React.ReactNode }) => {
   const { isLoading: basketLoading, refetch } = trpc.userRouter.getBasket.useQuery(undefined, {
     enabled: !!user?.id,
     refetchOnWindowFocus: false,
+    retry: 1,
     onSuccess: (response) => {
       if (response.status === 'success') {
         setCart(response.basket);
@@ -42,8 +43,11 @@ const Cart = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    refetch();
-  }, [isCartOpen]);
+    if (user?.id) {
+      refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCartOpen, user]);
 
   const strItems = JSON.stringify(cartItemsData);
 
@@ -79,7 +83,7 @@ const Cart = ({ children }: { children: React.ReactNode }) => {
     return itemsArray;
   }, [strItems, data?.products, cart, user]);
 
-  if (productsLoading || (basketLoading && !!user?.id)) return null;
+  if (productsLoading || (basketLoading && !!user?.id)) return children;
 
   return (
     <CartContext.Provider value={{ cart, updateCart, setLock }}>

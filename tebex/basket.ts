@@ -7,6 +7,7 @@ import {
   SetPrivateKey,
   SetWebstoreIdentifier,
 } from 'tebex_headless';
+import { TActionResponse } from '@assets/lib/types';
 import prisma from '../app/(assets)/lib/prisma';
 
 type TGetBasket = {
@@ -47,13 +48,20 @@ const createBasket = async (ipAddress: string) => {
 
   try {
     // TODO Redirects
+    const newBasketLink = await prisma.basketLink.create({ data: {} });
     const newBasket = await CreateBasket(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/shop/complete`,
       `${process.env.NEXT_PUBLIC_SERVER_URL}/shop/cancel`,
-      {},
+      { basketLink: newBasketLink.linkId },
       true,
       ipAddress,
     );
+    await prisma.basketLink.update({
+      where: { linkId: newBasketLink.linkId },
+      data: {
+        ident: newBasket.ident,
+      },
+    });
     const authUrl = await GetBasketAuthUrl(newBasket.ident, `${process.env.NEXT_PUBLIC_SERVER_URL}/shop/authorized`);
 
     return { newBasket, authUrl };
@@ -62,4 +70,60 @@ const createBasket = async (ipAddress: string) => {
   }
 
   return { error: true };
+};
+
+type TMissingBasket = {
+  basketIdent?: string | null | undefined;
+  ipAddress: string;
+  userId: string;
+};
+export const missingBasket = async ({
+  ipAddress,
+  basketIdent: searchForIdent,
+  userId,
+}: TMissingBasket): Promise<TActionResponse> => {
+  const data = await _getBasket({ basketIdent: searchForIdent || null, ipAddress: ipAddress });
+
+  if (data.error) {
+    return { status: 'error', message: 'Something went wrong!' };
+  }
+
+  const { authUrl, basket, newBasket } = data;
+
+  if (basket) {
+    return { status: 'success', basket };
+  }
+
+  const newBasketIdent = newBasket?.ident;
+  const authUrlLink = authUrl && authUrl[0] && authUrl[0].url;
+
+  if (!newBasketIdent && authUrlLink) {
+    return { status: 'error', message: 'Basket not authorized', authUrl: authUrlLink };
+  }
+
+  if (!newBasketIdent || !authUrlLink) {
+    return { status: 'error', message: 'Something went wrong!' };
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: {
+      basketIdent: newBasketIdent,
+      basketAuthUrl: authUrlLink,
+    },
+  });
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        previousBaskets: {
+          create: {
+            ident: newBasketIdent,
+          },
+        },
+      },
+    });
+  } catch {}
+
+  return { status: 'error', message: 'Basket not authorized', authUrl: authUrlLink };
 };

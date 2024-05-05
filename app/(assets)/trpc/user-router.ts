@@ -1,75 +1,15 @@
-import { addBasketPackage, getBasket, removeBasketPackage, updateBasketPackage } from '../../../tebex';
+import { addBasketPackage, removeBasketPackage, updateBasketPackage } from '../../../tebex';
+import { TActionResponse } from '../../(assets)/lib/types';
+import { missingBasket } from '../../../tebex/basket';
 import { router, userProcedure } from './trpc';
-import { PrismaClient } from '@prisma/client';
-import { Basket } from 'tebex_headless';
 import { z } from 'zod';
-
-type TActionResponse =
-  | { status: 'success'; basket: Basket }
-  | {
-      status: 'error';
-      message: 'Something went wrong!';
-    }
-  | { status: 'error'; message: 'Product quantity limit reached!' }
-  | {
-      status: 'error';
-      message: 'Basket not authorized';
-      authUrl: string;
-    };
-
-type TMissingBasket = {
-  basketIdent?: string | null | undefined;
-  prisma: PrismaClient;
-  ipAddress: string;
-  userId: string;
-};
-const missingBasket = async ({
-  ipAddress,
-  prisma,
-  basketIdent: searchForIdent,
-  userId,
-}: TMissingBasket): Promise<TActionResponse> => {
-  const data = await getBasket({ basketIdent: searchForIdent || null, ipAddress: ipAddress });
-
-  if (data.error) {
-    return { status: 'error', message: 'Something went wrong!' };
-  }
-
-  const { authUrl, basket, newBasket } = data;
-
-  if (basket) {
-    return { status: 'success', basket };
-  }
-
-  const newBasketIdent = newBasket?.ident;
-  const authUrlLink = authUrl && authUrl[0] && authUrl[0].url;
-
-  if (!newBasketIdent && authUrlLink) {
-    return { status: 'error', message: 'Basket not authorized', authUrl: authUrlLink };
-  }
-
-  if (!newBasketIdent || !authUrlLink) {
-    return { status: 'error', message: 'Something went wrong!' };
-  }
-
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      basketIdent: newBasketIdent,
-      basketAuthUrl: authUrlLink,
-    },
-  });
-
-  return { status: 'error', message: 'Basket not authorized', authUrl: authUrlLink };
-};
 
 export const userRouter = router({
   getBasket: userProcedure.query(async ({ ctx }) => {
-    const { user, prisma } = ctx;
+    const { user } = ctx;
 
     return await missingBasket({
       ipAddress: user.ipAddress,
-      prisma,
       userId: user.id!,
       basketIdent: user.basketIdent,
     });
@@ -83,12 +23,11 @@ export const userRouter = router({
     )
     .mutation(async ({ ctx, input }): Promise<TActionResponse> => {
       const { itemId, quantity } = input;
-      const { user, prisma } = ctx;
+      const { user } = ctx;
 
       if (!user.basketIdent) {
         return await missingBasket({
           ipAddress: user.ipAddress,
-          prisma,
           userId: user.id!,
           basketIdent: user.basketIdent,
         });
@@ -105,7 +44,6 @@ export const userRouter = router({
         if (action.message === 'Basket not found' || action.message === 'Basket not authorized') {
           return await missingBasket({
             ipAddress: user.ipAddress,
-            prisma,
             userId: user.id!,
             basketIdent: user.basketIdent,
           });
@@ -125,12 +63,11 @@ export const userRouter = router({
     )
     .mutation(async ({ ctx, input }): Promise<TActionResponse> => {
       const { itemId } = input;
-      const { user, prisma } = ctx;
+      const { user } = ctx;
 
       if (!user.basketIdent) {
         return await missingBasket({
           ipAddress: user.ipAddress,
-          prisma,
           userId: user.id!,
           basketIdent: user.basketIdent,
         });
@@ -145,7 +82,6 @@ export const userRouter = router({
         if (action.message === 'Basket not found' || action.message === 'Basket not authorized') {
           return await missingBasket({
             ipAddress: user.ipAddress,
-            prisma,
             userId: user.id!,
             basketIdent: user.basketIdent,
           });
@@ -164,12 +100,11 @@ export const userRouter = router({
     )
     .mutation(async ({ ctx, input }): Promise<TActionResponse> => {
       const { itemId, quantity } = input;
-      const { user, prisma } = ctx;
+      const { user } = ctx;
 
       if (!user.basketIdent) {
         return await missingBasket({
           ipAddress: user.ipAddress,
-          prisma,
           userId: user.id!,
           basketIdent: user.basketIdent,
         });
@@ -185,7 +120,6 @@ export const userRouter = router({
         if (action.message === 'Basket not found' || action.message === 'Basket not authorized') {
           return await missingBasket({
             ipAddress: user.ipAddress,
-            prisma,
             userId: user.id!,
             basketIdent: user.basketIdent,
           });

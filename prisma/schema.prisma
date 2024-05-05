@@ -156,8 +156,10 @@ model User {
   email         String?          @unique
   emailVerified DateTime?
   permissions   UserPermission[]
-  basketIdent   String?          @unique
-  basketAuthUrl String?          @db.Text
+
+  basketIdent     String?          @unique
+  basketAuthUrl   String?          @db.Text
+  previousBaskets PreviousBasket[]
 
   selectedDiscordId String?
 
@@ -196,4 +198,38 @@ model TribeScoreAdminDisabledId {
 
 model TribeScorePlayerDisabledId {
   steamId String @id @db.VarChar(32)
+}
+
+// Store
+model PreviousBasket {
+  ident String @id @unique
+
+  username      String  @default("Unknown")
+  usernameId    String  @default("Unknown")
+  completed     Boolean @default(false)
+  transactionId String  @default("")
+  pricePaid     Float   @default(0)
+  tax           Float   @default(0)
+
+  products BasketProduct[]
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model BasketProduct {
+  id BigInt @id @default(autoincrement())
+
+  productId Int
+  name      String
+  quantity  Int
+  price     Float
+
+  PreviousBasket      PreviousBasket @relation(fields: [previousBasketIdent], references: [ident], onDelete: Cascade)
+  previousBasketIdent String
+}
+
+model BasketLink {
+  linkId String  @id @default(cuid())
+  ident  String? @unique
 }
