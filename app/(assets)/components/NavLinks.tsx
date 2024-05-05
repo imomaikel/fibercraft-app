@@ -12,6 +12,7 @@ import { NAV_LINKS } from '@assets/lib/constans';
 import { usePathname } from 'next/navigation';
 import { cn } from '@assets/lib/utils';
 import { useMemo } from 'react';
+import Link from 'next/link';
 
 type TNavLinks = {
   userPermissions: ManagementPermission[];
@@ -43,6 +44,28 @@ const NavLinks = ({ userPermissions, userSelectedGuildId }: TNavLinks) => {
   return (
     <NavigationMenu delayDuration={100}>
       <NavigationMenuList>
+        <NavigationMenuItem>
+          <Link
+            href="/"
+            className="group inline-flex h-9 cursor-pointer
+           items-center justify-center rounded-md bg-background px-4 py-2
+            text-sm font-medium transition-colors hover:bg-accent
+            hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+          >
+            Home
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link
+            href="/store"
+            className="group inline-flex h-9 cursor-pointer
+           items-center justify-center rounded-md bg-background px-4 py-2
+            text-sm font-medium transition-colors hover:bg-accent
+            hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+          >
+            Store
+          </Link>
+        </NavigationMenuItem>
         {navLinksWithAccess.map((entry) => {
           if (!entry) return null;
 
