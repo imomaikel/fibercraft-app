@@ -1,7 +1,7 @@
 'use client';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@ui/sheet';
 import { useMobileNavbar } from '@assets/hooks/useMobileNavbar';
-import NavbarLinksAccess from './NavbarLinksAccess';
+import NavLinks from './NavLinks';
 
 const MobileNavbar = () => {
   const { closeMobileNav, isMobileNavOpen } = useMobileNavbar();
@@ -13,7 +13,7 @@ const MobileNavbar = () => {
           <SheetTitle>Navigation</SheetTitle>
         </SheetHeader>
         <div className="mt-4">
-          <NavbarLinksAccess />
+          <NavLinks />
         </div>
       </SheetContent>
     </Sheet>

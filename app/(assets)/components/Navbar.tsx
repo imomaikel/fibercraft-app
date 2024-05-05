@@ -1,11 +1,11 @@
 'use client';
 import { useMobileNavbar } from '@assets/hooks/useMobileNavbar';
-import NavbarLinksAccess from './NavbarLinksAccess';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { usePathname } from 'next/navigation';
 import CartButton from './cart/CartButton';
 import { Separator } from '@ui/separator';
 import UserProfile from './UserProfile';
+import NavLinks from './NavLinks';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -46,7 +46,7 @@ const Navbar = () => {
                   </div>
                 </Link>
                 <div className="hidden md:block">
-                  <NavbarLinksAccess />
+                  <NavLinks />
                 </div>
               </div>
               <div className="flex items-center space-x-1 sm:space-x-3">

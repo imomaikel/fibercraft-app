@@ -7,21 +7,23 @@ import {
   NavigationMenuListItem,
   NavigationMenuTrigger,
 } from '@ui/navigation-menu';
-import { ManagementPermission } from '@prisma/client';
+import { useCurrentUser } from '@assets/hooks/useCurrentUser';
 import { NAV_LINKS } from '@assets/lib/constans';
 import { usePathname } from 'next/navigation';
 import { cn } from '@assets/lib/utils';
 import { useMemo } from 'react';
 import Link from 'next/link';
 
-type TNavLinks = {
-  userPermissions: ManagementPermission[];
-  userSelectedGuildId: string | undefined;
-};
-const NavLinks = ({ userPermissions, userSelectedGuildId }: TNavLinks) => {
+const NavLinks = () => {
+  const { user } = useCurrentUser();
+
+  const userPermissions = user?.permissions;
+  const userSelectedGuildId = user?.selectedDiscordId;
+
   const pathname = usePathname();
 
   const navLinksWithAccess = useMemo(() => {
+    if (!userPermissions) return [];
     return NAV_LINKS.map((parent) => {
       if (!parent.itemsOnHover) return parent;
 
