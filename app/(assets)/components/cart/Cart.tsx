@@ -89,12 +89,12 @@ const Cart = ({ children }: { children: React.ReactNode }) => {
     <CartContext.Provider value={{ cart, updateCart, setLock }}>
       {children}
       <Sheet open={isCartOpen} onOpenChange={() => !isLock && closeCart()}>
-        <SheetContent>
+        <SheetContent className="overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Your Cart</SheetTitle>
             <SheetDescription>Under construction</SheetDescription>
           </SheetHeader>
-          <div className="mt-6">
+          <div className="mt-6 space-y-6">
             {items ? (
               items.length >= 1 ? (
                 items.map((item, idx) => <CartItem key={`cart-${item.id}-${idx}`} item={item} />)
