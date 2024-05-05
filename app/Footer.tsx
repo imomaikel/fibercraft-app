@@ -10,7 +10,7 @@ const Footer = () => {
   const pathname = usePathname();
 
   const showFooter = useMemo(() => {
-    return TEBEX_FOOTER_PATHS.some((entry) => pathname.startsWith(entry));
+    return TEBEX_FOOTER_PATHS.some((entry) => (entry === '/' ? pathname === entry : pathname.startsWith(entry)));
   }, [pathname]);
 
   if (!showFooter) return null;
