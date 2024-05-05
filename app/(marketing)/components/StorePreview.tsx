@@ -83,13 +83,13 @@ const StorePreview = () => {
             href={`/store/${entry.id}`}
           >
             <span className="text-lg font-semibold">{entry.name}</span>
-            <div className="h-[200px] w-[200px]">
+            <div className="flex h-[200px] w-[200px] items-center justify-center">
               <Image
-                src={entry.image || ''}
+                src={entry.image || '/empty.png'}
                 alt={`${entry.name} image`}
                 width={200}
                 height={200}
-                className="h-full w-full rounded-md"
+                className="h-auto w-auto rounded-md"
               />
             </div>
           </Link>
