@@ -80,7 +80,7 @@ const StorePreview = () => {
           <Link
             className="randomProduct relative rounded-md border border-white/50 bg-muted p-2 transition-colors hover:border-primary md:absolute"
             key={`random-${entry.id}`}
-            href={`/shop/${entry.id}`}
+            href={`/store/${entry.id}`}
           >
             <span className="text-lg font-semibold">{entry.name}</span>
             <div className="h-[200px] w-[200px]">

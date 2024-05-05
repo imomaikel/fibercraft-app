@@ -37,7 +37,7 @@ const CartItem = ({ item }: TCartItem) => {
         <div className="flex flex-1 flex-col">
           <div>
             <span className="line-clamp-1 text-center text-lg font-bold">{name}</span>
-            <Link href={`/shop/category/${categoryId}`}>
+            <Link href={`/store/category/${categoryId}`}>
               <span className="line-clamp-1 text-center text-xs text-muted-foreground underline">{categoryName}</span>
             </Link>
           </div>
@@ -83,7 +83,7 @@ const CartItem = ({ item }: TCartItem) => {
           </Button>
         </UpdateQuantityWrapper>
         <Button asChild className="flex-1">
-          <Link href={`/shop/${id}`}>
+          <Link href={`/store/${id}`}>
             Details <FaExternalLinkAlt className="ml-2 h-6 w-6" />
           </Link>
         </Button>

@@ -55,7 +55,7 @@ const Product = ({ description, id, name, image, totalPrice }: TProduct) => {
             />
           </CardItem>
           <div className="mt-8 flex items-center justify-between space-x-6">
-            <CardItem translateZ={20} as={Link} href={`/shop/${id}`}>
+            <CardItem translateZ={20} as={Link} href={`/store/${id}`}>
               <Button variant="ghost">
                 See the full product <MdKeyboardArrowRight className="h-8 w-8" />
               </Button>

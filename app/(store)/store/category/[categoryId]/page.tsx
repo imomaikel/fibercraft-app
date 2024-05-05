@@ -1,7 +1,7 @@
 'use client';
 import { MdOutlineKeyboardBackspace } from 'react-icons/md';
 import { useParams, useRouter } from 'next/navigation';
-import Product from '@shop/components/Product';
+import Product from '@store/components/Product';
 import { motion } from 'framer-motion';
 import { Button } from '@ui/button';
 import { trpc } from '@trpc/index';

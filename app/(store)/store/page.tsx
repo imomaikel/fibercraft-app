@@ -1,12 +1,12 @@
 'use client';
-import ShopHeader from './components/ShopHeader';
+import StoreHeader from './components/StoreHeader';
 import Products from './components/Products';
 
-const ShopLandingPage = () => {
+const StoreLandingPage = () => {
   return (
     <div>
       <div>
-        <ShopHeader />
+        <StoreHeader />
       </div>
 
       <div className="mt-6">
@@ -16,4 +16,4 @@ const ShopLandingPage = () => {
   );
 };
 
-export default ShopLandingPage;
+export default StoreLandingPage;

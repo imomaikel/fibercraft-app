@@ -1,7 +1,7 @@
 import { FaDiscord, FaGamepad } from 'react-icons/fa';
 import Link from 'next/link';
 
-const ShopHeader = () => {
+const StoreHeader = () => {
   return (
     <div className="flex justify-between">
       <div>
@@ -47,4 +47,4 @@ const ShopHeader = () => {
   );
 };
 
-export default ShopHeader;
+export default StoreHeader;

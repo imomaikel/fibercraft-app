@@ -26,7 +26,9 @@ const Navbar = () => {
                   <GiHamburgerMenu className="h-8 w-8" />
                 </div>
                 <Link
-                  href={pathname.startsWith('/') ? '/shop' : pathname.startsWith('/dashboard') ? '/shop' : '/dashboard'}
+                  href={
+                    pathname.startsWith('/') ? '/store' : pathname.startsWith('/dashboard') ? '/store' : '/dashboard'
+                  }
                 >
                   <div className="group relative flex h-16 items-center md:px-4">
                     <Image

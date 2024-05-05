@@ -100,7 +100,7 @@ const ProductPage = () => {
             <div className="absolute -z-30 h-px w-full bg-muted" />
           </div>
           <Button variant="ghost" className="mt-1 w-full" asChild>
-            <Link href={`/shop/category/${product.category.id}`}>Browse Similar</Link>
+            <Link href={`/store/category/${product.category.id}`}>Browse Similar</Link>
           </Button>
         </div>
       </div>
