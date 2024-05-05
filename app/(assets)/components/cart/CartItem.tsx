@@ -3,8 +3,9 @@ import { FaExternalLinkAlt, FaMinus, FaPlus } from 'react-icons/fa';
 import RemoveFromCartWrapper from './RemoveFromCartWrapper';
 import UpdateQuantityWrapper from './UpdateQuantityWrapper';
 import { BasketPackage, Package } from 'tebex_headless';
+import { cn, formatPrice } from '@assets/lib/utils';
 import AddToCartWrapper from './AddToCartWrapper';
-import { formatPrice } from '@assets/lib/utils';
+import { usePathname } from 'next/navigation';
 import { BsCartXFill } from 'react-icons/bs';
 import { Button } from '@ui/button';
 import { useMemo } from 'react';
@@ -25,6 +26,7 @@ const CartItem = ({ item }: TCartItem) => {
     sales_tax,
     total_price,
   } = item;
+  const pathname = usePathname();
 
   const quantityTotalPrice = useMemo(() => formatPrice(total_price * quantity), [total_price, quantity]);
 
@@ -83,7 +85,7 @@ const CartItem = ({ item }: TCartItem) => {
           </Button>
         </UpdateQuantityWrapper>
         <Button asChild className="flex-1">
-          <Link href={`/store/${id}`}>
+          <Link href={`/store/${id}`} className={cn(pathname === `/store/${id}` && 'pointer-events-none opacity-50')}>
             Details <FaExternalLinkAlt className="ml-2 h-6 w-6" />
           </Link>
         </Button>
