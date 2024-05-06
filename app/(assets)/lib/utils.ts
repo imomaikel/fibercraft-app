@@ -93,3 +93,14 @@ export const formatPrice = (price: number) => {
     currency: 'EUR',
   }).format(price);
 };
+
+const htmlRegex = /<[^>]*>/gi;
+export const replaceHtmlTags = (text: string) => {
+  const replaceBr = text.replace(/<br \/>/gi, '. ');
+  const replaceTags = replaceBr.replace(htmlRegex, ' ');
+  // eslint-disable-next-line no-irregular-whitespace
+  const replaceWhitespace = replaceTags.replace(/ /gi, ' ');
+  const trim = replaceWhitespace.replace(/[ ]{2,}/gi, ' ').trim();
+  const replaceExtraSigns = trim.replaceAll('. -', '.');
+  return replaceExtraSigns;
+};

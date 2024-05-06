@@ -1,9 +1,9 @@
 'use client';
 import AddToCartWrapper from '@assets/components/cart/AddToCartWrapper';
+import { formatPrice, replaceHtmlTags } from '@assets/lib/utils';
 import { CardBody, CardContainer, CardItem } from '@ui/3d-card';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 import { motion, useAnimate } from 'framer-motion';
-import { formatPrice } from '@assets/lib/utils';
 import { Skeleton } from '@ui/skeleton';
 import { Button } from '@ui/button';
 import Image from 'next/image';
@@ -17,12 +17,12 @@ type TProduct = {
   totalPrice: number;
 };
 const Product = ({ description, id, name, image, totalPrice }: TProduct) => {
-  description = description.replace(/<([a-z]+)(?![^>]*\/>)[^>]*>/gi, '');
-  description = description.substring(0, description.indexOf('<br'));
-  description = description.slice(0, 100).replace(/\./gi, '');
+  description = replaceHtmlTags(description);
+  description = description.slice(0, 100);
   if (description.length >= 3) {
     description += '...';
   }
+  description = description.replace(/\.{3,}/gi, '...');
   const [scope, animate] = useAnimate();
 
   return (

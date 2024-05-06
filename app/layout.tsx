@@ -14,7 +14,10 @@ import Footer from './Footer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Friendly Fibercraft',
+  title: {
+    default: 'Friendly Fibercraft',
+    template: '%s | Friendly Fibercraft',
+  },
   description: 'Your ARK Servers',
 };
 
