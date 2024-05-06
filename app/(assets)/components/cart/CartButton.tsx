@@ -28,7 +28,7 @@ const CartButton = () => {
       <HiOutlineShoppingBag className="group-h h-6 w-6 sm:h-8 sm:w-8" />
       <div
         className={cn(
-          'absolute -top-2.5 right-0 flex h-6 w-6 items-center justify-center rounded-full bg-primary opacity-0 transition-opacity sm:-right-1 sm:-top-1 md:-right-2.5 md:-top-2 md:h-8 md:w-8',
+          'absolute -top-2.5 right-0 flex h-6 w-6 items-center justify-center rounded-full bg-primary font-semibold text-black opacity-0 transition-opacity sm:-right-1 sm:-top-1 md:-right-2.5 md:-top-2 md:h-8 md:w-8',
           totalItems > 0 ? 'opacity-100' : '',
         )}
       >

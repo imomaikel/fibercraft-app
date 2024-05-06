@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 const StoreHeader = () => {
   return (
-    <div className="flex justify-between">
+    <div className="flex flex-col space-y-6 md:flex-row md:justify-between md:space-y-0">
       <div>
         <p className="text-sm text-muted-foreground">Welcome to the</p>
         <h1 className="text-4xl font-bold">Friendly Network Store</h1>

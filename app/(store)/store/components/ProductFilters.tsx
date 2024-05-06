@@ -74,7 +74,7 @@ const ProductFilters = ({ categoryList, setCategoryList }: TProductFilters) => {
   }, [searchParams]);
 
   return (
-    <div className="flex flex-wrap space-x-6">
+    <div className="flex flex-wrap gap-6">
       {categoryList.map((entry) => (
         <div className="flex items-center space-x-2" key={`filter-${entry.label}`}>
           <Label htmlFor={`${entry.label}-switch`}>{entry.label}</Label>
@@ -82,6 +82,7 @@ const ProductFilters = ({ categoryList, setCategoryList }: TProductFilters) => {
             id={`${entry.label}-switch`}
             checked={entry.enabled}
             onCheckedChange={(newState) => handleSwitch(entry.label, newState)}
+            aria-label={`toggle ${entry.label} filter`}
           />
         </div>
       ))}

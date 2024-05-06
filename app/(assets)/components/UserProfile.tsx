@@ -43,7 +43,7 @@ const UserProfile = () => {
             </div>
             <div>
               <Avatar>
-                <AvatarImage src={user?.image || undefined} />
+                <AvatarImage alt="avatar" src={user?.image || undefined} />
                 <AvatarFallback>
                   <Image src="/logo.webp" className="h-full w-full" width={0} height={0} sizes="100vw" alt="avatar" />
                 </AvatarFallback>
