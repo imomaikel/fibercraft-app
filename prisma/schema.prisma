@@ -14,12 +14,6 @@ model Widget {
   tribeScoreChannelId String? @db.TinyText
   tribeScoreMessageId String? @db.TinyText
 
-  // Server Control
-  serverControlLogChannelId String? @db.TinyText
-  serverControlChannelId    String? @db.TinyText
-  serverControlMessageId    String? @db.TinyText
-  serverControlRoleId       String? @db.TinyText
-
   // Testimonials
   testimonialsChannelId String? @db.TinyText
   testimonialsMessageId String? @db.TinyText

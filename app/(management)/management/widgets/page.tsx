@@ -40,10 +40,10 @@ const ManagementWidgetsPage = () => {
   return (
     <ManagementPageWrapper pageLabel="Widgets">
       <div className="space-y-4">
-        <ItemWrapper title="Server Control" description="Configure server-restart widget.">
+        <ItemWrapper title="Testimonials" description="Configure the testimonial widget.">
           <div className="mt-2 space-y-3">
             <div className="flex flex-col space-y-1">
-              <Label>Widget channel</Label>
+              <Label>Testimonials Channel</Label>
               <Combobox
                 data={channels || []}
                 notFoundText="No channels found."
@@ -51,29 +51,14 @@ const ManagementWidgetsPage = () => {
                 className="w-full max-w-xs"
                 isLoading={channelsLoading || widgetsLoading}
                 selectText="Click to expand"
-                defaultValue={widgetData?.serverControlChannelId || undefined}
+                defaultValue={widgetData?.testimonialsChannelId || undefined}
                 isDisabled={isUpdating}
-                onSelect={(_, value) => handleUpdate(value, 'serverControlChannelId')}
-                onReset={() => handleUpdate(null, 'serverControlChannelId')}
+                onSelect={(_, value) => handleUpdate(value, 'testimonialsChannelId')}
+                onReset={() => handleUpdate(null, 'testimonialsChannelId')}
               />
             </div>
             <div className="flex flex-col space-y-1">
-              <Label>Widget log channel</Label>
-              <Combobox
-                data={channels || []}
-                notFoundText="No channels found."
-                searchLabel="Type to search..."
-                className="w-full max-w-xs"
-                isLoading={channelsLoading || widgetsLoading}
-                selectText="Click to expand"
-                defaultValue={widgetData?.serverControlLogChannelId || undefined}
-                isDisabled={isUpdating}
-                onSelect={(_, value) => handleUpdate(value, 'serverControlLogChannelId')}
-                onReset={() => handleUpdate(null, 'serverControlLogChannelId')}
-              />
-            </div>
-            <div className="flex flex-col space-y-1">
-              <Label>Widget allowed roles</Label>
+              <Label>Role that can accept or deny testimonials</Label>
               <Combobox
                 data={roles || []}
                 notFoundText="No roles found."
@@ -81,10 +66,10 @@ const ManagementWidgetsPage = () => {
                 className="w-full max-w-xs"
                 isLoading={rolesLoading || widgetsLoading}
                 selectText="Click to expand"
-                defaultValue={widgetData?.serverControlRoleId || undefined}
+                defaultValue={widgetData?.testimonialsRoleId || undefined}
                 isDisabled={isUpdating}
-                onSelect={(_, value) => handleUpdate(value, 'serverControlRoleId')}
-                onReset={() => handleUpdate(null, 'serverControlRoleId')}
+                onSelect={(_, value) => handleUpdate(value, 'testimonialsRoleId')}
+                onReset={() => handleUpdate(null, 'testimonialsRoleId')}
               />
             </div>
           </div>

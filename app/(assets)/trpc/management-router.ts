@@ -6,6 +6,7 @@ import {
   apiGetPairedAccounts,
   apiGetRoles,
   apiGetServers,
+  updateWidget,
 } from '../../../bot/api/index';
 import { getPermissionFromLabel, translateWidgetEnum, widgetEnums } from '../../(assets)/lib/utils';
 import { serverControlApi } from '../../../bot/plugins/server-control';
@@ -273,6 +274,11 @@ export const managementRouter = router({
         });
       } catch {
         return { error: true };
+      }
+
+      const updateStatus = await updateWidget(field, user.selectedDiscordId);
+      if (!updateStatus.updated) {
+        return { error: true, message: updateStatus.message || 'Something went wrong!' };
       }
 
       createPanelLog({
