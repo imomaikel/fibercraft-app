@@ -20,7 +20,7 @@ const DataEntry = ({ value, title }: TDataEntry) => {
     <div className="flex flex-col space-y-0.5">
       <p className="font-semibold tracking-wide">{title}</p>
       <div className="flex">
-        <Input disabled defaultValue={value} className="max-w-[200px] rounded-br-none rounded-tr-none border-r-0" />
+        <Input disabled value={value} className="max-w-[200px] rounded-br-none rounded-tr-none border-r-0" />
         <Button size="icon" className="rounded-bl-none rounded-tl-none" onClick={handleCopy}>
           <HiClipboardCopy className="h-6 w-6" />
         </Button>
