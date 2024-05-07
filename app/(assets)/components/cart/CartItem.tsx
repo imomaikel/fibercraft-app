@@ -37,30 +37,30 @@ const CartItem = ({ item }: TCartItem) => {
           <Image alt={name} src={image || '/fiber.webp'} className="h-auto w-auto" width={128} height={128} />
         </div>
         <div className="flex flex-1 flex-col">
-          <div>
-            <span className="line-clamp-1 text-center text-lg font-bold">{name}</span>
+          <div className="flex flex-col items-center">
+            <span className="text-center text-lg font-bold md:line-clamp-1">{name}</span>
             <Link href={`/store/category/${categoryId}`}>
               <span className="line-clamp-1 text-center text-xs text-muted-foreground underline">{categoryName}</span>
             </Link>
           </div>
           <div className="flex items-center px-1 text-sm">
             <span>Price</span>
-            <div className="mx-4 flex h-px flex-1 bg-primary" />
+            <div className="mx-1 flex h-px flex-1 bg-primary md:mx-4" />
             <span>{formatPrice(price)}</span>
           </div>
           <div className="flex items-center px-1 text-sm">
             <span>Sales Tax</span>
-            <div className="mx-4 flex h-px flex-1 bg-primary" />
+            <div className="mx-1 flex h-px flex-1 bg-primary md:mx-4" />
             <span>{formatPrice(sales_tax)}</span>
           </div>
           <div className="flex items-center px-1 text-sm">
             <span>Quantity</span>
-            <div className="mx-4 flex h-px flex-1 bg-primary" />
+            <div className="mx-1 flex h-px flex-1 bg-primary md:mx-4" />
             <span>x{quantity}</span>
           </div>
           <div className="flex items-center px-1 text-sm">
             <span>Total</span>
-            <div className="mx-4 flex h-px flex-1 bg-primary" />
+            <div className="mx-1 flex h-px flex-1 bg-primary md:mx-4" />
             <span>{quantityTotalPrice}</span>
           </div>
         </div>

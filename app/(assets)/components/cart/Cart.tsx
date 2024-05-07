@@ -89,7 +89,7 @@ const Cart = ({ children }: { children: React.ReactNode }) => {
     <CartContext.Provider value={{ cart, updateCart, setLock }}>
       {children}
       <Sheet open={isCartOpen} onOpenChange={() => !isLock && closeCart()}>
-        <SheetContent className="overflow-y-auto">
+        <SheetContent className="w-[90vw] overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Your Cart</SheetTitle>
             <SheetDescription>Under construction</SheetDescription>

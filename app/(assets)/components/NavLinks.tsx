@@ -14,7 +14,10 @@ import { cn } from '@assets/lib/utils';
 import { useMemo } from 'react';
 import Link from 'next/link';
 
-const NavLinks = () => {
+type TNavLinks = {
+  className?: string;
+};
+const NavLinks = ({ className }: TNavLinks) => {
   const { user } = useCurrentUser();
 
   const userPermissions = user?.permissions;
@@ -45,12 +48,12 @@ const NavLinks = () => {
 
   return (
     <NavigationMenu delayDuration={100}>
-      <NavigationMenuList>
+      <NavigationMenuList className={className}>
         <NavigationMenuItem>
           <Link
             href="/"
             className="group inline-flex h-9 cursor-pointer
-           items-center justify-center rounded-md bg-background px-4 py-2
+           items-center justify-center rounded-md bg-background/50 px-4 py-2
             text-sm font-medium transition-colors hover:bg-accent
             hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
           >
@@ -61,7 +64,7 @@ const NavLinks = () => {
           <Link
             href="/store"
             className="group inline-flex h-9 cursor-pointer
-           items-center justify-center rounded-md bg-background px-4 py-2
+           items-center justify-center rounded-md bg-background/50 px-4 py-2
             text-sm font-medium transition-colors hover:bg-accent
             hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
           >
@@ -73,8 +76,8 @@ const NavLinks = () => {
 
           return (
             <NavigationMenuItem key={entry.label}>
-              <NavigationMenuTrigger>{entry.label}</NavigationMenuTrigger>
-              <NavigationMenuContent className="max-h-[80vh] max-w-[calc(100vw-48px)] overflow-y-auto md:w-auto">
+              <NavigationMenuTrigger className="bg-background/50">{entry.label}</NavigationMenuTrigger>
+              <NavigationMenuContent className="max-h-[60vh] max-w-[calc(100vw-48px)] overflow-y-auto md:w-auto">
                 <ul className="grid w-[400px] max-w-[calc(100vw-48px)] gap-3 p-4 md:w-[500px] md:max-w-none md:grid-cols-2 lg:w-[600px]">
                   {entry.itemsOnHover.map((children) => {
                     if (!children) return null;

@@ -12,8 +12,8 @@ const MobileNavbar = () => {
         <SheetHeader>
           <SheetTitle>Navigation</SheetTitle>
         </SheetHeader>
-        <div className="mt-4">
-          <NavLinks />
+        <div className="mt-4 flex w-full ">
+          <NavLinks className="flex w-full flex-col" />
         </div>
       </SheetContent>
     </Sheet>
