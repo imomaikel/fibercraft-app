@@ -12,6 +12,7 @@ type TMethods = {
     map: string;
     lastLogin: number;
     playTime: number;
+    onlineStatus: number;
   }[];
   'Player ID': {
     characterName: string;
@@ -23,6 +24,7 @@ type TMethods = {
     map: string;
     lastLogin: number;
     playTime: number;
+    onlineStatus: number;
   }[];
   'Discord ID': {
     characterName: string;
@@ -34,6 +36,7 @@ type TMethods = {
     map: string;
     lastLogin: number;
     playTime: number;
+    onlineStatus: number;
   }[];
   Character: {
     steamId: string;
@@ -46,6 +49,7 @@ type TMethods = {
     playTime: number;
     characterName: string;
     characterNameFallback: string;
+    onlineStatus: number;
   }[];
   Tribe: {
     tribeName: string;
@@ -60,6 +64,7 @@ type TMethods = {
       playTime: number;
       lastLogin: number;
       map: string;
+      onlineStatus: number;
     }[];
   }[];
 };
@@ -94,7 +99,8 @@ export const advancedSearch = async <T extends TMethod>(
           n.last_login AS lastLogin,
           n.play_time AS playTime,
           r.TribeName AS tribeName,
-          t.DiscordId AS discordId
+          t.DiscordId AS discordId,
+          n.online_status as onlineStatus
       FROM
           statisticsfiber.personal_stats n
               RIGHT JOIN
@@ -117,7 +123,8 @@ export const advancedSearch = async <T extends TMethod>(
           n.last_login AS lastLogin,
           n.play_time AS playTime,
           r.TribeName AS tribeName,
-          t.DiscordId AS discordId
+          t.DiscordId AS discordId,
+          n.online_status as onlineStatus
       FROM
           statisticsfiber.personal_stats n
               RIGHT JOIN
@@ -141,7 +148,8 @@ export const advancedSearch = async <T extends TMethod>(
           r.TribeName AS tribeName,
           t.DiscordId AS discordId,
           s.CharacterName AS characterName,
-          n.player_name AS characterNameFallback
+          n.player_name AS characterNameFallback,
+          n.online_status as onlineStatus
       FROM
           statisticsfiber.personal_stats n
               RIGHT JOIN
@@ -165,7 +173,8 @@ export const advancedSearch = async <T extends TMethod>(
           s.PlayerID AS playerId,
           s.LastMap AS map,
           n.last_login AS lastLogin,
-          n.play_time AS playTime
+          n.play_time AS playTime,
+          n.online_status as onlineStatus
       FROM
           statisticsfiber.personal_stats n
               RIGHT JOIN
@@ -189,7 +198,8 @@ export const advancedSearch = async <T extends TMethod>(
           t.play_time as playTime,
           t.last_login as lastLogin,
           r.LastMap as lastMap,
-          q.DiscordID as discordId
+          q.DiscordID as discordId,
+          t.online_status as onlineStatus
       FROM
           tribesfiber.wtribes_tribedata n
               RIGHT JOIN

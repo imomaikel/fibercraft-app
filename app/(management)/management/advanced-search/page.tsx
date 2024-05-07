@@ -3,6 +3,7 @@ import { ReadonlyURLSearchParams, usePathname, useRouter } from 'next/navigation
 import ManagementPageWrapper from '../components/ManagementPageWrapper';
 import { Tabs, TabsList, TabsTrigger } from '@ui/tabs';
 import CommandEntry from './components/CommandEntry';
+import OnlineStatus from './components/OnlineStatus';
 import ItemWrapper from '../components/ItemWrapper';
 import { relativeDate } from '@assets/lib/utils';
 import { useEventListener } from 'usehooks-ts';
@@ -31,7 +32,10 @@ const ManagementAdvancedSearch = () => {
       tribeId?: number | undefined | null;
       tribeName?: string | undefined | null;
       discordId?: string | undefined | null;
+      onlineStatus?: number | undefined;
+
       members?: {
+        onlineStatus?: number | undefined;
         characterName?: string | undefined;
         characterNameFallback?: string | undefined;
         playerId?: number | undefined;
@@ -227,6 +231,7 @@ const ManagementAdvancedSearch = () => {
                       {playerTribeId && <DataEntry value={playerTribeId} title="Tribe ID" />}
                       {entry?.tribeName && <DataEntry value={entry.tribeName} title="Tribe Name" />}
                       {entry?.discordId && <DataEntry value={entry.discordId} title="Discord ID" />}
+                      <OnlineStatus status={entry.onlineStatus} />
                     </div>
                     <div className="mt-4 flex flex-col space-y-6">
                       {members.length >= 1 && (
@@ -252,6 +257,7 @@ const ManagementAdvancedSearch = () => {
                                 <DataEntry value={relativeDate(new Date(member.lastLogin * 1000))} title="Last login" />
                               )}
                               {member?.map && <DataEntry value={member.map} title="Last map" />}
+                              <OnlineStatus status={member.onlineStatus} />
                               <Separator />
                             </div>
                           );
