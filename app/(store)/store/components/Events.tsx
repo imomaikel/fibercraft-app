@@ -6,9 +6,9 @@ const Events = () => {
   return (
     <div className="relative w-full max-w-4xl rounded-lg border">
       <div className="absolute -right-10 bottom-0 z-10 w-1/2 select-none">
-        <Image src="/ev3.png" alt="" width={0} height={0} sizes="100vw" className="max-h-60 w-auto" />
+        <Image src="/ev3.png" alt="" width={0} height={0} sizes="100vw" className="h-60 w-auto" />
       </div>
-      <div className="relative h-48 overflow-hidden rounded-lg">
+      <div className="relative h-36 overflow-hidden rounded-lg md:h-48">
         <Image
           alt="background"
           className="h-full w-full object-cover blur-sm"

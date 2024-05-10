@@ -108,6 +108,7 @@ enum ManagementPermission {
   VIEW_LOGS            @map("View Logs")
   ADVANCED_SEARCH      @map("Advanced Search")
   WEBSITE_CONTROL      @map("Website Control")
+  PLUGIN_CONFIG        @map("Plugin Config")
 }
 
 model UserPermission {

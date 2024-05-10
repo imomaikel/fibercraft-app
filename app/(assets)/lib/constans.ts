@@ -52,6 +52,12 @@ export const NAV_LINKS = [
         description: 'Configure the website',
         permission: 'WEBSITE_CONTROL' as ManagementPermission,
       },
+      {
+        label: 'Plugin Config',
+        path: '/management/plugin-config',
+        description: 'Change the config of the plugin(s)',
+        permission: 'PLUGIN_CONFIG' as ManagementPermission,
+      },
     ],
   },
 ] as const;

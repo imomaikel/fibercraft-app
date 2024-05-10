@@ -12,6 +12,7 @@ import { getPermissionFromLabel, translateWidgetEnum, widgetEnums } from '../../
 import { serverControlApi } from '../../../bot/plugins/server-control';
 import { ManagementPermissionValidator } from '../validators/custom';
 import { advancedSearch } from '../../(assets)/lib/advanced-search';
+import { structuresEditor } from '../../../bot/plugins/editor';
 import { dbGetFiberServers } from '../../../bot/lib/mysql';
 import { TAllNavLabels } from '../../(assets)/lib/types';
 import { ManagementPermission } from '@prisma/client';
@@ -499,4 +500,44 @@ export const managementRouter = router({
 
     return avatar;
   }),
+  getStructuresConfig: managementProcedure.query(async ({ ctx }) => {
+    const { userPermissions } = ctx;
+
+    if (!verifyFromLabel('Plugin Config', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+    const statuses = await structuresEditor({
+      method: 'CHECK',
+    });
+
+    return statuses;
+  }),
+  changeStructuresConfig: managementProcedure
+    .input(
+      z.object({
+        method: z.enum(['ADD', 'REMOVE']),
+        serverIds: z.number().array(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userPermissions, user } = ctx;
+      const { method, serverIds } = input;
+
+      if (!verifyFromLabel('Plugin Config', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+      const action = await structuresEditor({
+        method,
+        serverIds,
+      });
+
+      createPanelLog({
+        content: 'Changed AntiStructureMesh Config',
+        userDiscordId: user.discordId,
+        username: user.name!,
+        guildId: user.selectedDiscordId,
+      });
+
+      if (action.method === 'ADD' || action.method === 'REMOVE') {
+        return action;
+      }
+    }),
 });
