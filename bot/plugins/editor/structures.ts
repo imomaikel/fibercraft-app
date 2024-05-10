@@ -1,5 +1,5 @@
 import { dbGetFiberServers } from '../../lib/mysql';
-import { readFile } from 'fs/promises';
+import { readFile, writeFile } from 'fs/promises';
 import { resolve } from 'path';
 
 type TStructuresEditorInput =
@@ -72,6 +72,8 @@ export const _structuresEditor = async (props: TStructuresEditorInput): Promise<
         content.AntiStructureMesh.Structures_Collision.push('Tek Teleporter');
         content.AntiStructureMesh.DetectedStructures.push('Tek Teleporter');
       }
+
+      await writeFile(configPath, JSON.stringify(content, null, 2), { encoding: 'utf-8' });
 
       successList.push(server.id);
     } catch {
