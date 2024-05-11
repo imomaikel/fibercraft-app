@@ -1,4 +1,5 @@
 import { setTestimonialsChannel } from '../../plugins/testimonials';
+import { createLinkEmbed } from '../../plugins/discord-link';
 import { widgetEnums } from '@assets/lib/utils';
 import prisma from '../../lib/prisma';
 import { z } from 'zod';
@@ -28,6 +29,12 @@ export const _updateWidget = async (widget: z.infer<typeof widgetEnums>, guildId
     } catch {
       return { updated: false, message: 'Something went wrong!' };
     }
+  } else if (widget === 'discordLinkChannelId' && guild.widgets?.discordLinkChannelId) {
+    const action = await createLinkEmbed({ guildId, channelId: guild.widgets.discordLinkChannelId });
+    if (action.success) {
+      return { updated: true };
+    }
+    return { updated: false, message: action.message || 'Something went wrong!' };
   }
 
   return { updated: true };

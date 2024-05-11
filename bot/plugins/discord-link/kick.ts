@@ -3,6 +3,7 @@ import { dbGetDiscordLink } from '../../lib/mysql';
 import { executeRconCommand } from '../rcon';
 import { colors } from '../../constans';
 import { client } from '../../client';
+import prisma from '../../lib/prisma';
 
 type THandleKickButton = {
   interaction: ButtonInteraction;
@@ -43,6 +44,14 @@ export const _handleKickButton = async ({ interaction }: THandleKickButton) => {
       command: 'KickPlayer',
       executedBy: client.user?.username || 'Discord Bot',
       args: data.SteamId,
+    });
+
+    await prisma.config.updateMany({
+      data: {
+        kickButtonUse: {
+          increment: 1,
+        },
+      },
     });
 
     if (findMap && findMap.length >= 2) {

@@ -74,6 +74,26 @@ const ManagementWidgetsPage = () => {
             </div>
           </div>
         </ItemWrapper>
+        <ItemWrapper
+          title="Link & Kick Widget"
+          description="A widget where players can link Discord with ARK and kick themselves from maps"
+        >
+          <div className="flex flex-col space-y-1">
+            <Label>Widget Channel</Label>
+            <Combobox
+              data={channels || []}
+              notFoundText="No channels found."
+              searchLabel="Type to search..."
+              className="w-full max-w-xs"
+              isLoading={channelsLoading || widgetsLoading}
+              selectText="Click to expand"
+              defaultValue={widgetData?.discordLinkChannelId || undefined}
+              isDisabled={isUpdating}
+              onSelect={(_, value) => handleUpdate(value, 'discordLinkChannelId')}
+              onReset={() => handleUpdate(null, 'discordLinkChannelId')}
+            />
+          </div>
+        </ItemWrapper>
       </div>
     </ManagementPageWrapper>
   );
