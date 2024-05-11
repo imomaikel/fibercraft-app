@@ -10,7 +10,7 @@ type TExecuteRconCommand = {
   executedBy: string;
 };
 export const _executeRconCommand = async ({ command, serverMapName, args = '', executedBy }: TExecuteRconCommand) => {
-  if (!ALL_RCON_COMMANDS.includes(command) || !args) {
+  if (!ALL_RCON_COMMANDS.includes(command)) {
     return { error: true, message: 'Invalid request!' };
   }
 
