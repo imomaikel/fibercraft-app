@@ -1,16 +1,16 @@
 import { dbGetFiberServers } from '../../lib/mysql';
-import { COMMANDS } from '../../constans';
+import { ALL_RCON_COMMANDS } from '../../constans';
 import prisma from '../../lib/prisma';
 import { Rcon } from 'rcon-client';
 
 type TExecuteRconCommand = {
   serverMapName?: string | undefined;
-  command: (typeof COMMANDS)[number];
-  args: string;
+  command: (typeof ALL_RCON_COMMANDS)[number];
+  args?: string;
   executedBy: string;
 };
-export const _executeRconCommand = async ({ command, serverMapName, args, executedBy }: TExecuteRconCommand) => {
-  if (!COMMANDS.includes(command) || !args) {
+export const _executeRconCommand = async ({ command, serverMapName, args = '', executedBy }: TExecuteRconCommand) => {
+  if (!ALL_RCON_COMMANDS.includes(command) || !args) {
     return { error: true, message: 'Invalid request!' };
   }
 

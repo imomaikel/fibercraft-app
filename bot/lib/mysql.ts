@@ -1,4 +1,10 @@
-import { TDbGetFiberServers, TDbGetNewTribeLogs, TDbGetPairedAccounts, TDbGetTopTribeScore } from './types';
+import {
+  TDbGetDiscordLink,
+  TDbGetFiberServers,
+  TDbGetNewTribeLogs,
+  TDbGetPairedAccounts,
+  TDbGetTopTribeScore,
+} from './types';
 import { TribeScorePosition } from '@prisma/client';
 import { getEnv } from '../utils/env';
 import mysql from 'mysql2';
@@ -132,4 +138,32 @@ export const updateTribeScore = async (
   );
 
   return;
+};
+
+export const dbCreateDiscordLink = async (discordId: string, hash: string) => {
+  try {
+    const getLink = await dbGetDiscordLink(discordId);
+    if (getLink?.DiscordId) {
+      await db('UPDATE kalcrosschatfiber.discordsteamlinks SET InviteCode = ? WHERE DiscordId = ?', [hash, discordId]);
+    } else {
+      await db('INSERT INTO kalcrosschatfiber.discordsteamlinks (SteamId, DiscordId, InviteCode) VALUES (?, ?, ?)', [
+        '',
+        discordId,
+        hash,
+      ]);
+    }
+    return true;
+  } catch {}
+  return false;
+};
+export const dbGetDiscordLink = async (discordId: string) => {
+  const query = (await db('SELECT SteamId, DiscordId FROM kalcrosschatfiber.discordsteamlinks WHERE DiscordId = ?', [
+    discordId,
+  ])) as TDbGetDiscordLink[];
+
+  if (query && query[0]) {
+    return query[0];
+  }
+
+  return null;
 };

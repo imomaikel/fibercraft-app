@@ -1,5 +1,5 @@
 import { executeRconCommand } from '../../../../bot/plugins/rcon';
-import { COMMANDS } from '../../../../bot/constans';
+import { API_RCON_COMMANDS } from '../../../../bot/constans';
 import crypto from 'node:crypto';
 
 const RCON_API_SECRET = process.env.RCON_API_SECRET;
@@ -9,9 +9,9 @@ const handle = async (request: Request) => {
     const form = await request.formData();
 
     const data = Object.fromEntries(form);
-    const command = data.command as (typeof COMMANDS)[number];
+    const command = data.command as (typeof API_RCON_COMMANDS)[number];
 
-    if (!COMMANDS.includes(command)) {
+    if (!API_RCON_COMMANDS.includes(command)) {
       return new Response('Invalid command!', { status: 400 });
     }
 

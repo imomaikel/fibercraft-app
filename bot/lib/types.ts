@@ -39,3 +39,8 @@ export type TDbGetTopTribeScore = {
   progress: number;
   mode: TribeScorePosition;
 }[];
+
+export type TDbGetDiscordLink = {
+  SteamId: string;
+  DiscordId: string;
+};

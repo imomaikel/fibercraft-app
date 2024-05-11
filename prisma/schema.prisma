@@ -19,6 +19,10 @@ model Widget {
   testimonialsMessageId String? @db.TinyText
   testimonialsRoleId    String? @db.TinyText
 
+  // Discord Link
+  discordLinkChannelId String? @db.TinyText
+  discordLinkMessageId String? @db.TinyText
+
   guild   Guild  @relation(fields: [guildId], references: [id])
   guildId String @unique
 }
@@ -67,6 +71,8 @@ model Config {
   lastWipe        DateTime @default(now())
   nextWipe        DateTime @default(now())
   wipeDelayInDays Int      @default(14)
+
+  kickButtonUse Int @default(0)
 
   serverIp String @default("103.214.68.111")
 
