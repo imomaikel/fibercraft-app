@@ -27,6 +27,22 @@ model Widget {
   guildId String @unique
 }
 
+enum BoostAction {
+  START
+  END
+}
+
+model DiscordBoost {
+  id String @id @default(cuid())
+
+  discordId String
+  action    BoostAction
+  executed  Boolean     @default(false)
+  isLinked  Boolean
+
+  createdAt DateTime @default(now())
+}
+
 enum TestimonialStatus {
   WAITING
   APPROVED

@@ -23,4 +23,10 @@ export const extraSigns = {
 
 export const API_RCON_COMMANDS = ['aac.ban', 'aac.removeban', 'punishment.advert.rcon', 'kmute', 'kunmute'] as const;
 
-export const ALL_RCON_COMMANDS = [...API_RCON_COMMANDS, 'ListPlayers', 'KickPlayer'] as const;
+export const ALL_RCON_COMMANDS = [
+  ...API_RCON_COMMANDS,
+  'ListPlayers',
+  'KickPlayer',
+  'permissions.add',
+  'permissions.remove',
+] as const;
