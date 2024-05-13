@@ -2,6 +2,7 @@ import { hoursToMilliseconds, minutesToMilliseconds } from 'date-fns';
 import { fetchOldReactions } from '../plugins/testimonials';
 import { updateTribeScore } from '../plugins/tribe-score';
 import { refetchTebexCategories } from '../../tebex';
+import { revalidateBoosts } from '../plugins/boost';
 import { event } from '../utils/events';
 import prisma from '../lib/prisma';
 
@@ -34,6 +35,11 @@ export default event('ready', async (client) => {
 
   // Fetch old reaction
   fetchOldReactions();
+
+  // Check boosts
+  setInterval(() => {
+    revalidateBoosts();
+  }, hoursToMilliseconds(1));
 
   // TODO
   if (process.env.NODE_ENV === 'production') {
