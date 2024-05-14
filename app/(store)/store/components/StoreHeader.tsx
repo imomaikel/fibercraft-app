@@ -7,7 +7,7 @@ const StoreHeader = () => {
       <div>
         <p className="text-sm text-muted-foreground">Welcome to the</p>
         <h1 className="text-4xl font-bold">Friendly Network Store</h1>
-        <div className="mt-2 max-w-2xl space-y-2">
+        <div className="mt-2 max-w-xl space-y-2">
           <p className="text-muted-foreground">
             Friendly Network is a community for all people that want to enjoy playing without grinding and just having
             fun. We have a store so you can improve the quality of the servers and keep them running.
