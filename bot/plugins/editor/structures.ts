@@ -1,5 +1,7 @@
 import { dbGetFiberServers } from '../../lib/mysql';
 import { readFile, writeFile } from 'fs/promises';
+import { executeRconCommand } from '../rcon';
+import { client } from '../../client';
 import { resolve } from 'path';
 
 type TStructuresEditorInput =
@@ -16,7 +18,7 @@ type TStructuresEditorOutput =
       servers: {
         name: string;
         id: number;
-        status: 'With teleporter' | 'Without teleporter' | 'Error';
+        fileStatus: 'With teleporter' | 'Without teleporter' | 'Error';
       }[];
     }
   | {
@@ -24,7 +26,8 @@ type TStructuresEditorOutput =
       servers: {
         name: string;
         id: number;
-        status: 'Success' | 'Error';
+        fileStatus: 'Success' | 'Error';
+        rconStatus: boolean;
       }[];
     };
 
@@ -81,13 +84,20 @@ export const _structuresEditor = async (props: TStructuresEditorInput): Promise<
     }
   }
 
+  const reloadCommand = await executeRconCommand({
+    command: 'asm.reload',
+    executedBy: client.user?.username || 'Discord Bot',
+  });
+
+  const executedMaps = (reloadCommand.executed || []).map(({ mapName }) => mapName);
+
   if (props.method === 'CHECK') {
     return {
       method: 'CHECK',
       servers: servers.map((server) => ({
         id: server.id,
         name: server.mapName,
-        status: checkList.includes(server.id)
+        fileStatus: checkList.includes(server.id)
           ? 'With teleporter'
           : errorList.includes(server.id)
             ? 'Error'
@@ -100,7 +110,8 @@ export const _structuresEditor = async (props: TStructuresEditorInput): Promise<
       servers: servers.map((server) => ({
         id: server.id,
         name: server.mapName,
-        status: successList.includes(server.id) ? 'Success' : 'Error',
+        fileStatus: successList.includes(server.id) ? 'Success' : 'Error',
+        rconStatus: executedMaps.includes(server.mapName),
       })),
     };
   }

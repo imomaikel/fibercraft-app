@@ -29,4 +29,5 @@ export const ALL_RCON_COMMANDS = [
   'KickPlayer',
   'permissions.add',
   'permissions.remove',
+  'asm.reload',
 ] as const;

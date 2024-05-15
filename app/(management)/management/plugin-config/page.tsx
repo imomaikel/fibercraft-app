@@ -97,7 +97,7 @@ const ManagementPluginConfigPage = () => {
                       </TableCell>
                       <TableCell>{server.name}</TableCell>
                       <TableCell>
-                        <Badge>{server.status}</Badge>
+                        <Badge>{server.fileStatus}</Badge>
                       </TableCell>
                     </TableRow>
                   );
@@ -129,7 +129,8 @@ const ManagementPluginConfigPage = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Map</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>File Changed</TableHead>
+                <TableHead>Plugin Reloaded</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -138,7 +139,10 @@ const ManagementPluginConfigPage = () => {
                   <TableRow key={`server-result-${server.id}`}>
                     <TableCell>{server.name}</TableCell>
                     <TableCell>
-                      <Badge>{server.status}</Badge>
+                      <Badge>{server.fileStatus}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge>{server.rconStatus ? 'Succeed' : 'Failed'}</Badge>
                     </TableCell>
                   </TableRow>
                 );
