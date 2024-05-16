@@ -29,6 +29,8 @@ const authOptions: NextAuthOptions = {
 
       session.user.basketIdent = getUserData?.basketIdent || null;
       session.user.basketAuthUrl = getUserData?.basketAuthUrl || null;
+      session.user.epicId = getUserData?.epicId;
+      session.user.storeMethod = getUserData?.storeMethod;
 
       if (getUserData?.discordId) {
         session.user.discordId = getUserData.discordId;

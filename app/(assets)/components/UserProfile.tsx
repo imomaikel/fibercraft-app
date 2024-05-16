@@ -8,6 +8,7 @@ import { Avatar, AvatarImage } from '@ui/avatar';
 import { Skeleton } from '@ui/skeleton';
 import { Button } from '@ui/button';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const UserProfile = () => {
   const { user, sessionStatus } = useCurrentUser();
@@ -51,7 +52,11 @@ const UserProfile = () => {
             </div>
           </div>
         </PopoverTrigger>
-        <PopoverContent>
+        <PopoverContent className="space-y-2">
+          <Button className="w-full" asChild>
+            <Link href="/me/store-settings">Store Settings</Link>
+          </Button>
+
           <Button className="w-full" variant="secondary" aria-labelledby="logout" onClick={() => signOut()}>
             Logout
           </Button>

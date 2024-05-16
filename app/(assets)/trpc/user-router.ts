@@ -140,4 +140,50 @@ export const userRouter = router({
 
       return { status: 'success', basket: action.basket };
     }),
+  getMyStoreSettings: userProcedure.query(({ ctx }) => {
+    const {
+      user: { epicId, storeMethod },
+    } = ctx;
+
+    return { epicId, storeMethod };
+  }),
+  updateMyStoreSettings: userProcedure
+    .input(
+      z.object({
+        data: z
+          .object({
+            method: z.literal('STEAM'),
+          })
+          .or(
+            z.object({
+              method: z.literal('EPIC'),
+              epicId: z.string().min(6),
+            }),
+          ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma, user } = ctx;
+      const { data } = input;
+
+      try {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            ...(data.method === 'EPIC'
+              ? {
+                  epicId: data.epicId,
+                  storeMethod: 'EPIC',
+                }
+              : {
+                  storeMethod: 'STEAM',
+                }),
+          },
+        });
+
+        return { success: true };
+      } catch {
+        return { error: true };
+      }
+    }),
 });
