@@ -18,7 +18,7 @@ export const _getBasket = async ({ basketIdent, ipAddress }: TGetBasket) => {
   SetWebstoreIdentifier(process.env.TEBEX_PUBLIC_TOKEN!);
 
   try {
-    const basket = basketIdent ? await GetBasket(basketIdent) : null;
+    const basket = basketIdent ? await GetBasket(basketIdent).catch(() => null) : null;
 
     if (!basket || !basket.ident) {
       const { authUrl, newBasket } = await createBasket(ipAddress);

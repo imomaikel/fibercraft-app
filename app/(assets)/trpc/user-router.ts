@@ -2,6 +2,7 @@ import { addBasketPackage, removeBasketPackage, updateBasketPackage } from '../.
 import { TActionResponse } from '../../(assets)/lib/types';
 import { missingBasket } from '../../../tebex/basket';
 import { router, userProcedure } from './trpc';
+import { StoreMethod } from '@prisma/client';
 import { z } from 'zod';
 
 export const userRouter = router({
@@ -33,11 +34,19 @@ export const userRouter = router({
         });
       }
 
+      let method: StoreMethod = 'STEAM';
+      if (user.storeMethod === 'EPIC') {
+        if (user.epicId && user.epicId.length >= 6) {
+          method = 'EPIC';
+        }
+      }
+
       const action = await addBasketPackage({
         basketIdent: user.basketIdent,
         discordId: user.discordId,
         itemId,
         quantity,
+        epic_id: method === 'EPIC' ? user.epicId! : null,
       });
 
       if (action.error || !action.basket) {

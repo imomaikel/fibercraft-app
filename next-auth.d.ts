@@ -1,4 +1,4 @@
-import { ManagementPermission } from '@prisma/client';
+import { ManagementPermission, StoreMethod } from '@prisma/client';
 import { DefaultSession } from 'next-auth';
 
 interface NextAuthUser {
@@ -8,6 +8,8 @@ interface NextAuthUser {
   basketAuthUrl?: string | null;
   selectedDiscordId?: string;
   permissions?: ManagementPermission[];
+  storeMethod?: StoreMethod;
+  epicId?: string | null;
 }
 export interface NextAuthSession {
   user: NextAuthUser & DefaultSession['user'];

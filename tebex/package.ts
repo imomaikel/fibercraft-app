@@ -7,11 +7,21 @@ type TAddBasketPackage = {
   itemId: number;
   quantity?: number;
   discordId: string;
+  epic_id: string | null;
 };
-export const _addBasketPackage = async ({ basketIdent, itemId, discordId, quantity = 1 }: TAddBasketPackage) => {
+export const _addBasketPackage = async ({
+  basketIdent,
+  itemId,
+  discordId,
+  quantity = 1,
+  epic_id,
+}: TAddBasketPackage) => {
   try {
     SetWebstoreIdentifier(process.env.TEBEX_PUBLIC_TOKEN!);
-    const basket = await AddPackageToBasket(basketIdent, itemId, quantity, 'single', { discord_id: discordId });
+    const basket = await AddPackageToBasket(basketIdent, itemId, quantity, 'single', {
+      discord_id: discordId,
+      epic_id,
+    });
     return { success: true, basket };
   } catch (error) {
     const errorMessage = translateTebexError(error);
