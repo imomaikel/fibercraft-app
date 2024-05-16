@@ -183,6 +183,7 @@ model User {
   basketAuthUrl   String?          @db.Text
   previousBaskets PreviousBasket[]
 
+  totalPaid   Float       @default(0)
   epicId      String?
   storeMethod StoreMethod @default(STEAM)
 
@@ -240,6 +241,9 @@ model PreviousBasket {
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model BasketProduct {
@@ -250,7 +254,7 @@ model BasketProduct {
   quantity  Int
   price     Float
 
-  PreviousBasket      PreviousBasket @relation(fields: [previousBasketIdent], references: [ident], onDelete: Cascade)
+  previousBasket      PreviousBasket @relation(fields: [previousBasketIdent], references: [ident], onDelete: Cascade)
   previousBasketIdent String
 }
 

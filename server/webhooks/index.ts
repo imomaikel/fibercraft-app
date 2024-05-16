@@ -27,11 +27,12 @@ const webhookHandler = async (req: any, res: express.Response) => {
 
     if (data.type === 'validation.webhook') {
       res.json({ id: data.id }).status(200);
+      return;
     }
 
     // Handle webhook event and send response
     await handleWebhookEvent({ data, res });
-  } catch (error) {
+  } catch {
     res.status(500).send('Server error (2)');
   }
 };

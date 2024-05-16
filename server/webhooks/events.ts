@@ -19,7 +19,7 @@ const handleWebhookEvent = async ({ data, res }: THandleWebhookEvent) => {
       )?.ident;
       if (!ident) return res.status(500).send('Invalid Basket Link ID');
 
-      await prisma.previousBasket.update({
+      const updatedBasket = await prisma.previousBasket.update({
         where: {
           ident,
         },
@@ -45,6 +45,16 @@ const handleWebhookEvent = async ({ data, res }: THandleWebhookEvent) => {
       await prisma.basketLink.delete({
         where: { ident },
       });
+      if (data.subject.price_paid.amount) {
+        await prisma.user.update({
+          where: { id: updatedBasket.userId },
+          data: {
+            totalPaid: {
+              increment: data.subject.price_paid.amount,
+            },
+          },
+        });
+      }
 
       return res.status(200).send('Payment received');
     } else {

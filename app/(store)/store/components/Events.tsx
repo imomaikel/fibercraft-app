@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 const Events = () => {
   return (
-    <div className="relative w-full max-w-4xl rounded-lg border">
+    <div className="relative h-fit w-full max-w-4xl rounded-lg border">
       <div className="absolute -right-10 bottom-0 z-10 hidden select-none md:block">
         <Image src="/ev3.png" alt="" width={0} height={0} sizes="100vw" className="w-auto md:h-60" />
       </div>

@@ -1,7 +1,7 @@
 import { dbGetFiberServers, getTopTribeScore } from '../../../bot/lib/mysql';
+import { endOfMonth, millisecondsToHours, startOfMonth } from 'date-fns';
 import { getTebexCategories, getTebexProducts } from '../../../tebex';
 import { publicProcedure, router } from './trpc';
-import { millisecondsToHours } from 'date-fns';
 import { Package } from 'tebex_headless';
 import { z } from 'zod';
 
@@ -122,5 +122,60 @@ export const publicRouter = router({
     }
 
     return randomProducts;
+  }),
+  getTopDonators: publicProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const now = new Date();
+    const firstDay = startOfMonth(now);
+    const lastDay = endOfMonth(now);
+
+    const topAllTimeDonator = await prisma.user.findFirst({
+      orderBy: {
+        totalPaid: 'desc',
+      },
+      take: 1,
+      select: {
+        totalPaid: true,
+        name: true,
+        image: true,
+      },
+    });
+
+    const topMonthlyDonator = await prisma.previousBasket.findFirst({
+      where: {
+        completed: true,
+        updatedAt: {
+          gte: firstDay,
+          lte: lastDay,
+        },
+      },
+      select: {
+        pricePaid: true,
+        user: {
+          select: {
+            name: true,
+            image: true,
+          },
+        },
+      },
+      orderBy: {
+        pricePaid: 'desc',
+      },
+      take: 1,
+    });
+
+    return {
+      monthly: {
+        name: topAllTimeDonator?.name || null,
+        price: topAllTimeDonator?.totalPaid || 0,
+        image: topAllTimeDonator?.image || null,
+      },
+      allTime: {
+        name: topMonthlyDonator?.user.name || null,
+        price: topMonthlyDonator?.pricePaid || 0,
+        image: topMonthlyDonator?.user.image || null,
+      },
+    };
   }),
 });
