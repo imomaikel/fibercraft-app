@@ -20,7 +20,7 @@ export const _getBasket = async ({ basketIdent, ipAddress }: TGetBasket) => {
   try {
     const basket = basketIdent ? await GetBasket(basketIdent).catch(() => null) : null;
 
-    if (!basket || !basket.ident) {
+    if (!basket || !basket.ident || basket.complete) {
       const { authUrl, newBasket } = await createBasket(ipAddress);
       return { authUrl, newBasket };
     }
