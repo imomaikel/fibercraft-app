@@ -1,4 +1,4 @@
-import { addBasketPackage, removeBasketPackage, updateBasketPackage } from '../../../tebex';
+import { addBasketPackage, getTebexProducts, removeBasketPackage, updateBasketPackage } from '../../../tebex';
 import { TActionResponse } from '../../(assets)/lib/types';
 import { missingBasket } from '../../../tebex/basket';
 import { router, userProcedure } from './trpc';
@@ -218,4 +218,75 @@ export const userRouter = router({
       return null;
     }
   }),
+  getPayment: userProcedure
+    .input(
+      z.object({
+        paymentId: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { prisma, user } = ctx;
+      const { paymentId } = input;
+
+      const products = await getTebexProducts();
+
+      try {
+        const payments = await prisma.previousBasket.findMany({
+          take: 1,
+          where: {
+            user: {
+              id: user.id,
+            },
+            transactionId: paymentId,
+          },
+          select: {
+            transactionId: true,
+            completed: true,
+            pricePaid: true,
+            tax: true,
+            username: true,
+            updatedAt: true,
+            usernameId: true,
+            user: {
+              select: {
+                email: true,
+              },
+            },
+            products: {
+              select: {
+                name: true,
+                productId: true,
+                price: true,
+                quantity: true,
+              },
+            },
+          },
+        });
+        const payment = payments[0];
+        if (!payment) return { exists: false };
+
+        if (payment.completed) {
+          return {
+            exists: true,
+            completed: true,
+            payment: {
+              ...payment,
+              products: payment.products.map((product) => {
+                const findOriginal = products.find((entry) => entry.id === product.productId);
+                return {
+                  ...product,
+                  exists: !!findOriginal?.id,
+                  category: findOriginal?.category,
+                  image: findOriginal?.image,
+                };
+              }),
+            },
+          };
+        } else {
+          return { exists: true, completed: false };
+        }
+      } catch {
+        return { exists: false };
+      }
+    }),
 });

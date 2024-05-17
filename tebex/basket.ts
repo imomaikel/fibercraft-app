@@ -50,7 +50,7 @@ const createBasket = async (ipAddress: string) => {
     // TODO Redirects
     const newBasketLink = await prisma.basketLink.create({ data: {} });
     const newBasket = await CreateBasket(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/store/complete`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/me/payments/id`,
       `${process.env.NEXT_PUBLIC_SERVER_URL}/store/cancel`,
       { basketLink: newBasketLink.linkId },
       true,
@@ -62,6 +62,7 @@ const createBasket = async (ipAddress: string) => {
         ident: newBasket.ident,
       },
     });
+    // TODO Redirect
     const authUrl = await GetBasketAuthUrl(newBasket.ident, `${process.env.NEXT_PUBLIC_SERVER_URL}/store/authorized`);
 
     return { newBasket, authUrl };

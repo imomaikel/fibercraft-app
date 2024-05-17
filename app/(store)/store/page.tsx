@@ -16,7 +16,7 @@ const StoreLandingPage = () => {
         <TopDonators />
       </div>
 
-      <div className="mt-6">
+      <div className="mt-12">
         <Products />
       </div>
     </div>
