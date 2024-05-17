@@ -186,4 +186,36 @@ export const userRouter = router({
         return { error: true };
       }
     }),
+  getMyPayments: userProcedure.query(async ({ ctx }) => {
+    const { prisma, user } = ctx;
+
+    try {
+      const payments = (
+        await prisma.user.findUnique({
+          where: { id: user.id },
+          select: {
+            previousBaskets: {
+              where: {
+                completed: true,
+              },
+              select: {
+                transactionId: true,
+                pricePaid: true,
+                updatedAt: true,
+                _count: {
+                  select: {
+                    products: true,
+                  },
+                },
+              },
+            },
+          },
+        })
+      )?.previousBaskets;
+
+      return payments || null;
+    } catch {
+      return null;
+    }
+  }),
 });

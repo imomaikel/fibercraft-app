@@ -52,7 +52,11 @@ const UserProfile = () => {
             </div>
           </div>
         </PopoverTrigger>
-        <PopoverContent className="space-y-2">
+        <PopoverContent className="space-y-3">
+          <Button className="w-full" asChild>
+            <Link href="/me/payments">My Payments</Link>
+          </Button>
+
           <Button className="w-full" asChild>
             <Link href="/me/store-settings">Store Settings</Link>
           </Button>
