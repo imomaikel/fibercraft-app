@@ -13,7 +13,7 @@ const TopDonators = () => {
   if (!data || isLoading) return null;
 
   return (
-    <div className="flex w-fit flex-col justify-around rounded-md border bg-muted/50 px-6 py-3 2xl:py-0">
+    <div className="flex w-full flex-col items-center justify-center rounded-md border bg-muted/50 px-6 py-3 md:justify-around xl:w-fit 2xl:py-0">
       <div>
         <h2 className="text-2xl font-medium">
           Top <span className="font-bold text-primary">All-Time</span> Customer

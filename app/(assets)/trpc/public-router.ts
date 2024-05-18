@@ -178,4 +178,39 @@ export const publicRouter = router({
       },
     };
   }),
+  getRecentPayments: publicProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const payments = await prisma.previousBasket.findMany({
+      where: {
+        completed: true,
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      take: 10,
+      select: {
+        pricePaid: true,
+        username: true,
+        products: {
+          select: {
+            name: true,
+          },
+          take: 1,
+        },
+        user: {
+          select: {
+            image: true,
+          },
+        },
+        _count: {
+          select: {
+            products: true,
+          },
+        },
+      },
+    });
+
+    return payments;
+  }),
 });

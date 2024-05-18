@@ -1,4 +1,5 @@
 'use client';
+import RecentPayments from './components/RecentPayments';
 import TopDonators from './components/TopDonators';
 import StoreHeader from './components/StoreHeader';
 import Products from './components/Products';
@@ -11,9 +12,16 @@ const StoreLandingPage = () => {
         <StoreHeader />
       </div>
 
-      <div className="mt-8 flex flex-col space-y-6 2xl:flex-row 2xl:justify-between 2xl:space-y-0">
-        <Events />
-        <TopDonators />
+      <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-4 xl:grid-cols-3 xl:gap-x-0">
+        <div className="col-span-2 grid">
+          <Events />
+        </div>
+        <div className="col-span-2 flex md:col-span-2 xl:col-span-1 xl:justify-end">
+          <TopDonators />
+        </div>
+        <div className="col-span-2 grid xl:col-span-3">
+          <RecentPayments />
+        </div>
       </div>
 
       <div className="mt-12">
