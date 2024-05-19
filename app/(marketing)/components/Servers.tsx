@@ -4,6 +4,7 @@ import { FaMapMarkedAlt, FaSteam } from 'react-icons/fa';
 import { HoverEffect } from '@ui/card-hover-effect';
 import { LuClipboardCopy } from 'react-icons/lu';
 import { useEffect, useState } from 'react';
+import { TiWarning } from 'react-icons/ti';
 import { TbSlash } from 'react-icons/tb';
 import { Skeleton } from '@ui/skeleton';
 import { cn } from '@assets/lib/utils';
@@ -32,14 +33,26 @@ const Servers = ({ ipAddress }: TServers) => {
   return (
     <MarketingSectionWrapper title="Season Maps" description="Find a map that suits you" theme="DARK">
       {isLoading ? (
-        <Skeleton className="mx-auto mb-6 h-[32px] w-[400px]" />
+        <>
+          <Skeleton className="mx-auto mb-6 h-[32px] w-[400px]" />
+          <Skeleton className="mx-auto mb-6 h-[40px] w-[475px]" />
+        </>
       ) : (
-        <div className="mb-6 flex items-center justify-center text-2xl">
-          <span>{servers?.length} season maps</span>
-          <div className="mx-4">
-            <TbSlash className="h-8 w-8" />
+        <div>
+          <div className="mb-6 flex items-center justify-center text-2xl">
+            <span>{servers?.length} season maps</span>
+            <div className="mx-4">
+              <TbSlash className="h-8 w-8" />
+            </div>
+            <span>{totalPlayers} players</span>
           </div>
-          <span>{totalPlayers} players</span>
+          <div className="mb-6 hidden items-center justify-center space-x-2 md:flex">
+            <TiWarning className="h-12 w-12 animate-bounce text-destructive" />
+            <p className="max-w-sm text-center text-sm font-medium">
+              &quot;Click to join&quot; buttons work only for Steam players and your game needs to be closed before use.
+            </p>
+            <TiWarning className="h-12 w-12 animate-bounce text-destructive" />
+          </div>
         </div>
       )}
       {isLoading ? (
@@ -108,7 +121,7 @@ const Servers = ({ ipAddress }: TServers) => {
               server.lastStatus === 'online' ? (
                 <Link
                   prefetch={false}
-                  href={`steam://connect/${ipAddress}:${server.queryPort}`}
+                  href={`steam://run/346110//+connect%20${ipAddress}:${server.queryPort}`}
                   className="group/extra absolute right-2 top-2 z-20 hidden cursor-pointer rounded-bl-2xl rounded-tr-2xl bg-slate-800/[0.8] transition-colors hover:bg-primary md:block"
                 >
                   <div className="flex items-center space-x-3 px-6 py-3">
