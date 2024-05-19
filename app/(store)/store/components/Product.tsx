@@ -40,8 +40,10 @@ const Product = ({ description, id, name, image, totalPrice }: TProduct) => {
       viewport={{ once: true }}
     >
       <CardContainer containerClassName="h-full" className="h-full">
-        <CardBody className="group/card relative flex h-full w-auto flex-col justify-around overflow-hidden rounded-xl border border-black/[0.1] bg-gray-50 dark:border-white/[0.2] dark:bg-black/50 dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] sm:w-[30rem]">
-          <div className="absolute inset-0 h-full w-full rotate-45 rounded-md bg-gradient-to-r from-green-300 via-primary to-purple-600 opacity-50 blur-[200px]" />
+        <CardBody className="group/card relative flex h-full w-auto flex-col justify-around rounded-xl border border-black/[0.1] bg-gray-50 dark:border-white/[0.2] dark:bg-black/50 dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] sm:w-[30rem]">
+          <div className="absolute inset-0 h-full w-full overflow-hidden rounded-xl">
+            <div className="h-full w-full rotate-45 rounded-md bg-gradient-to-r from-green-300 via-primary to-purple-600 opacity-50 blur-[200px]" />
+          </div>
 
           <Link href={`/store/${id}`} className="flex h-full flex-col justify-around px-6 pt-6">
             <CardItem

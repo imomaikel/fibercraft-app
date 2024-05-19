@@ -111,7 +111,7 @@ const StaffControl = () => {
               <TableCell>
                 <div className="flex items-center space-x-2">
                   <Avatar>
-                    <AvatarImage src={member.image || ''} />
+                    <AvatarImage src={member.image || ''} alt="avatar" />
                     <AvatarFallback>
                       <Image src="/logo.webp" alt="member avatar" fill />
                     </AvatarFallback>
@@ -168,7 +168,7 @@ const StaffControl = () => {
                 disabled={avatarLoading || isMemberAdding}
               />
               <Avatar>
-                <AvatarImage src={avatar.startsWith('https://cdn.discordapp.com') ? avatar : ''} />
+                <AvatarImage src={avatar.startsWith('https://cdn.discordapp.com') ? avatar : ''} alt="avatar" />
                 <AvatarFallback>
                   <Image src="/logo.webp" alt="default avatar" fill />
                 </AvatarFallback>

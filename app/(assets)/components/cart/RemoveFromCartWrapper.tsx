@@ -34,7 +34,6 @@ const RemoveFromCartWrapper = ({ itemId, itemName, children, className, disabled
         },
         {
           onSuccess: (data) => {
-            cartContext.setLock(false);
             if (data.status === 'error') {
               if (data.message === 'Basket not authorized') {
                 openAuthorizeDialog(data.authUrl);
@@ -45,6 +44,7 @@ const RemoveFromCartWrapper = ({ itemId, itemName, children, className, disabled
               toast.success(`Removed "${itemName}" from the basket!`);
               cartContext.updateCart(data.basket);
             }
+            cartContext.setLock(false);
           },
           onError: () => {
             cartContext.setLock(false);

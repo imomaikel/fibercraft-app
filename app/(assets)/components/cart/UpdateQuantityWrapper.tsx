@@ -45,7 +45,6 @@ const UpdateQuantityWrapper = ({
         },
         {
           onSuccess: (data) => {
-            cartContext.setLock(false);
             if (data.status === 'error') {
               if (data.message === 'Basket not authorized') {
                 openAuthorizeDialog(data.authUrl);
@@ -60,6 +59,7 @@ const UpdateQuantityWrapper = ({
               }
               cartContext.updateCart(data.basket);
             }
+            cartContext.setLock(false);
           },
           onError: () => {
             cartContext.setLock(false);

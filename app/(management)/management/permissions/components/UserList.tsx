@@ -90,7 +90,7 @@ const UserList = ({ isOpen, handleClose, currentUsers }: TUserList) => {
                 }}
               >
                 <Avatar>
-                  <AvatarImage src={entry.avatar} />
+                  <AvatarImage src={entry.avatar} alt="avatar" />
                   <AvatarFallback>
                     <Image src="/logo.webp" className="h-full w-full" width={0} height={0} sizes="100vw" alt="avatar" />
                   </AvatarFallback>

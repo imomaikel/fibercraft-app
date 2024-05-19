@@ -20,7 +20,7 @@ const TopDonators = () => {
         </h2>
         <div className="mt-1 flex items-center space-x-2">
           <Avatar>
-            <AvatarImage src={data.allTime.image || ''} />
+            <AvatarImage src={data.allTime.image || ''} alt="avatar" />
             <AvatarFallback>
               <Image src="/logo.webp" className="h-full w-full" width={0} height={0} sizes="100vw" alt="avatar" />
             </AvatarFallback>
@@ -35,7 +35,7 @@ const TopDonators = () => {
         <h2 className="text-2xl font-medium">Top Monthly Customer</h2>
         <div className="mt-1 flex items-center space-x-2">
           <Avatar>
-            <AvatarImage src={data.monthly.image || ''} />
+            <AvatarImage src={data.monthly.image || ''} alt="avatar" />
             <AvatarFallback>
               <Image src="/logo.webp" className="h-full w-full" width={0} height={0} sizes="100vw" alt="avatar" />
             </AvatarFallback>

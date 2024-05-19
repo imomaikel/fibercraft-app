@@ -9,7 +9,7 @@ type TUserAvatar = {
 const UserAvatar = ({ url, fallback }: TUserAvatar) => {
   return (
     <Avatar>
-      <AvatarImage src={url || undefined} />
+      <AvatarImage src={url || undefined} alt="avatar" />
       <AvatarFallback>
         <Image
           src={fallback || '/logo.webp'}

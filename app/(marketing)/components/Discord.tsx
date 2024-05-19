@@ -13,7 +13,7 @@ const Discord = () => {
     >
       <div className="flex flex-col items-center justify-center space-y-6 md:flex-row md:space-x-6 md:space-y-0">
         <div className="text-center">
-          <h3 className="text-2xl font-medium tracking-wide">Let&apos;s talk</h3>
+          <h2 className="text-2xl font-medium tracking-wide">Let&apos;s talk</h2>
           <Image
             src="/dino-group.webp"
             width={384}
@@ -27,6 +27,7 @@ const Discord = () => {
         </div>
         <div>
           <iframe
+            title="Discord"
             src="https://discord.com/widget?id=924291148019793980&theme=dark"
             width="350"
             height="500"

@@ -45,7 +45,6 @@ const AddToCartWrapper = ({
         },
         {
           onSuccess: (data) => {
-            cartContext.setLock(false);
             if (data.status === 'error') {
               if (data.message === 'Basket not authorized') {
                 openAuthorizeDialog(data.authUrl);
@@ -56,6 +55,7 @@ const AddToCartWrapper = ({
               toast.success(`Added "${itemName}" to the basket!`);
               cartContext.updateCart(data.basket);
             }
+            cartContext.setLock(false);
           },
           onError: () => {
             cartContext.setLock(false);

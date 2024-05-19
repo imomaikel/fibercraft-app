@@ -34,7 +34,7 @@ const CartItem = ({ item }: TCartItem) => {
     <div className="space-y-2 rounded-lg border p-2">
       <div className="relative flex space-x-2">
         <div className="relative flex max-h-[128px] max-w-[128px] shrink-0 items-center justify-center">
-          <Image alt={name} src={image || '/fiber.webp'} className="h-auto w-auto" width={128} height={128} />
+          <Image alt={name} src={image || '/empty.png'} className="h-auto w-auto" width={128} height={128} />
         </div>
         <div className="flex flex-1 flex-col">
           <div className="flex flex-col items-center">

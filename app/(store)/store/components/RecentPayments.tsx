@@ -23,7 +23,7 @@ const RecentPayments = () => {
             >
               <div>
                 <Avatar>
-                  <AvatarImage src={payment.user.image || ''} />
+                  <AvatarImage src={payment.user.image || ''} alt="avatar" />
                   <AvatarFallback>
                     <Image src="/logo.webp" className="h-full w-full" width={0} height={0} sizes="100vw" alt="avatar" />
                   </AvatarFallback>

@@ -18,7 +18,8 @@ export const metadata: Metadata = {
     default: 'Friendly Fibercraft',
     template: '%s | Friendly Fibercraft',
   },
-  description: 'Your ARK Servers',
+  // prettier-ignore
+  description: 'Friendly Fibercraft is a Fibercraft ARK Server where everyone is supposed to have fun from solo/duo tribe to full 6-man. We\'re trying to balance everything in Terms of PvP to make it as much fun as possible.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
