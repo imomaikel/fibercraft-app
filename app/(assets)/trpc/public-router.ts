@@ -1,6 +1,7 @@
 import { dbGetFiberServers, getTopTribeScore } from '../../../bot/lib/mysql';
 import { endOfMonth, millisecondsToHours, startOfMonth } from 'date-fns';
 import { getTebexCategories, getTebexProducts } from '../../../tebex';
+import { replaceHtmlTags } from '../../(assets)/lib/utils';
 import { publicProcedure, router } from './trpc';
 import { Package } from 'tebex_headless';
 import { z } from 'zod';
@@ -34,6 +35,31 @@ export const publicRouter = router({
     if (oneCategoryId) {
       categories = categories.filter((category) => category.id === oneCategoryId);
     }
+
+    return categories;
+  }),
+  getCategoryList: publicProcedure.query(async () => {
+    const allCategories = await getTebexCategories();
+
+    const categories = allCategories.map((category) => {
+      let description = category.description || '';
+      description = replaceHtmlTags(description);
+      description = description.slice(0, 75);
+      if (description.length >= 3) {
+        description += '...';
+      }
+      description = description.replace(/\.{3,}/gi, '...');
+
+      const pictures = category.packages.filter(({ image }) => image);
+      const randomPicture = pictures[Math.floor(Math.random() * pictures.length)].image as string;
+
+      return {
+        id: category.id,
+        name: category.name,
+        description,
+        randomPicture,
+      };
+    });
 
     return categories;
   }),

@@ -2,7 +2,7 @@
 import RecentPayments from './components/RecentPayments';
 import TopDonators from './components/TopDonators';
 import StoreHeader from './components/StoreHeader';
-import Products from './components/Products';
+import Categories from './components/Categories';
 import Events from './components/Events';
 
 const StoreLandingPage = () => {
@@ -25,7 +25,13 @@ const StoreLandingPage = () => {
       </div>
 
       <div className="mt-12">
-        <Products />
+        <div className="flex flex-col items-center justify-center">
+          <h2 className="text-4xl font-bold">Store Categories</h2>
+          <p className="z-10 text-sm text-muted-foreground">Select a category to see related packages</p>
+        </div>
+        <div className="mt-8">
+          <Categories />
+        </div>
       </div>
     </div>
   );
