@@ -196,6 +196,9 @@ export const publicRouter = router({
     const payments = await prisma.previousBasket.findMany({
       where: {
         completed: true,
+        pricePaid: {
+          gt: 1,
+        },
       },
       orderBy: {
         updatedAt: 'desc',
