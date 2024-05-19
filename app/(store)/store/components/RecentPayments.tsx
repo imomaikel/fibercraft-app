@@ -9,6 +9,8 @@ const RecentPayments = () => {
 
   if (isLoading) return null;
 
+  if (!recentPayments || recentPayments?.length <= 0) return null;
+
   return (
     <div className="flex w-full items-center justify-center rounded-lg bg-muted/50 px-8 py-4">
       <div>
