@@ -6,7 +6,7 @@ const StoreHeader = () => {
     <div className="flex flex-col space-y-6 md:flex-row md:justify-between md:space-x-4 md:space-y-0">
       <div>
         <p className="text-sm text-muted-foreground">Welcome to the</p>
-        <h1 className="text-4xl font-bold">Friendly Network Store</h1>
+        <h2 className="text-4xl font-bold">Friendly Network Store</h2>
         <div className="mt-2 max-w-xl space-y-2">
           <p className="text-muted-foreground">
             Friendly Network is a community for all people that want to enjoy playing without grinding and just having

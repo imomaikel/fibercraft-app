@@ -22,7 +22,7 @@ const Events = () => {
       </div>
       <div className="absolute left-0 top-0 h-full w-full md:w-1/2">
         <div className="relative flex h-full w-full items-center justify-center px-4 text-center">
-          <p className="text-2xl font-medium">View our amazing package and have fun with them!</p>
+          <p className="text-2xl font-medium">View our amazing packages and have fun with them!</p>
         </div>
       </div>
     </div>
