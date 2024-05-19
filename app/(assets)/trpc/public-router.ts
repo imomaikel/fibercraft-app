@@ -131,6 +131,11 @@ export const publicRouter = router({
     const lastDay = endOfMonth(now);
 
     const topAllTimeDonator = await prisma.user.findFirst({
+      where: {
+        totalPaid: {
+          gt: 1,
+        },
+      },
       orderBy: {
         totalPaid: 'desc',
       },
@@ -149,6 +154,9 @@ export const publicRouter = router({
           gte: firstDay,
           lte: lastDay,
         },
+        pricePaid: {
+          gt: 1,
+        },
       },
       select: {
         pricePaid: true,
@@ -166,16 +174,20 @@ export const publicRouter = router({
     });
 
     return {
-      monthly: {
-        name: topAllTimeDonator?.name || null,
-        price: topAllTimeDonator?.totalPaid || 0,
-        image: topAllTimeDonator?.image || null,
-      },
-      allTime: {
-        name: topMonthlyDonator?.user.name || null,
-        price: topMonthlyDonator?.pricePaid || 0,
-        image: topMonthlyDonator?.user.image || null,
-      },
+      monthly: topAllTimeDonator
+        ? {
+            name: topAllTimeDonator?.name || null,
+            price: topAllTimeDonator?.totalPaid || 0,
+            image: topAllTimeDonator?.image || null,
+          }
+        : null,
+      allTime: topMonthlyDonator
+        ? {
+            name: topMonthlyDonator?.user.name || null,
+            price: topMonthlyDonator?.pricePaid || 0,
+            image: topMonthlyDonator?.user.image || null,
+          }
+        : null,
     };
   }),
   getRecentPayments: publicProcedure.query(async ({ ctx }) => {
