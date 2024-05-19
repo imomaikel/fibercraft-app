@@ -36,22 +36,24 @@ export default event('ready', async (client) => {
   // Fetch old reaction
   fetchOldReactions();
 
-  // Check boosts
-  setInterval(() => {
-    revalidateBoosts();
-  }, hoursToMilliseconds(1));
-
-  // TODO
-  if (process.env.NODE_ENV === 'production') {
-    setInterval(() => {
-      updateTribeScore();
-    }, hoursToMilliseconds(6));
-  }
-
+  // Get shop data
   setInterval(() => {
     refetchTebexCategories();
   }, minutesToMilliseconds(2.5));
   refetchTebexCategories();
+
+  if (process.env.NODE_ENV === 'production' && process.env.FORCE_PRIVATE_IP_IMPORTANT === 'false') {
+    // Check boosts
+    setInterval(() => {
+      revalidateBoosts();
+    }, hoursToMilliseconds(1));
+
+    //  Update tribe scores
+    setInterval(() => {
+      updateTribeScore();
+    }, hoursToMilliseconds(1));
+    updateTribeScore();
+  }
 
   console.log(`Discord client started. (${client.user?.username})`);
 });
