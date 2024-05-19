@@ -1,4 +1,5 @@
 import { addBasketPackage, getTebexProducts, removeBasketPackage, updateBasketPackage } from '../../../tebex';
+import { GetBasket, SetWebstoreIdentifier } from 'tebex_headless';
 import { TActionResponse } from '../../(assets)/lib/types';
 import { missingBasket } from '../../../tebex/basket';
 import { router, userProcedure } from './trpc';
@@ -8,22 +9,29 @@ import { z } from 'zod';
 export const userRouter = router({
   getBasket: userProcedure.query(async ({ ctx }) => {
     const { user } = ctx;
+    if (!user.basketIdent) return { error: true };
 
-    return await missingBasket({
-      ipAddress: user.ipAddress,
-      userId: user.id!,
-      basketIdent: user.basketIdent,
-    });
+    try {
+      SetWebstoreIdentifier(process.env.TEBEX_PUBLIC_TOKEN!);
+
+      const basket = await GetBasket(user.basketIdent).catch(() => null);
+      if (basket) {
+        return { success: true, basket };
+      }
+    } catch {}
+
+    return { error: true };
   }),
   addItem: userProcedure
     .input(
       z.object({
         itemId: z.number(),
         quantity: z.number().optional(),
+        pathname: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }): Promise<TActionResponse> => {
-      const { itemId, quantity } = input;
+      const { itemId, quantity, pathname } = input;
       const { user } = ctx;
 
       if (!user.basketIdent) {
@@ -31,6 +39,7 @@ export const userRouter = router({
           ipAddress: user.ipAddress,
           userId: user.id!,
           basketIdent: user.basketIdent,
+          pathname,
         });
       }
 
@@ -55,6 +64,7 @@ export const userRouter = router({
             ipAddress: user.ipAddress,
             userId: user.id!,
             basketIdent: user.basketIdent,
+            pathname,
           });
         } else if (action.message === 'Product quantity limit reached!') {
           return { status: 'error', message: 'Product quantity limit reached!' };
@@ -68,10 +78,11 @@ export const userRouter = router({
     .input(
       z.object({
         itemId: z.number(),
+        pathname: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }): Promise<TActionResponse> => {
-      const { itemId } = input;
+      const { itemId, pathname } = input;
       const { user } = ctx;
 
       if (!user.basketIdent) {
@@ -79,6 +90,7 @@ export const userRouter = router({
           ipAddress: user.ipAddress,
           userId: user.id!,
           basketIdent: user.basketIdent,
+          pathname,
         });
       }
 
@@ -93,6 +105,7 @@ export const userRouter = router({
             ipAddress: user.ipAddress,
             userId: user.id!,
             basketIdent: user.basketIdent,
+            pathname,
           });
         }
         return { status: 'error', message: 'Something went wrong!' };
@@ -105,10 +118,11 @@ export const userRouter = router({
       z.object({
         itemId: z.number(),
         quantity: z.number(),
+        pathname: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }): Promise<TActionResponse> => {
-      const { itemId, quantity } = input;
+      const { itemId, quantity, pathname } = input;
       const { user } = ctx;
 
       if (!user.basketIdent) {
@@ -116,6 +130,7 @@ export const userRouter = router({
           ipAddress: user.ipAddress,
           userId: user.id!,
           basketIdent: user.basketIdent,
+          pathname,
         });
       }
 
@@ -131,6 +146,7 @@ export const userRouter = router({
             ipAddress: user.ipAddress,
             userId: user.id!,
             basketIdent: user.basketIdent,
+            pathname,
           });
         } else if (action.message === 'Product quantity limit reached!') {
           return { status: 'error', message: 'Product quantity limit reached!' };

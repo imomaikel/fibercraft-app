@@ -2,6 +2,7 @@
 import { useCurrentUser } from '@assets/hooks/useCurrentUser';
 import { cn, errorToast } from '@assets/lib/utils';
 import { useCart } from '@assets/hooks/useCart';
+import { usePathname } from 'next/navigation';
 import { ImSpinner10 } from 'react-icons/im';
 import { CartContext } from './Cart';
 import { trpc } from '@trpc/index';
@@ -19,6 +20,7 @@ const RemoveFromCartWrapper = ({ itemId, itemName, children, className, disabled
   const { setCartItemQuantity, openAuthorizeDialog } = useCart();
   const cartContext = useContext(CartContext);
   const { user } = useCurrentUser();
+  const pathname = usePathname();
 
   const { mutate, isLoading } = trpc.userRouter.removeItem.useMutation();
 
@@ -28,6 +30,7 @@ const RemoveFromCartWrapper = ({ itemId, itemName, children, className, disabled
       mutate(
         {
           itemId,
+          pathname,
         },
         {
           onSuccess: (data) => {

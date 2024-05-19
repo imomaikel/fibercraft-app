@@ -33,7 +33,7 @@ const Cart = ({ children }: { children: React.ReactNode }) => {
     refetchOnWindowFocus: false,
     retry: 1,
     onSuccess: (response) => {
-      if (response.status === 'success') {
+      if (response?.success) {
         setCart(response.basket);
       }
     },

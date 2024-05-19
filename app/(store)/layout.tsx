@@ -1,3 +1,5 @@
+import AuthorizeToast from '@store/components/AuthorizeToast';
+import { Suspense } from 'react';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -10,7 +12,15 @@ export const metadata: Metadata = {
 };
 
 const StoreLayout = ({ children }: { children: React.ReactNode }) => {
-  return <div className="px-2 pb-16 pt-[88px]">{children}</div>;
+  return (
+    <>
+      <div className="px-2 pb-16 pt-[88px]">{children}</div>
+
+      <Suspense>
+        <AuthorizeToast />
+      </Suspense>
+    </>
+  );
 };
 
 export default StoreLayout;

@@ -13,15 +13,16 @@ import prisma from '../app/(assets)/lib/prisma';
 type TGetBasket = {
   basketIdent: string | null;
   ipAddress: string;
+  pathname: string;
 };
-export const _getBasket = async ({ basketIdent, ipAddress }: TGetBasket) => {
+export const _getBasket = async ({ basketIdent, ipAddress, pathname }: TGetBasket) => {
   SetWebstoreIdentifier(process.env.TEBEX_PUBLIC_TOKEN!);
 
   try {
     const basket = basketIdent ? await GetBasket(basketIdent).catch(() => null) : null;
 
     if (!basket || !basket.ident || basket.complete) {
-      const { authUrl, newBasket } = await createBasket(ipAddress);
+      const { authUrl, newBasket } = await createBasket(ipAddress, pathname);
       return { authUrl, newBasket };
     }
 
@@ -42,7 +43,7 @@ export const _getBasket = async ({ basketIdent, ipAddress }: TGetBasket) => {
   return { error: true };
 };
 
-const createBasket = async (ipAddress: string) => {
+const createBasket = async (ipAddress: string, pathname: string) => {
   SetWebstoreIdentifier(process.env.TEBEX_PUBLIC_TOKEN!);
   SetPrivateKey(process.env.TEBEX_PRIVATE_KEY!);
 
@@ -61,8 +62,8 @@ const createBasket = async (ipAddress: string) => {
         ident: newBasket.ident,
       },
     });
-    // TODO Redirect
-    const authUrl = await GetBasketAuthUrl(newBasket.ident, `${process.env.NEXT_PUBLIC_SERVER_URL}/store/authorized`);
+
+    const authUrl = await GetBasketAuthUrl(newBasket.ident, `${process.env.NEXT_PUBLIC_SERVER_URL}${pathname}`);
 
     return { newBasket, authUrl };
   } catch (error) {
@@ -76,13 +77,15 @@ type TMissingBasket = {
   basketIdent?: string | null | undefined;
   ipAddress: string;
   userId: string;
+  pathname: string;
 };
 export const missingBasket = async ({
   ipAddress,
   basketIdent: searchForIdent,
   userId,
+  pathname,
 }: TMissingBasket): Promise<TActionResponse> => {
-  const data = await _getBasket({ basketIdent: searchForIdent || null, ipAddress: ipAddress });
+  const data = await _getBasket({ basketIdent: searchForIdent || null, ipAddress: ipAddress, pathname });
 
   if (data.error) {
     return { status: 'error', message: 'Something went wrong!' };
