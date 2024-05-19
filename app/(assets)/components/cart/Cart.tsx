@@ -4,6 +4,7 @@ import { Basket, BasketPackage, Package } from 'tebex_headless';
 import { useCurrentUser } from '@assets/hooks/useCurrentUser';
 import { createContext, useMemo, useState } from 'react';
 import { useCart } from '@assets/hooks/useCart';
+import { usePathname } from 'next/navigation';
 import { Separator } from '@ui/separator';
 import { Button } from '@ui/button';
 import { motion } from 'framer-motion';
@@ -16,10 +17,12 @@ export const CartContext = createContext<{
   updateCart: (newBasket: Basket) => void;
   cart: Basket | null;
   setLock: (isLocked: boolean) => void;
+  refetch: () => void;
 }>({
   updateCart: () => {},
   cart: null,
   setLock: () => {},
+  refetch: () => {},
 });
 
 const Cart = ({ children }: { children: React.ReactNode }) => {
@@ -27,13 +30,14 @@ const Cart = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<Basket | null>(null);
   const [isLock, setLock] = useState(false);
   const { user } = useCurrentUser();
+  const pathname = usePathname();
 
   const { data, isLoading: productsLoading } = trpc.publicRouter.getProducts.useQuery(
     {},
     { refetchOnWindowFocus: false, retry: 1 },
   );
 
-  const { isLoading: basketLoading } = trpc.userRouter.getBasket.useQuery(undefined, {
+  const { isLoading: basketLoading, refetch } = trpc.userRouter.getBasket.useQuery(undefined, {
     enabled: !!user?.id,
     refetchOnWindowFocus: false,
     retry: 1,
@@ -86,7 +90,7 @@ const Cart = ({ children }: { children: React.ReactNode }) => {
   const isCartEmpty = !items || items.length <= 0;
 
   return (
-    <CartContext.Provider value={{ cart, updateCart, setLock }}>
+    <CartContext.Provider value={{ cart, updateCart, setLock, refetch }}>
       {children}
       <Sheet open={isCartOpen} onOpenChange={() => !isLock && closeCart()}>
         <SheetContent className="w-[90vw] overflow-y-auto overflow-x-hidden">
@@ -118,14 +122,20 @@ const Cart = ({ children }: { children: React.ReactNode }) => {
               </motion.div>
             ) : (
               <div>
-                <div className="rounded-lg border bg-muted/50 p-4 text-center">
-                  <span>Got all you wanted?</span>
-                  <p className="text-sm text-muted-foreground">Click &quot;Continue&quot; to proceed to the summary</p>
-                  <Button asChild className="mt-2 w-full">
-                    <Link href="/store/summary">Continue</Link>
-                  </Button>
-                </div>
-                <Separator className="mb-3 mt-6" />
+                {pathname !== '/store/summary' && (
+                  <>
+                    <div className="rounded-lg border bg-muted/50 p-4 text-center">
+                      <span>Got all you wanted?</span>
+                      <p className="text-sm text-muted-foreground">
+                        Click &quot;Continue&quot; to proceed to the summary
+                      </p>
+                      <Button asChild className="mt-2 w-full">
+                        <Link href="/store/summary">Continue</Link>
+                      </Button>
+                    </div>
+                    <Separator className="mb-3 mt-6" />
+                  </>
+                )}
                 <p className="my-3 text-center text-xl font-bold">Your Packages</p>
                 <div className="space-y-6">
                   {items.map((item, idx) => (

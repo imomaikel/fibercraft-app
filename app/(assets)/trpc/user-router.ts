@@ -1,4 +1,11 @@
-import { addBasketPackage, getTebexProducts, removeBasketPackage, updateBasketPackage } from '../../../tebex';
+import {
+  addBasketPackage,
+  applyDiscount,
+  getTebexProducts,
+  removeBasketPackage,
+  removeDiscount,
+  updateBasketPackage,
+} from '../../../tebex';
 import { GetBasket, SetWebstoreIdentifier } from 'tebex_headless';
 import { TActionResponse } from '../../(assets)/lib/types';
 import { missingBasket } from '../../../tebex/basket';
@@ -304,5 +311,45 @@ export const userRouter = router({
       } catch {
         return { exists: false };
       }
+    }),
+  applyDiscount: userProcedure
+    .input(
+      z.object({
+        method: z.enum(['coupons', 'giftcards', 'creator-codes']),
+        value: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { method, value } = input;
+      const { user } = ctx;
+
+      if (!user.basketIdent) return { error: true };
+
+      const isAdded = await applyDiscount({ method, value, basketIdent: user.basketIdent });
+
+      if (isAdded) {
+        return { success: true };
+      }
+      return { error: true };
+    }),
+  removeDiscount: userProcedure
+    .input(
+      z.object({
+        method: z.enum(['coupons', 'giftcards', 'creator-codes']),
+        value: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { method, value } = input;
+      const { user } = ctx;
+
+      if (!user.basketIdent) return { error: true };
+
+      const isRemoved = await removeDiscount({ method, value, basketIdent: user.basketIdent });
+
+      if (isRemoved) {
+        return { success: true };
+      }
+      return { error: true };
     }),
 });
