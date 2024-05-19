@@ -71,7 +71,7 @@ const columns: ColumnDef<TPayments[0]>[] = [
       const transactionId = row.original.transactionId;
       return (
         <Button asChild size="icon">
-          <Link href={`/me/payments/${transactionId}`}>
+          <Link href={`/me/payments/id?txn-id=${transactionId}`}>
             <FaExternalLinkAlt />
           </Link>
         </Button>
