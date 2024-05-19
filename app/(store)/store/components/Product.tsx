@@ -82,7 +82,9 @@ const Product = ({ description, id, name, image, totalPrice }: TProduct) => {
                     animate(scope.current, { scale: [1, 1.1, 0.9, 1] }, { duration: 0.4 });
                   }}
                 >
-                  <Button>Add to Cart</Button>
+                  <Button asChild>
+                    <span>Add to Cart</span>
+                  </Button>
                 </div>
               </AddToCartWrapper>
             </CardItem>

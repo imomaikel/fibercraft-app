@@ -63,12 +63,9 @@ const ProductPage = () => {
             </div>
 
             {/* Buy as a gift */}
-            <div className="my-6 w-full max-w-sm space-y-2 md:my-0">
+            {/* <div className="my-6 w-full max-w-sm space-y-2 md:my-0">
               <h3 className="text-xl font-medium">Do you want to buy this as a gift?</h3>
-              <Button variant="secondary" className="w-full">
-                Buy as a Gift
-              </Button>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="space-y-2">

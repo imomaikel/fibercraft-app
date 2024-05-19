@@ -49,5 +49,5 @@ module.exports = {
     'spaced-comment': 'error',
     'yoda': 'error',
   },
-  'ignorePatterns': ['next-env.d.ts', 'app/_shared/components'],
+  'ignorePatterns': ['next-env.d.ts', 'app/_shared/components', 'postponed'],
 };
