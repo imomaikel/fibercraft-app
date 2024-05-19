@@ -57,6 +57,9 @@ const handleWebhookEvent = async ({ data, res }: THandleWebhookEvent) => {
       }
 
       return res.status(200).send('Payment received');
+    } else if (data.type.toLowerCase().includes('basket') && data.type.toLocaleLowerCase().includes('abandoned')) {
+      console.log(JSON.stringify(data, null, 2));
+      return res.status(200).send('Event received');
     } else {
       res.status(500).send('Unknown data type');
     }
