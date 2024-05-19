@@ -26,7 +26,9 @@ const Discounts = ({ coupons, creator_code, giftcards, refetch }: TDiscounts) =>
   useEffect(() => {
     clearInterval(intervalId);
     setIntervalId(undefined);
-    toast.success('Discount calculated!');
+    if (discountsLen >= 1) {
+      toast.success('Discount calculated!');
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [discountsLen]);
 

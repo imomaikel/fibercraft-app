@@ -17,7 +17,7 @@ const StoreSummaryPage = () => {
   const { user } = useCurrentUser();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => closeCart, []);
+  useEffect(() => closeCart(), []);
 
   // TODO Skeleton
   if (!cart || !user) return null;
