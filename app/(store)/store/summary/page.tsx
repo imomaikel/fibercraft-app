@@ -7,14 +7,17 @@ import { useCart } from '@assets/hooks/useCart';
 import Discounts from './components/Discounts';
 import { Separator } from '@ui/separator';
 import { Button } from '@ui/button';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { Badge } from '@ui/badge';
 import Link from 'next/link';
 
 const StoreSummaryPage = () => {
   const { cart, refetch } = useContext(CartContext);
-  const { openCart } = useCart();
+  const { openCart, closeCart } = useCart();
   const { user } = useCurrentUser();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => closeCart, []);
 
   // TODO Skeleton
   if (!cart || !user) return null;
