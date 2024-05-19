@@ -47,11 +47,10 @@ const createBasket = async (ipAddress: string) => {
   SetPrivateKey(process.env.TEBEX_PRIVATE_KEY!);
 
   try {
-    // TODO Redirects
     const newBasketLink = await prisma.basketLink.create({ data: {} });
     const newBasket = await CreateBasket(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/me/payments/id`,
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/store/cancel`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/me/payments/cancel`,
       { basketLink: newBasketLink.linkId },
       true,
       ipAddress,
