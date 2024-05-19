@@ -22,6 +22,9 @@ export const _addBasketPackage = async ({
       discord_id: discordId,
       epic_id,
     });
+    if (basket.complete) {
+      return { error: true, message: 'Basket not found' };
+    }
     return { success: true, basket };
   } catch (error) {
     const errorMessage = translateTebexError(error);
@@ -40,6 +43,9 @@ export const _removeBasketPackage = async ({ basketIdent, itemId }: TRemoveBaske
   try {
     SetWebstoreIdentifier(process.env.TEBEX_PUBLIC_TOKEN!);
     const basket = await RemovePackage(basketIdent, itemId);
+    if (basket.complete) {
+      return { error: true, message: 'Basket not found' };
+    }
     return { success: true, basket };
   } catch (error) {
     const errorMessage = translateTebexError(error);
@@ -59,6 +65,9 @@ export const _updateBasketPackage = async ({ basketIdent, itemId, quantity }: TU
   try {
     SetWebstoreIdentifier(process.env.TEBEX_PUBLIC_TOKEN!);
     const basket = await UpdateQuantity(basketIdent, itemId, quantity);
+    if (basket.complete) {
+      return { error: true, message: 'Basket not found' };
+    }
     return { success: true, basket };
   } catch (error) {
     const errorMessage = translateTebexError(error);
