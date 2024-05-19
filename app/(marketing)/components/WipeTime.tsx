@@ -1,5 +1,6 @@
 import { WavyBackground } from '@ui/wavy-background';
 import DateCountdown from './DateCountdown';
+import ScrollInfo from './ScrollInfo';
 import { format } from 'date-fns';
 import React from 'react';
 
@@ -10,7 +11,7 @@ type TWipeTime = {
 };
 const WipeTime = ({ lastWipe, nextWipe, wipeDelayInDays }: TWipeTime) => {
   return (
-    <div>
+    <div className="relative">
       <WavyBackground
         className=""
         backgroundFill="#020817"
@@ -21,6 +22,9 @@ const WipeTime = ({ lastWipe, nextWipe, wipeDelayInDays }: TWipeTime) => {
         <DateCountdown toDate={nextWipe} className="mt-4" />
         <p className="mt-1 text-center text-muted-foreground">Servers wipe every {wipeDelayInDays} days</p>
         <p className="text-center text-muted-foreground">The last wipe was on {format(lastWipe, 'dd-MM-yyyy')}</p>
+        <div className="absolute right-1/2 mt-12 translate-x-1/2 md:-right-[20%] md:mt-0 md:translate-x-0">
+          <ScrollInfo />
+        </div>
       </WavyBackground>
     </div>
   );
