@@ -22,6 +22,17 @@ export const userRouter = router({
       SetWebstoreIdentifier(process.env.TEBEX_PUBLIC_TOKEN!);
 
       const basket = await GetBasket(user.basketIdent).catch(() => null);
+      if (basket?.complete) {
+        await prisma?.user.update({
+          where: { id: user.id },
+          data: {
+            basketAuthUrl: null,
+            basketIdent: null,
+          },
+        });
+
+        return { error: true };
+      }
       if (basket) {
         return { success: true, basket };
       }
