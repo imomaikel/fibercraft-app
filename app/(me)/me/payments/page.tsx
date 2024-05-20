@@ -5,6 +5,7 @@ import { trpc } from '@trpc/index';
 const MyPaymentsPage = () => {
   const { data: payments, isLoading } = trpc.userRouter.getMyPayments.useQuery();
 
+  // TODO Skeleton
   if (isLoading) return null;
 
   return (

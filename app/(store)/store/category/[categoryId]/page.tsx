@@ -1,6 +1,7 @@
 'use client';
 import { MdOutlineKeyboardBackspace } from 'react-icons/md';
 import { useParams, useRouter } from 'next/navigation';
+import NotFound from '@assets/components/NotFound';
 import Product from '@store/components/Product';
 import { motion } from 'framer-motion';
 import { Button } from '@ui/button';
@@ -19,7 +20,12 @@ const CategoryPage = () => {
     },
   );
 
-  if (!category || isLoading) return null;
+  // TODO Skeleton
+  if (isLoading) return null;
+
+  if (!category || category.length <= 0) {
+    return <NotFound text="This category could not be found." />;
+  }
 
   const { packages: products } = category[0];
   const { description: categoryDescription, name: categoryName } = category[0];

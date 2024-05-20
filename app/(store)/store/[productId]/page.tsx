@@ -3,6 +3,7 @@ import AddToCartWrapper from '@assets/components/cart/AddToCartWrapper';
 import { MdOutlineKeyboardBackspace } from 'react-icons/md';
 import { MovingBorderButton } from '@ui/moving-border';
 import { useParams, useRouter } from 'next/navigation';
+import NotFound from '@assets/components/NotFound';
 import { formatPrice } from '@assets/lib/utils';
 import { FaDollarSign } from 'react-icons/fa';
 import { TitleDash } from '@ui/TitleDash';
@@ -26,7 +27,12 @@ const ProductPage = () => {
     },
   );
 
-  if (!product || isLoading) return null;
+  // TODO Skeleton
+  if (isLoading) return null;
+
+  if (!product) {
+    return <NotFound text="This package could not be found." />;
+  }
 
   return (
     <div className="space-y-8 md:space-y-4">
