@@ -1,4 +1,4 @@
-import { dbGetFiberServers, getTopTribeScore } from '../../../bot/lib/mysql';
+import { dbGetFiberServers, dbGetTribeScore, getTopTribeScore } from '../../../bot/lib/mysql';
 import { endOfMonth, millisecondsToHours, startOfMonth } from 'date-fns';
 import { getTebexCategories, getTebexProducts } from '../../../tebex';
 import { replaceHtmlTags } from '../../(assets)/lib/utils';
@@ -253,5 +253,12 @@ export const publicRouter = router({
     });
 
     return payments;
+  }),
+  checkTribeScore: publicProcedure.input(z.object({ tribeName: z.string().min(3) })).mutation(async ({ input }) => {
+    const { tribeName } = input;
+
+    const data = await dbGetTribeScore(tribeName);
+
+    return data;
   }),
 });

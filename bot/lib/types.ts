@@ -44,3 +44,8 @@ export type TDbGetDiscordLink = {
   SteamId: string;
   DiscordId: string;
 };
+
+export type TDbGetTribeScore = {
+  tribeName: string;
+  score: number;
+};

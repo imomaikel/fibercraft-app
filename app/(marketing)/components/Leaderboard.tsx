@@ -4,6 +4,7 @@ import MarketingSectionWrapper from './MarketingSectionWrapper';
 import { Skeleton } from '@ui/skeleton';
 import { motion } from 'framer-motion';
 import { cn } from '@assets/lib/utils';
+import CheckScore from './CheckScore';
 import { trpc } from '@trpc/index';
 import { useRef } from 'react';
 
@@ -93,6 +94,7 @@ const Leaderboard = () => {
         <div>
           <p className={cn('mt-1 text-muted-foreground', isLoading && 'invisible')}>Auto update every 10 seconds.</p>
         </div>
+        <CheckScore />
       </div>
     </MarketingSectionWrapper>
   );

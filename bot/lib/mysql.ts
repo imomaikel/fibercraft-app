@@ -4,6 +4,7 @@ import {
   TDbGetNewTribeLogs,
   TDbGetPairedAccounts,
   TDbGetTopTribeScore,
+  TDbGetTribeScore,
 } from './types';
 import { TribeScorePosition } from '@prisma/client';
 import { getEnv } from '../utils/env';
@@ -166,4 +167,15 @@ export const dbGetDiscordLink = async (discordId: string) => {
   }
 
   return null;
+};
+
+export const dbGetTribeScore = async (tribeName: string) => {
+  const query = (await db('SELECT tribeName, score FROM fibercraft.tribescore where tribeName LIKE ?;', [
+    `%${tribeName.replace(/%/g, '')}%`,
+  ])) as TDbGetTribeScore[];
+
+  if (query && query[0]) {
+    return query;
+  }
+  return [];
 };
