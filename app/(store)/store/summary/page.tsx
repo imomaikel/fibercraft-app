@@ -7,6 +7,7 @@ import { useCart } from '@assets/hooks/useCart';
 import Discounts from './components/Discounts';
 import { useContext, useEffect } from 'react';
 import { Separator } from '@ui/separator';
+import { signIn } from 'next-auth/react';
 import { Button } from '@ui/button';
 import { Badge } from '@ui/badge';
 import Link from 'next/link';
@@ -20,7 +21,33 @@ const StoreSummaryPage = () => {
   useEffect(() => closeCart(), []);
 
   // TODO Skeleton
-  if (!cart || !user) return null;
+  if (!user) {
+    return (
+      <div className="relative max-w-md space-y-2">
+        <h2 className="text-4xl font-bold">Authentication Required!</h2>
+        <p className="text-muted-foreground">
+          To ensure smooth delivery of your order, please login to your in-game account. Packages will be sent directly
+          to your account, so logging in is crucial for a seamless experience. Thank you!
+        </p>
+        <Button className="w-full" size="lg" onClick={() => signIn('discord')}>
+          Sign in with Discord
+        </Button>
+        <div className="absolute inset-1/4 -z-10 h-full w-1/2 rotate-45 bg-gradient-to-r from-blue-700 via-blue-800 to-gray-900 opacity-75 blur-[100px]" />
+      </div>
+    );
+  }
+  if (!cart) {
+    return (
+      <div className="relative max-w-md space-y-2">
+        <h2 className="text-4xl font-bold">Empty Cart!</h2>
+        <p className="text-muted-foreground">Your cart is empty. Visit the store and add some packages.</p>
+        <Button asChild className="w-full" size="lg">
+          <Link href="/store">Visit Store</Link>
+        </Button>
+        <div className="absolute inset-1/4 -z-10 h-full w-1/2 rotate-45 bg-gradient-to-r from-blue-700 via-blue-800 to-gray-900 opacity-75 blur-[100px]" />
+      </div>
+    );
+  }
 
   return (
     <div>
