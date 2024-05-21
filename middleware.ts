@@ -4,6 +4,13 @@ import { NextResponse } from 'next/server';
 
 export default withAuth(
   function middleware(req) {
+    if (req.url.includes('/me')) {
+      if (!req.nextauth.token?.email) {
+        return NextResponse.redirect(new URL('/store', req.url));
+      } else {
+        return NextResponse.next();
+      }
+    }
     const path = req.url.substring(req.url.indexOf('/management')).split('/').slice(0, 3).join('/').split('?')[0];
     const pathData = getPermissionFromPath(path);
     const userPermissions = req.nextauth.token?.permissions;
@@ -29,4 +36,4 @@ export default withAuth(
   },
 );
 
-export const config = { matcher: ['/management/:path*'] };
+export const config = { matcher: ['/management/:path*', '/me/:path*'] };
