@@ -212,6 +212,8 @@ export const userRouter = router({
               : {
                   storeMethod: 'STEAM',
                 }),
+            basketAuthUrl: null,
+            basketIdent: null,
           },
         });
 

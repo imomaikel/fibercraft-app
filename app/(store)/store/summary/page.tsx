@@ -5,9 +5,9 @@ import { CartContext } from '@assets/components/cart/Cart';
 import { formatPrice } from '@assets/lib/utils';
 import { useCart } from '@assets/hooks/useCart';
 import Discounts from './components/Discounts';
+import { useContext, useEffect } from 'react';
 import { Separator } from '@ui/separator';
 import { Button } from '@ui/button';
-import { useContext, useEffect } from 'react';
 import { Badge } from '@ui/badge';
 import Link from 'next/link';
 
@@ -120,6 +120,18 @@ const StoreSummaryPage = () => {
             </TableRow>
           </TableBody>
         </Table>
+        <div className="mt-4 rounded-lg bg-destructive/50 p-4">
+          <h3 className="text-lg font-medium">Important Notice</h3>
+          <p className="text-muted-foreground">
+            You are about to purchase packages as a <Badge variant="secondary">{user.storeMethod}</Badge> player. If you
+            are an <Badge variant="secondary">{user.storeMethod === 'EPIC' ? 'STEAM' : 'EPIC'}</Badge> player, please
+            change your settings{' '}
+            <Link href="/me/store-settings" className="underline">
+              here
+            </Link>
+            .
+          </p>
+        </div>
       </div>
 
       <Separator className="my-6" />

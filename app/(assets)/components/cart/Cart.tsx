@@ -44,6 +44,8 @@ const Cart = ({ children }: { children: React.ReactNode }) => {
     onSuccess: (response) => {
       if (response?.success) {
         setCart(response.basket);
+      } else if (response.error) {
+        setCart(null);
       }
     },
   });
