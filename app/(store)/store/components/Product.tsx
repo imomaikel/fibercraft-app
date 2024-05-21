@@ -40,7 +40,7 @@ const Product = ({ description, id, name, image, totalPrice }: TProduct) => {
       viewport={{ once: true }}
     >
       <CardContainer containerClassName="h-full" className="h-full">
-        <CardBody className="group/card relative flex h-full w-auto flex-col justify-around rounded-xl border border-black/[0.1] bg-gray-50 dark:border-white/[0.2] dark:bg-black/50 dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] sm:w-[30rem]">
+        <CardBody className="group/card relative flex h-full w-auto max-w-[90vw] flex-col justify-around rounded-xl border border-black/[0.1] bg-gray-50 dark:border-white/[0.2] dark:bg-black/50 dark:hover:shadow-2xl dark:hover:shadow-emerald-500/[0.1] sm:w-[30rem]">
           <div className="absolute inset-0 h-full w-full overflow-hidden rounded-xl">
             <div className="h-full w-full rotate-45 rounded-md bg-gradient-to-r from-green-300 via-primary to-purple-600 opacity-50 blur-[200px]" />
           </div>
@@ -65,7 +65,7 @@ const Product = ({ description, id, name, image, totalPrice }: TProduct) => {
               />
             </CardItem>
           </Link>
-          <div className="mt-8 flex items-center justify-between space-x-6 px-6 pb-6">
+          <div className="mt-8 flex flex-col items-center justify-between space-y-4 px-6 pb-6 md:flex-row md:space-x-6 md:space-y-0">
             <CardItem translateZ={20} as={Link} href={`/store/${id}`}>
               <Button variant="ghost">
                 See the full product <MdKeyboardArrowRight className="h-8 w-8" />
@@ -74,7 +74,7 @@ const Product = ({ description, id, name, image, totalPrice }: TProduct) => {
             <CardItem translateZ={20} as="p" className="text-xl font-semibold">
               {formatPrice(totalPrice)}
             </CardItem>
-            <CardItem translateZ={20} as="button">
+            <CardItem translateZ={20} as="button" className="w-full md:w-auto">
               <AddToCartWrapper itemId={id} itemName={name}>
                 <div
                   ref={scope}
@@ -82,7 +82,7 @@ const Product = ({ description, id, name, image, totalPrice }: TProduct) => {
                     animate(scope.current, { scale: [1, 1.1, 0.9, 1] }, { duration: 0.4 });
                   }}
                 >
-                  <Button asChild>
+                  <Button asChild className="w-full md:w-auto">
                     <span>Add to Cart</span>
                   </Button>
                 </div>
