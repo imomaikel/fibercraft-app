@@ -4,24 +4,21 @@ import prisma from '../../lib/prisma';
 import { Rcon } from 'rcon-client';
 
 type TExecuteRconCommand = {
-  serverMapName?: string | undefined;
-  command: (typeof ALL_RCON_COMMANDS)[number];
+  mapNames?: string[] | undefined;
+  command: (typeof ALL_RCON_COMMANDS)[number] | { custom: string };
   args?: string;
   executedBy: string;
 };
-export const _executeRconCommand = async ({ command, serverMapName, args = '', executedBy }: TExecuteRconCommand) => {
-  if (!ALL_RCON_COMMANDS.includes(command)) {
-    return { error: true, message: 'Invalid request!' };
-  }
-
+export const _executeRconCommand = async ({ command, mapNames, args = '', executedBy }: TExecuteRconCommand) => {
   let servers = await dbGetFiberServers();
 
-  if (typeof serverMapName === 'string' && serverMapName.length >= 2) {
-    const singleServer = servers.find((server) => server.mapName.toLowerCase().includes(serverMapName.toLowerCase()));
-    if (!singleServer) {
-      return { error: true, message: 'Could not find the server' };
+  if (mapNames && mapNames.length >= 1) {
+    for (let i = 0; i < mapNames.length; i++) mapNames[i] = mapNames[i].toLowerCase();
+    const filteredServers = servers.filter((server) => mapNames.includes(server.mapName.toLowerCase()));
+    if (!filteredServers || filteredServers.length <= 0) {
+      return { error: true, message: 'Could not find the maps' };
     }
-    servers = [singleServer];
+    servers = filteredServers;
   }
 
   const config = await prisma.config.findFirst();
@@ -44,6 +41,10 @@ export const _executeRconCommand = async ({ command, serverMapName, args = '', e
   const failedToExecute: string[] = [];
   const executed: { mapName: string; response: string }[] = [];
 
+  if (typeof command === 'object') {
+    // @ts-expect-error disabled for autocomplete hints
+    command = command.custom;
+  }
   const toExecute = `${command} ${args}`;
 
   await prisma.rconLog.create({

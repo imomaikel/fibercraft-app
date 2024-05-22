@@ -131,6 +131,7 @@ enum ManagementPermission {
   ADVANCED_SEARCH      @map("Advanced Search")
   WEBSITE_CONTROL      @map("Website Control")
   PLUGIN_CONFIG        @map("Plugin Config")
+  ALL_RCON_COMMANDS    @map("All RCON Commands")
 }
 
 model UserPermission {

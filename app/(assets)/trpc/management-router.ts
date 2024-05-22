@@ -12,6 +12,7 @@ import { getPermissionFromLabel, translateWidgetEnum, widgetEnums } from '../../
 import { serverControlApi } from '../../../bot/plugins/server-control';
 import { ManagementPermissionValidator } from '../validators/custom';
 import { advancedSearch } from '../../(assets)/lib/advanced-search';
+import { executeRconCommand } from '../../../bot/plugins/rcon';
 import { structuresEditor } from '../../../bot/plugins/editor';
 import { dbGetFiberServers } from '../../../bot/lib/mysql';
 import { TAllNavLabels } from '../../(assets)/lib/types';
@@ -539,5 +540,32 @@ export const managementRouter = router({
       if (action.method === 'ADD' || action.method === 'REMOVE') {
         return action;
       }
+    }),
+  executeRcon: managementProcedure
+    .input(
+      z.object({
+        command: z.string().min(1),
+        maps: z.string().array(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userPermissions, user } = ctx;
+      const { command, maps } = input;
+
+      if (!verifyFromLabel('RCON Commands', userPermissions) || !user.name) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+
+      const args = command.split(' ').slice(1);
+      const hasArgs = args.length >= 1;
+
+      const action = await executeRconCommand({
+        command: { custom: command },
+        executedBy: user.name,
+        args: hasArgs ? args.join(' ') : undefined,
+        mapNames: maps,
+      });
+
+      return action;
     }),
 });

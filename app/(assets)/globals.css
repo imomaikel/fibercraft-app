@@ -32,3 +32,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+.commandScroll::-webkit-scrollbar {
+  @apply w-2 rounded-br-md;
+}
+.commandScroll::-webkit-scrollbar-track {
+  @apply rounded-br-md  bg-stone-900;
+}
+.commandScroll::-webkit-scrollbar-thumb {
+  @apply rounded-br-md  bg-stone-500;
+}
+.commandScroll::-webkit-scrollbar-thumb:hover {
+  @apply rounded-br-md  bg-stone-400;
+}

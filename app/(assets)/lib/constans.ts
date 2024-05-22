@@ -58,6 +58,12 @@ export const NAV_LINKS = [
         description: 'Change the config of the plugin(s)',
         permission: 'PLUGIN_CONFIG' as ManagementPermission,
       },
+      {
+        label: 'RCON Commands',
+        path: '/management/rcon',
+        description: 'Execute commands, gain control',
+        permission: 'ALL_RCON_COMMANDS' as ManagementPermission,
+      },
     ],
   },
 ] as const;

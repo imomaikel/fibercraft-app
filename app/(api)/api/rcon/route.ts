@@ -1,5 +1,5 @@
 import { executeRconCommand } from '../../../../bot/plugins/rcon';
-import { API_RCON_COMMANDS } from '../../../../bot/constans';
+import { ALL_RCON_COMMANDS } from '../../../../bot/constans';
 import crypto from 'node:crypto';
 
 const RCON_API_SECRET = process.env.RCON_API_SECRET;
@@ -9,21 +9,18 @@ const handle = async (request: Request) => {
     const form = await request.formData();
 
     const data = Object.fromEntries(form);
-    const command = data.command as (typeof API_RCON_COMMANDS)[number];
-
-    if (!API_RCON_COMMANDS.includes(command)) {
-      return new Response('Invalid command!', { status: 400 });
-    }
+    const command = data.command as (typeof ALL_RCON_COMMANDS)[number];
 
     const hash = data.hash;
     const args = data.args;
-    const mapName = data?.map?.toString() || '';
+    const mapNames = data?.map || '';
+    const mapHash = Array.isArray(mapNames) ? mapNames.join(',') : '';
 
     if (typeof hash !== 'string' || typeof args !== 'string') {
       return new Response('Missing args or hash!', { status: 400 });
     }
 
-    const toCheck = command + args + mapName + RCON_API_SECRET;
+    const toCheck = command + args + mapHash + RCON_API_SECRET;
 
     const sha1 = crypto.createHash('sha1');
     sha1.update(toCheck);
@@ -39,7 +36,7 @@ const handle = async (request: Request) => {
         command,
         args,
         executedBy: 'API_USER',
-        serverMapName: mapName,
+        mapNames: Array.isArray(mapNames) ? mapNames : undefined,
       });
       return Response.json(executed, { status: 200 });
     } else if (command === 'aac.removeban') {
@@ -47,7 +44,7 @@ const handle = async (request: Request) => {
         command,
         args,
         executedBy: 'API_USER',
-        serverMapName: mapName,
+        mapNames: Array.isArray(mapNames) ? mapNames : undefined,
       });
       return Response.json(executed, { status: 200 });
     } else if (command === 'punishment.advert.rcon') {
@@ -55,7 +52,7 @@ const handle = async (request: Request) => {
         command,
         args,
         executedBy: 'API_USER',
-        serverMapName: mapName,
+        mapNames: Array.isArray(mapNames) ? mapNames : undefined,
       });
       return Response.json(executed, { status: 200 });
     } else if (command === 'kmute') {
@@ -69,7 +66,7 @@ const handle = async (request: Request) => {
               command,
               args,
               executedBy: 'API_USER',
-              serverMapName: mapName,
+              mapNames: Array.isArray(mapNames) ? mapNames : undefined,
             });
             return Response.json(executed, { status: 200 });
           }
@@ -81,7 +78,7 @@ const handle = async (request: Request) => {
         command,
         args,
         executedBy: 'API_USER',
-        serverMapName: mapName,
+        mapNames: Array.isArray(mapNames) ? mapNames : undefined,
       });
       return Response.json(executed, { status: 200 });
     }
