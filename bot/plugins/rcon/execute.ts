@@ -47,11 +47,13 @@ export const _executeRconCommand = async ({ command, mapNames, args = '', execut
   }
   const toExecute = `${command} ${args}`;
 
+  const serverList = servers.map(({ mapName }) => mapName).join(', ');
+
   await prisma.rconLog.create({
     data: {
       command: toExecute,
       executedBy,
-      servers: servers.map(({ mapName }) => mapName).join(', '),
+      servers: serverList,
     },
   });
 

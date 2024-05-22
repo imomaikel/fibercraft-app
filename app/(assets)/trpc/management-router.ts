@@ -9,10 +9,10 @@ import {
   updateWidget,
 } from '../../../bot/api/index';
 import { getPermissionFromLabel, translateWidgetEnum, widgetEnums } from '../../(assets)/lib/utils';
+import { createDiscordRCONLog, executeRconCommand } from '../../../bot/plugins/rcon';
 import { serverControlApi } from '../../../bot/plugins/server-control';
 import { ManagementPermissionValidator } from '../validators/custom';
 import { advancedSearch } from '../../(assets)/lib/advanced-search';
-import { executeRconCommand } from '../../../bot/plugins/rcon';
 import { structuresEditor } from '../../../bot/plugins/editor';
 import { dbGetFiberServers } from '../../../bot/lib/mysql';
 import { TAllNavLabels } from '../../(assets)/lib/types';
@@ -558,6 +558,12 @@ export const managementRouter = router({
 
       const args = command.split(' ').slice(1);
       const hasArgs = args.length >= 1;
+
+      createDiscordRCONLog({
+        command,
+        executedBy: user.name,
+        servers: maps.join(', '),
+      });
 
       const action = await executeRconCommand({
         command: { custom: command },

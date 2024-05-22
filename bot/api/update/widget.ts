@@ -1,3 +1,4 @@
+import { _setDiscordRCONLogChannel } from '../../plugins/rcon/channel';
 import { setTestimonialsChannel } from '../../plugins/testimonials';
 import { createLinkEmbed } from '../../plugins/discord-link';
 import { widgetEnums } from '@assets/lib/utils';
@@ -31,6 +32,12 @@ export const _updateWidget = async (widget: z.infer<typeof widgetEnums>, guildId
     }
   } else if (widget === 'discordLinkChannelId' && guild.widgets?.discordLinkChannelId) {
     const action = await createLinkEmbed({ guildId, channelId: guild.widgets.discordLinkChannelId });
+    if (action.success) {
+      return { updated: true };
+    }
+    return { updated: false, message: action.message || 'Something went wrong!' };
+  } else if (widget === 'rconLogsChannelId' && guild.widgets?.rconLogsChannelId) {
+    const action = await _setDiscordRCONLogChannel({ channelId: guild.widgets.rconLogsChannelId, guildId: guild.id });
     if (action.success) {
       return { updated: true };
     }

@@ -23,6 +23,9 @@ model Widget {
   discordLinkChannelId String? @db.TinyText
   discordLinkMessageId String? @db.TinyText
 
+  // RCON Logs
+  rconLogsChannelId String? @db.TinyText
+
   guild   Guild  @relation(fields: [guildId], references: [id])
   guildId String @unique
 }

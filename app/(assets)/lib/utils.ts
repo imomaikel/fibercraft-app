@@ -47,7 +47,12 @@ export const getPermissionFromPath = (path: string) => {
   };
 };
 
-export const widgetEnums = z.enum(['testimonialsChannelId', 'testimonialsRoleId', 'discordLinkChannelId']);
+export const widgetEnums = z.enum([
+  'testimonialsChannelId',
+  'testimonialsRoleId',
+  'discordLinkChannelId',
+  'rconLogsChannelId',
+]);
 export const translateWidgetEnum = (widget: z.infer<typeof widgetEnums>) => {
   if (widget === 'testimonialsChannelId') {
     return 'Testimonial Control Channel';
@@ -55,6 +60,8 @@ export const translateWidgetEnum = (widget: z.infer<typeof widgetEnums>) => {
     return 'Testimonial Control Role';
   } else if (widget === 'discordLinkChannelId') {
     return 'Discord Link Channel';
+  } else if (widget === 'rconLogsChannelId') {
+    return 'RCON Logs Channel';
   }
   return 'Unknown Widget';
 };

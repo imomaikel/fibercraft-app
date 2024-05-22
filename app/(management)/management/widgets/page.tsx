@@ -94,6 +94,23 @@ const ManagementWidgetsPage = () => {
             />
           </div>
         </ItemWrapper>
+        <ItemWrapper title="RCON Commands Channel" description="Decide where RCON command logs should be sent">
+          <div className="flex flex-col space-y-1">
+            <Label>Log Channel</Label>
+            <Combobox
+              data={channels || []}
+              notFoundText="No channels found."
+              searchLabel="Type to search..."
+              className="w-full max-w-xs"
+              isLoading={channelsLoading || widgetsLoading}
+              selectText="Click to expand"
+              defaultValue={widgetData?.rconLogsChannelId || undefined}
+              isDisabled={isUpdating}
+              onSelect={(_, value) => handleUpdate(value, 'rconLogsChannelId')}
+              onReset={() => handleUpdate(null, 'rconLogsChannelId')}
+            />
+          </div>
+        </ItemWrapper>
       </div>
     </ManagementPageWrapper>
   );

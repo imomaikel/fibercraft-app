@@ -1,4 +1,4 @@
-import { executeRconCommand } from '../../../../bot/plugins/rcon';
+import { _executeRconCommand as executeRconCommand } from '../../../../bot/plugins/rcon/execute';
 import { ALL_RCON_COMMANDS } from '../../../../bot/constans';
 import crypto from 'node:crypto';
 
