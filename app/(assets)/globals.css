@@ -45,3 +45,16 @@
 .commandScroll::-webkit-scrollbar-thumb:hover {
   @apply rounded-br-md  bg-stone-400;
 }
+
+.testimonialScroll::-webkit-scrollbar {
+  @apply w-2 rounded-br-2xl rounded-tr-2xl;
+}
+.testimonialScroll::-webkit-scrollbar-track {
+  @apply rounded-br-2xl rounded-tr-2xl  bg-muted;
+}
+.testimonialScroll::-webkit-scrollbar-thumb {
+  @apply rounded-br-2xl rounded-tr-2xl  bg-slate-500;
+}
+.testimonialScroll::-webkit-scrollbar-thumb:hover {
+  @apply rounded-br-2xl rounded-tr-2xl  bg-slate-400;
+}
