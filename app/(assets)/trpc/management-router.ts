@@ -555,10 +555,6 @@ export const managementRouter = router({
       if (!verifyFromLabel('RCON Commands', userPermissions) || !user.name) {
         throw new TRPCError({ code: 'UNAUTHORIZED' });
       }
-
-      const args = command.split(' ').slice(1);
-      const hasArgs = args.length >= 1;
-
       createDiscordRCONLog({
         command,
         executedBy: user.name,
@@ -568,7 +564,6 @@ export const managementRouter = router({
       const action = await executeRconCommand({
         command: { custom: command },
         executedBy: user.name,
-        args: hasArgs ? args.join(' ') : undefined,
         mapNames: maps,
       });
 
