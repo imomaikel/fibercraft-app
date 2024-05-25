@@ -149,7 +149,7 @@ const StoreSummaryPage = () => {
         </Table>
         <div className="mt-4 rounded-lg bg-destructive/50 p-4">
           <h3 className="text-lg font-medium">Important Notice</h3>
-          <p className="text-muted-foreground">
+          <div className="text-muted-foreground">
             You are about to purchase packages as a <Badge variant="secondary">{user.storeMethod}</Badge> player. If you
             are an <Badge variant="secondary">{user.storeMethod === 'EPIC' ? 'STEAM' : 'EPIC'}</Badge> player, please
             change your settings{' '}
@@ -157,7 +157,7 @@ const StoreSummaryPage = () => {
               here
             </Link>
             .
-          </p>
+          </div>
         </div>
       </div>
 
