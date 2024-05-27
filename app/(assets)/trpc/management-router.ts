@@ -20,6 +20,7 @@ import { ManagementPermission } from '@prisma/client';
 import { managementProcedure, router } from './trpc';
 import { createPanelLog } from '../lib/actions';
 import { TRPCError } from '@trpc/server';
+import { addDays } from 'date-fns';
 import { z } from 'zod';
 
 const verifyFromLabel = (label: TAllNavLabels, userPermissions: ManagementPermission[]): boolean => {
@@ -569,4 +570,65 @@ export const managementRouter = router({
 
       return action;
     }),
+  addEvent: managementProcedure
+    .input(z.object({ text: z.string(), expireAt: z.date() }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma, userPermissions, user } = ctx;
+      const { expireAt, text } = input;
+
+      if (!verifyFromLabel('Website Control', userPermissions) || !user.name) {
+        throw new TRPCError({ code: 'UNAUTHORIZED' });
+      }
+
+      const minimumDate = addDays(new Date(), 1).getTime();
+
+      if (expireAt.getTime() < minimumDate) {
+        return { error: true, message: 'The event should not expire today or in the past!' };
+      }
+
+      try {
+        await prisma.event.create({
+          data: {
+            expireAt,
+            text,
+          },
+        });
+
+        createPanelLog({
+          content: 'Added Event',
+          userDiscordId: user.discordId,
+          username: user.name!,
+        });
+
+        return { success: true };
+      } catch {
+        return { error: true };
+      }
+    }),
+  removeEvent: managementProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
+    const { prisma, userPermissions, user } = ctx;
+    const { id } = input;
+
+    if (!verifyFromLabel('Website Control', userPermissions) || !user.name) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+
+    try {
+      await prisma.event.delete({
+        where: {
+          id,
+        },
+      });
+
+      createPanelLog({
+        content: 'Removed Event',
+        userDiscordId: user.discordId,
+        username: user.name!,
+      });
+
+      return { success: true };
+    } catch {
+      return { error: true };
+    }
+  }),
 });

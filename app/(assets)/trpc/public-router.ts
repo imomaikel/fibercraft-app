@@ -261,4 +261,21 @@ export const publicRouter = router({
 
     return data;
   }),
+  getEvents: publicProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const events = await prisma.event.findMany({
+      where: {
+        expireAt: {
+          gte: new Date(),
+        },
+      },
+      select: {
+        id: true,
+        text: true,
+      },
+    });
+
+    return events;
+  }),
 });

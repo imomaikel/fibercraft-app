@@ -266,3 +266,12 @@ model BasketLink {
   linkId String  @id @default(cuid())
   ident  String? @unique
 }
+
+model Event {
+  id Int @id @default(autoincrement())
+
+  text String @db.Text
+
+  expireAt  DateTime
+  createdAt DateTime @default(now())
+}

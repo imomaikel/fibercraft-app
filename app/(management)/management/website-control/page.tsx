@@ -1,11 +1,15 @@
 'use client';
 import ManagementPageWrapper from '../components/ManagementPageWrapper';
+import EventsControl from './components/EventsControl';
 import StaffControl from './components/StaffControl';
 
 const ManagementWebsiteControlPage = () => {
   return (
     <ManagementPageWrapper pageLabel="Website Control">
-      <StaffControl />
+      <div className="space-y-6">
+        <StaffControl />
+        <EventsControl />
+      </div>
     </ManagementPageWrapper>
   );
 };
