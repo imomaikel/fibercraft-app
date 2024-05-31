@@ -3,6 +3,7 @@ import { fetchOldReactions } from '../plugins/testimonials';
 import { updateTribeScore } from '../plugins/tribe-score';
 import { refetchTebexCategories } from '../../tebex';
 import { revalidateBoosts } from '../plugins/boost';
+import scheduleEvents from '../plugins/scheduler';
 import { event } from '../utils/events';
 import prisma from '../lib/prisma';
 
@@ -36,6 +37,7 @@ export default event('ready', async (client) => {
   // Fetch old reaction
   fetchOldReactions();
 
+  // TODO
   // Get shop data
   setInterval(() => {
     refetchTebexCategories();
@@ -43,6 +45,7 @@ export default event('ready', async (client) => {
   refetchTebexCategories();
 
   if (process.env.NODE_ENV === 'production' && process.env.FORCE_PRIVATE_IP_IMPORTANT === 'false') {
+    scheduleEvents();
     // Check boosts
     setInterval(() => {
       revalidateBoosts();
