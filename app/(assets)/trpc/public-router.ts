@@ -252,7 +252,7 @@ export const publicRouter = router({
       },
     });
 
-    return payments;
+    return payments.reverse();
   }),
   checkTribeScore: publicProcedure.input(z.object({ tribeName: z.string().min(3) })).mutation(async ({ input }) => {
     const { tribeName } = input;
