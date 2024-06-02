@@ -200,14 +200,14 @@ export const publicRouter = router({
     });
 
     return {
-      monthly: topAllTimeDonator
+      allTime: topAllTimeDonator
         ? {
             name: topAllTimeDonator?.name || null,
             price: topAllTimeDonator?.totalPaid || 0,
             image: topAllTimeDonator?.image || null,
           }
         : null,
-      allTime: topMonthlyDonator
+      monthly: topMonthlyDonator
         ? {
             name: topMonthlyDonator?.user.name || null,
             price: topMonthlyDonator?.pricePaid || 0,
