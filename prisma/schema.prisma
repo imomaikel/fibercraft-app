@@ -28,6 +28,8 @@ model Widget {
 
   guild   Guild  @relation(fields: [guildId], references: [id])
   guildId String @unique
+
+  @@map("widget")
 }
 
 enum BoostAction {
@@ -44,6 +46,8 @@ model DiscordBoost {
   isLinked  Boolean
 
   createdAt DateTime @default(now())
+
+  @@map("discordboost")
 }
 
 enum TestimonialStatus {
@@ -62,6 +66,8 @@ model Testimonial {
   status          TestimonialStatus @default(WAITING)
 
   createdAt DateTime @default(now())
+
+  @@map("testimonial")
 }
 
 model TribeLog {
@@ -70,6 +76,8 @@ model TribeLog {
   tribeName String
   content   String
   timestamp DateTime
+
+  @@map("tribelog")
 }
 
 model Guild {
@@ -82,6 +90,8 @@ model Guild {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("guild")
 }
 
 model Config {
@@ -98,6 +108,8 @@ model Config {
   rconPassword                 String   @default("")
   tribeScoreUpdateDelayMinutes Int      @default(60)
   tribeScoreLastUpdate         DateTime @default(now())
+
+  @@map("config")
 }
 
 model RconLog {
@@ -108,6 +120,8 @@ model RconLog {
   servers    String
 
   createdAt DateTime @default(now())
+
+  @@map("rconlog")
 }
 
 model PanelLog {
@@ -121,6 +135,8 @@ model PanelLog {
   guildId String?
 
   createdAt DateTime @default(now())
+
+  @@map("panellog")
 }
 
 // Website
@@ -141,10 +157,12 @@ model UserPermission {
   id         Int                  @id @default(autoincrement())
   permission ManagementPermission
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
   createdAt DateTime @default(now())
+
+  @@map("userpermission")
 }
 
 // Auth
@@ -165,6 +183,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@map("account")
 }
 
 enum StoreMethod {
@@ -194,6 +213,8 @@ model User {
   selectedDiscordId String?
 
   createdAt DateTime @default(now())
+
+  @@map("user")
 }
 
 model Staff {
@@ -203,6 +224,8 @@ model Staff {
   image       String?
   name        String   @db.TinyText
   joinedAt    DateTime
+
+  @@map("staff")
 }
 
 // In-Game plugin
@@ -220,14 +243,20 @@ model TribeScore {
   position  Int                @default(0)
   progress  Int                @default(0)
   mode      TribeScorePosition @default(PROMOTE)
+
+  @@map("tribescore")
 }
 
 model TribeScoreAdminDisabledId {
   steamId String @id @db.VarChar(32)
+
+  @@map("tribescoreadmindisabledid")
 }
 
 model TribeScorePlayerDisabledId {
   steamId String @id @db.VarChar(32)
+
+  @@map("tribescoreplayerdisabledid")
 }
 
 // Store
@@ -248,6 +277,8 @@ model PreviousBasket {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("previousbasket")
 }
 
 model BasketProduct {
@@ -260,11 +291,15 @@ model BasketProduct {
 
   previousBasket      PreviousBasket @relation(fields: [previousBasketIdent], references: [ident], onDelete: Cascade)
   previousBasketIdent String
+
+  @@map("basketproduct")
 }
 
 model BasketLink {
   linkId String  @id @default(cuid())
   ident  String? @unique
+
+  @@map("basketlink")
 }
 
 model Event {
@@ -274,4 +309,6 @@ model Event {
 
   expireAt  DateTime
   createdAt DateTime @default(now())
+
+  @@map("event")
 }
