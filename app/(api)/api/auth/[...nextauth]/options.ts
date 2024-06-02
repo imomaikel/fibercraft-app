@@ -46,18 +46,7 @@ const authOptions: NextAuthOptions = {
           data: { discordId: token.discordId },
         });
       }
-      if (getUserData && getUserData.permissions.length <= 0) {
-        await prisma.user.update({
-          where: { id: token.uid },
-          data: {
-            permissions: {
-              create: {
-                permission: 'USER',
-              },
-            },
-          },
-        });
-      }
+
       if (session.user.image?.includes('https') && getUserData?.image !== session.user.image) {
         await prisma.user.update({
           where: { id: token.uid },
@@ -77,13 +66,29 @@ const authOptions: NextAuthOptions = {
     jwt: async ({ token, user, account }) => {
       if (!user || !account) return token;
 
-      if ((!token.permissions || !token.selectedDiscordId) && token.uid) {
+      try {
+        if (!token.permissions || token.permissions.length <= 0) {
+          const userDb = await prisma.user.findUnique({ where: { id: user.id }, include: { permissions: true } });
+          if (!userDb) return token;
+
+          const permissions = userDb.permissions.map(({ permission }) => permission);
+          if (permissions.length <= 0) {
+            permissions.push('USER');
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { permissions: { create: { permission: 'USER' } } },
+            });
+          }
+
+          token.permissions = permissions;
+        }
+      } catch {}
+
+      if (!token.selectedDiscordId && token.uid) {
         const getUserData = await prisma.user.findUnique({
           where: { id: token.uid },
           include: { permissions: true },
         });
-        const permissions = getUserData?.permissions.map((entry) => entry.permission);
-        token.permissions = permissions;
         token.selectedDiscordId = getUserData?.selectedDiscordId || undefined;
       }
 
