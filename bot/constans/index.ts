@@ -32,4 +32,5 @@ export const ALL_RCON_COMMANDS = [
   'permissions.add',
   'permissions.remove',
   'asm.reload',
+  'cryorama.reload',
 ] as const;

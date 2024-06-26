@@ -10,10 +10,10 @@ import {
 } from '../../../bot/api/index';
 import { getPermissionFromLabel, translateWidgetEnum, widgetEnums } from '../../(assets)/lib/utils';
 import { createDiscordRCONLog, executeRconCommand } from '../../../bot/plugins/rcon';
+import { cryoramaEditor, structuresEditor } from '../../../bot/plugins/editor';
 import { serverControlApi } from '../../../bot/plugins/server-control';
 import { ManagementPermissionValidator } from '../validators/custom';
 import { advancedSearch } from '../../(assets)/lib/advanced-search';
-import { structuresEditor } from '../../../bot/plugins/editor';
 import { dbGetFiberServers } from '../../../bot/lib/mysql';
 import { TAllNavLabels } from '../../(assets)/lib/types';
 import { ManagementPermission } from '@prisma/client';
@@ -502,37 +502,41 @@ export const managementRouter = router({
 
     return avatar;
   }),
-  getStructuresConfig: managementProcedure.query(async ({ ctx }) => {
+  getPluginsConfig: managementProcedure.query(async ({ ctx }) => {
     const { userPermissions } = ctx;
 
     if (!verifyFromLabel('Plugin Config', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
-    const statuses = await structuresEditor({
+    const structureStatuses = await structuresEditor({
+      method: 'CHECK',
+    });
+    const cryoramaStatuses = await cryoramaEditor({
       method: 'CHECK',
     });
 
-    return statuses;
+    return { structureStatuses, cryoramaStatuses };
   }),
-  changeStructuresConfig: managementProcedure
+  changePluginConfig: managementProcedure
     .input(
       z.object({
         method: z.enum(['ADD', 'REMOVE']),
         serverIds: z.number().array(),
+        plugin: z.enum(['STRUCTURES', 'CRYORAMA']),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const { method, serverIds, plugin } = input;
       const { userPermissions, user } = ctx;
-      const { method, serverIds } = input;
 
       if (!verifyFromLabel('Plugin Config', userPermissions)) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
-      const action = await structuresEditor({
-        method,
-        serverIds,
-      });
+      const action =
+        plugin === 'STRUCTURES'
+          ? await structuresEditor({ method, serverIds })
+          : await cryoramaEditor({ method, serverIds });
 
       createPanelLog({
-        content: 'Changed AntiStructureMesh Config',
+        content: `Changed ${plugin.toLowerCase()} config`,
         userDiscordId: user.discordId,
         username: user.name!,
         guildId: user.selectedDiscordId,
@@ -542,6 +546,7 @@ export const managementRouter = router({
         return action;
       }
     }),
+
   executeRcon: managementProcedure
     .input(
       z.object({

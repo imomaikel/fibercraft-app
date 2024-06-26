@@ -14,12 +14,13 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 type TResponseServers = Exclude<
-  inferRouterOutputs<typeof managementRouter>['changeStructuresConfig'],
+  inferRouterOutputs<typeof managementRouter>['changePluginConfig'],
   undefined
 >['servers'];
 
 const ManagementPluginConfigPage = () => {
-  const [checked, setChecked] = useState<number[]>([]);
+  const [checkedStructures, setCheckedStructures] = useState<number[]>([]);
+  const [checkedCryorama, setCheckedCryorama] = useState<number[]>([]);
   const [response, setResponse] = useState<{
     servers: TResponseServers;
     isOpen: boolean;
@@ -28,22 +29,25 @@ const ManagementPluginConfigPage = () => {
     isOpen: false,
   });
 
-  const { data, isLoading, refetch, isRefetching } = trpc.management.getStructuresConfig.useQuery(undefined, {
+  const { data, isLoading, refetch, isRefetching } = trpc.management.getPluginsConfig.useQuery(undefined, {
     onSuccess: (serverResponse) => {
-      if (serverResponse.servers && checked.length <= 0) {
-        setChecked(serverResponse.servers.map((entry) => entry.id));
+      if (serverResponse.structureStatuses && checkedStructures.length <= 0) {
+        setCheckedStructures(serverResponse.structureStatuses.servers.map((entry) => entry.id));
+      }
+      if (serverResponse.cryoramaStatuses && checkedCryorama.length <= 0) {
+        setCheckedCryorama(serverResponse.cryoramaStatuses.servers.map((entry) => entry.id));
       }
     },
   });
 
-  const { mutate: changeStructuresConfig, isLoading: isUpdating } =
-    trpc.management.changeStructuresConfig.useMutation();
+  const { mutate: changePluginConfig, isLoading: isUpdating } = trpc.management.changePluginConfig.useMutation();
 
-  const onUpdate = (method: 'ADD' | 'REMOVE') => {
-    changeStructuresConfig(
+  const onUpdate = (method: 'ADD' | 'REMOVE', plugin: 'STRUCTURES' | 'CRYORAMA') => {
+    changePluginConfig(
       {
         method,
-        serverIds: checked,
+        serverIds: plugin === 'STRUCTURES' ? checkedStructures : checkedCryorama,
+        plugin,
       },
       {
         onSuccess: (serverResponse) => {
@@ -59,11 +63,19 @@ const ManagementPluginConfigPage = () => {
     );
   };
 
-  const onCheck = (serverId: number) => {
-    if (checked.includes(serverId)) {
-      setChecked(checked.filter((id) => id !== serverId));
-    } else {
-      setChecked([...checked, serverId]);
+  const onCheck = (serverId: number, plugin: 'STRUCTURES' | 'CRYORAMA') => {
+    if (plugin === 'STRUCTURES') {
+      if (checkedStructures.includes(serverId)) {
+        setCheckedStructures(checkedStructures.filter((id) => id !== serverId));
+      } else {
+        setCheckedStructures([...checkedStructures, serverId]);
+      }
+    } else if (plugin === 'CRYORAMA') {
+      if (checkedCryorama.includes(serverId)) {
+        setCheckedCryorama(checkedCryorama.filter((id) => id !== serverId));
+      } else {
+        setCheckedCryorama([...checkedCryorama, serverId]);
+      }
     }
   };
 
@@ -89,11 +101,14 @@ const ManagementPluginConfigPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data?.servers.map((server) => {
+                {data?.structureStatuses.servers.map((server) => {
                   return (
-                    <TableRow key={`server-${server.id}`}>
+                    <TableRow key={`server-key1-${server.id}`}>
                       <TableCell className="py-1">
-                        <Checkbox onCheckedChange={() => onCheck(server.id)} checked={checked.includes(server.id)} />
+                        <Checkbox
+                          onCheckedChange={() => onCheck(server.id, 'STRUCTURES')}
+                          checked={checkedStructures.includes(server.id)}
+                        />
                       </TableCell>
                       <TableCell>{server.name}</TableCell>
                       <TableCell>
@@ -106,11 +121,55 @@ const ManagementPluginConfigPage = () => {
             </Table>
             <div className="space-y-2">
               <div className="grid grid-cols-2 gap-x-2">
-                <Button variant="positive" onClick={() => onUpdate('ADD')} disabled={isUpdating}>
+                <Button variant="positive" onClick={() => onUpdate('ADD', 'STRUCTURES')} disabled={isUpdating}>
                   Add Teleporter
                 </Button>
-                <Button variant="destructive" onClick={() => onUpdate('REMOVE')} disabled={isUpdating}>
+                <Button variant="destructive" onClick={() => onUpdate('REMOVE', 'STRUCTURES')} disabled={isUpdating}>
                   Remove Teleporter
+                </Button>
+              </div>
+              <Button className="w-full" onClick={handleRefetch} disabled={isRefetching || isUpdating}>
+                Refresh
+              </Button>
+            </div>
+          </div>
+        </ItemWrapper>
+        <ItemWrapper title="Cryorama Plugin" description="Control the config for the Cryorama Plugin">
+          <div className="max-w-md space-y-2">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Selected</TableHead>
+                  <TableHead>Map</TableHead>
+                  <TableHead>Spacewhale</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data?.cryoramaStatuses.servers.map((server) => {
+                  return (
+                    <TableRow key={`server-key2-${server.id}`}>
+                      <TableCell className="py-1">
+                        <Checkbox
+                          onCheckedChange={() => onCheck(server.id, 'CRYORAMA')}
+                          checked={checkedCryorama.includes(server.id)}
+                        />
+                      </TableCell>
+                      <TableCell>{server.name}</TableCell>
+                      <TableCell>
+                        <Badge>{server.fileStatus}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-x-2">
+                <Button variant="positive" onClick={() => onUpdate('ADD', 'CRYORAMA')} disabled={isUpdating}>
+                  Add Spacewhale
+                </Button>
+                <Button variant="destructive" onClick={() => onUpdate('REMOVE', 'CRYORAMA')} disabled={isUpdating}>
+                  Remove Spacewhale
                 </Button>
               </div>
               <Button className="w-full" onClick={handleRefetch} disabled={isRefetching || isUpdating}>
