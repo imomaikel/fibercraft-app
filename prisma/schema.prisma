@@ -202,9 +202,10 @@ model User {
   emailVerified DateTime?
   permissions   UserPermission[]
 
-  basketIdent     String?          @unique
-  basketAuthUrl   String?          @db.Text
-  previousBaskets PreviousBasket[]
+  basketIdent      String?          @unique
+  basketAuthUrl    String?          @db.Text
+  basketLastUpdate DateTime         @default(now())
+  previousBaskets  PreviousBasket[]
 
   totalPaid   Float       @default(0)
   epicId      String?

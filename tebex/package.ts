@@ -1,6 +1,7 @@
 'use server';
 import { AddPackageToBasket, RemovePackage, SetWebstoreIdentifier, UpdateQuantity } from 'tebex_headless';
 import { translateTebexError } from '.';
+import prisma from '../bot/lib/prisma';
 
 type TAddBasketPackage = {
   basketIdent: string;
@@ -25,6 +26,12 @@ export const _addBasketPackage = async ({
     if (basket.complete) {
       return { error: true, message: 'Basket not found' };
     }
+
+    await prisma.user.update({
+      where: { basketIdent },
+      data: { basketLastUpdate: new Date() },
+    });
+
     return { success: true, basket };
   } catch (error) {
     const errorMessage = translateTebexError(error);
@@ -46,6 +53,12 @@ export const _removeBasketPackage = async ({ basketIdent, itemId }: TRemoveBaske
     if (basket.complete) {
       return { error: true, message: 'Basket not found' };
     }
+
+    await prisma.user.update({
+      where: { basketIdent },
+      data: { basketLastUpdate: new Date() },
+    });
+
     return { success: true, basket };
   } catch (error) {
     const errorMessage = translateTebexError(error);
@@ -68,6 +81,12 @@ export const _updateBasketPackage = async ({ basketIdent, itemId, quantity }: TU
     if (basket.complete) {
       return { error: true, message: 'Basket not found' };
     }
+
+    await prisma.user.update({
+      where: { basketIdent },
+      data: { basketLastUpdate: new Date() },
+    });
+
     return { success: true, basket };
   } catch (error) {
     const errorMessage = translateTebexError(error);

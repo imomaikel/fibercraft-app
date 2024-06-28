@@ -113,6 +113,7 @@ export const missingBasket = async ({
     data: {
       basketIdent: newBasketIdent,
       basketAuthUrl: authUrlLink,
+      basketLastUpdate: new Date(),
     },
   });
   try {
