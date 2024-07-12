@@ -1,4 +1,3 @@
-'use server';
 import { SetWebstoreIdentifier, Apply, ApplyType, Remove } from 'tebex_headless';
 
 type TDiscount = {

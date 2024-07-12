@@ -1,4 +1,3 @@
-'use server';
 import { db } from '../../../bot/lib/mysql';
 
 type TMethods = {

@@ -1,5 +1,3 @@
-'use server';
-
 type TError =
   | 'Basket not authorized'
   | 'Basket not found'

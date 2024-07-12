@@ -1,4 +1,3 @@
-'use server';
 import { SetWebstoreIdentifier, GetCategories, Category, Package } from 'tebex_headless';
 
 let tebexCategories: Category[] = [];

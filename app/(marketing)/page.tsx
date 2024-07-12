@@ -1,4 +1,3 @@
-'use server';
 import StorePreview from './components/StorePreview';
 import Testimonials from './components/Testimonials';
 import Leaderboard from './components/Leaderboard';
@@ -44,3 +43,5 @@ const MarketingPage = async () => {
 };
 
 export default MarketingPage;
+
+export const revalidate = 3600;

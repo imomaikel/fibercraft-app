@@ -1,4 +1,3 @@
-'use server';
 import { AddPackageToBasket, RemovePackage, SetWebstoreIdentifier, UpdateQuantity } from 'tebex_headless';
 import { translateTebexError } from '.';
 import prisma from '../bot/lib/prisma';
