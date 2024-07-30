@@ -151,6 +151,7 @@ enum ManagementPermission {
   WEBSITE_CONTROL      @map("Website Control")
   PLUGIN_CONFIG        @map("Plugin Config")
   ALL_RCON_COMMANDS    @map("All RCON Commands")
+  POLLS                @map("Polls")
 }
 
 model UserPermission {
@@ -312,4 +313,56 @@ model Event {
   createdAt DateTime @default(now())
 
   @@map("event")
+}
+
+// Polls
+model Poll {
+  id BigInt @id @default(autoincrement())
+
+  messageId String
+  channelId String
+
+  title       String?
+  description String  @db.Text
+  maxVotes    BigInt?
+  ranks       Rank[]
+
+  options PollOption[]
+  results PollResult[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  ended     Boolean   @default(false)
+  expireAt  DateTime?
+}
+
+model PollResult {
+  id BigInt @id @default(autoincrement())
+
+  option PollOption @relation(fields: [pollOptionId], references: [id], onDelete: Cascade)
+  votes  BigInt
+
+  poll         Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  pollId       BigInt
+  pollOptionId BigInt
+}
+
+model PollOption {
+  id BigInt @id @default(autoincrement())
+
+  description String @db.Text
+
+  poll       Poll         @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  pollId     BigInt
+  pollResult PollResult[]
+}
+
+model Rank {
+  id Int @id @default(autoincrement())
+
+  roleId        String
+  pointsPerVote Int
+
+  poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  pollId BigInt
 }
