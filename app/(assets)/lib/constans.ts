@@ -64,6 +64,12 @@ export const NAV_LINKS = [
         description: 'Execute commands, gain control',
         permission: 'ALL_RCON_COMMANDS' as ManagementPermission,
       },
+      {
+        label: 'Polls',
+        path: '/management/polls',
+        description: 'Design and administer polls',
+        permission: 'POLLS' as ManagementPermission,
+      },
     ],
   },
 ] as const;
