@@ -1,6 +1,7 @@
 import { MessageReaction, PartialMessageReaction, PartialUser, User } from 'discord.js';
 import { getUserReactions, removeUserReaction } from '../../utils/reaction';
 import { getLetterFromRegionalIndicatorEmoji } from '../../constans';
+import { sendErrorEmbed, sendSuccessEmbed } from '../../utils/embeds';
 import prisma from '../../lib/prisma';
 import { updatePollResult } from '.';
 import { debounce } from 'lodash';
@@ -36,7 +37,13 @@ export const _handlePollReaction = async ({ reaction, user, method }: THandlePol
     const isReactionValid = poll.options.some((entry) => entry.letter === emojiAsLetter);
 
     if (!isReactionValid) {
-      // TODO notify user
+      if (method === 'add') {
+        await sendErrorEmbed({
+          channel: reaction.message.channel,
+          deleteAfter: 10,
+          content: `Hey, ${user.toString()}\nYou can not use ${reaction.emoji.name} reaction to vote in this poll.`,
+        });
+      }
       await removeUserReaction(user.id, reaction);
       return;
     }
@@ -56,7 +63,20 @@ export const _handlePollReaction = async ({ reaction, user, method }: THandlePol
     const userReactions = await getUserReactions(user.id, reaction);
     if (maxVotes && userReactions.size > maxVotes) {
       await removeUserReaction(user.id, reaction);
-      // TODO Notify user
+      await sendErrorEmbed({
+        channel: reaction.message.channel,
+        deleteAfter: 10,
+        content: `Hey, ${user.toString()}\nYou have reached the maximum number of votes allowed. However, you still have the option to modify your vote.`,
+      });
+    } else {
+      await sendSuccessEmbed({
+        channel: reaction.message.channel,
+        deleteAfter: 10,
+        content:
+          method === 'add'
+            ? `Hey, ${user.toString()}\nThank you for casting your vote :handshake:\nThe poll results are currently being updated.\nYour vote multiplier is set at **${pointsPerVote}x**`
+            : `Hey, ${user.toString()}\nYour vote has been removed.\nThe poll results are currently being updated.`,
+      });
     }
 
     await prisma.poll.update({

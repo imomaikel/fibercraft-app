@@ -23,3 +23,25 @@ export const sendErrorEmbed = async ({ content, channel, deleteAfter }: TSendErr
     });
   } catch {}
 };
+
+type TSendSuccessEmbed = {
+  channel: Channel;
+  content: string;
+  deleteAfter: 'never' | number;
+};
+export const sendSuccessEmbed = async ({ content, channel, deleteAfter }: TSendSuccessEmbed) => {
+  if (channel.type !== ChannelType.GuildText) return;
+  try {
+    const embed = new EmbedBuilder().setColor(colors.green).setDescription(content);
+
+    if (deleteAfter) {
+      embed.setFooter({ text: `This message will disappear in ${deleteAfter} seconds.` });
+    }
+
+    await channel.send({ embeds: [embed] }).then((msg) => {
+      if (deleteAfter !== 'never') {
+        setTimeout(() => msg.delete().catch(() => {}), secondsToMilliseconds(deleteAfter));
+      }
+    });
+  } catch {}
+};
