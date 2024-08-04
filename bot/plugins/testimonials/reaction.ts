@@ -7,6 +7,7 @@ import {
   User,
   hyperlink,
 } from 'discord.js';
+import { removeUserReactions } from '../../utils/reaction';
 import { sendErrorEmbed } from '../../utils/embeds';
 import { colors, extraSigns } from '../../constans';
 import prisma from '../../lib/prisma';
@@ -134,17 +135,5 @@ export const _onTestimonialReactionAdd = async ({ reaction, user: reactionUser }
         await testimonialAuthor.send({ embeds: [embed] }).catch(() => {});
       }
     }
-  } catch {}
-};
-
-const removeUserReactions = async (userId: string, reaction: MessageReaction | PartialMessageReaction) => {
-  const userReactions = reaction.message.reactions.cache.filter((entry) => entry.users.cache.has(userId));
-
-  try {
-    await Promise.all(
-      userReactions.map(async (entry) => {
-        await entry.users.remove(userId);
-      }),
-    );
   } catch {}
 };

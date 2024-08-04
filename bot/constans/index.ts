@@ -34,3 +34,73 @@ export const ALL_RCON_COMMANDS = [
   'asm.reload',
   'cryorama.reload',
 ] as const;
+
+export const POLL_LETTERS = [
+  'a',
+  'b',
+  'c',
+  'd',
+  'e',
+  'f',
+  'g',
+  'h',
+  'i',
+  'j',
+  'k',
+  'l',
+  'm',
+  'n',
+  'o',
+  'p',
+  'q',
+  'r',
+  's',
+  't',
+  'u',
+  'v',
+  'w',
+  'x',
+  'y',
+  'z',
+] as const;
+
+const EMOJI_LETTERS = [
+  '🇦',
+  '🇧',
+  '🇨',
+  '🇩',
+  '🇪',
+  '🇫',
+  '🇬',
+  '🇭',
+  '🇮',
+  '🇯',
+  '🇰',
+  '🇱',
+  '🇲',
+  '🇳',
+  '🇴',
+  '🇵',
+  '🇶',
+  '🇷',
+  '🇸',
+  '🇹',
+  '🇺',
+  '🇻',
+  '🇼',
+  '🇽',
+  '🇾',
+  '🇿',
+];
+
+export const createRegionalLetterIndicator = (letter: (typeof POLL_LETTERS)[number]) => {
+  const index = POLL_LETTERS.findIndex((entry) => entry === letter);
+  return EMOJI_LETTERS[index || 0];
+};
+
+export const getLetterFromRegionalIndicatorEmoji = (emoji: string) => {
+  const index = EMOJI_LETTERS.findIndex((entry) => entry === emoji);
+
+  const letter = typeof index === 'number' ? POLL_LETTERS[index] : undefined;
+  return letter;
+};
