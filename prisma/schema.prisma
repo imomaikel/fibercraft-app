@@ -318,7 +318,7 @@ model Event {
 
 // Polls
 model Poll {
-  id BigInt @id @default(autoincrement())
+  id String @id @default(cuid())
 
   messageId String? @unique
   channelId String
@@ -347,7 +347,7 @@ model PollOption {
   votes       Int    @default(0)
 
   poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
-  pollId BigInt
+  pollId String
 
   @@unique([pollId, letter])
 }
@@ -360,5 +360,5 @@ model Rank {
   maxVotes      Int
 
   poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
-  pollId BigInt
+  pollId String
 }

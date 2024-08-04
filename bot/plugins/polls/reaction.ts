@@ -2,6 +2,10 @@ import { MessageReaction, PartialMessageReaction, PartialUser, User } from 'disc
 import { getUserReactions, removeUserReaction } from '../../utils/reaction';
 import { getLetterFromRegionalIndicatorEmoji } from '../../constans';
 import prisma from '../../lib/prisma';
+import { updatePollResult } from '.';
+import { debounce } from 'lodash';
+
+const update = debounce((pollId: string) => updatePollResult({ pollId }), 2_000);
 
 type THandlePollReaction = {
   user: User | PartialUser;
@@ -23,8 +27,6 @@ export const _handlePollReaction = async ({ reaction, user, method }: THandlePol
         options: true,
       },
     });
-
-    console.log('Trigger');
 
     if (!poll) return;
 
@@ -53,7 +55,6 @@ export const _handlePollReaction = async ({ reaction, user, method }: THandlePol
 
     const userReactions = await getUserReactions(user.id, reaction);
     if (maxVotes && userReactions.size > maxVotes) {
-      console.log('Remove');
       await removeUserReaction(user.id, reaction);
       // TODO Notify user
     }
@@ -81,6 +82,8 @@ export const _handlePollReaction = async ({ reaction, user, method }: THandlePol
         },
       },
     });
+
+    update(poll.id);
 
     // TODO Notify user
   } catch (error) {
