@@ -15,7 +15,10 @@ import { Label } from '@ui/label';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-const PollCreator = () => {
+type TPollCreator = {
+  refetch: () => void;
+};
+const PollCreator = ({ refetch }: TPollCreator) => {
   const [isCreatorVisible, setIsCreatorVisible] = useState(false);
 
   const { data: channels, isLoading: channelsLoading } = trpc.management.getChannels.useQuery();
@@ -50,11 +53,13 @@ const PollCreator = () => {
   };
 
   const onSubmit = (values: TPollSchema) => {
-    console.log(values);
     createPoll(values, {
       onSuccess: (data) => {
         if (data.success) {
           toast.success(data.message);
+          refetch();
+          form.reset();
+          setIsCreatorVisible(false);
         } else {
           errorToast(data.message);
         }
@@ -96,7 +101,7 @@ const PollCreator = () => {
                 <FormItem>
                   <FormLabel>Poll Description*</FormLabel>
                   <FormControl>
-                    <Input placeholder="Vote for changes to our network" {...field} />
+                    <Textarea placeholder="Vote for changes to our network" {...field} rows={5} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

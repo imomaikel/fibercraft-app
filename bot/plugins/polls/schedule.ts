@@ -4,7 +4,7 @@ import { client } from '../../client';
 import prisma from '../../lib/prisma';
 import { createPollEmbed } from '.';
 
-const foundExpiredPoll = async (pollId: string) => {
+export const _closePoll = async (pollId: string): Promise<boolean> => {
   const poll = await prisma.poll.update({
     where: { id: pollId },
     data: {
@@ -15,13 +15,13 @@ const foundExpiredPoll = async (pollId: string) => {
     },
   });
 
-  if (!poll.messageId) return;
+  if (!poll.messageId) return false;
 
   const channel = client.channels.cache.get(poll.channelId);
-  if (!channel?.id || channel.type !== ChannelType.GuildText) return;
+  if (!channel?.id || channel.type !== ChannelType.GuildText) return false;
 
   const message = await channel.messages.fetch(poll.messageId);
-  if (!message?.id) return;
+  if (!message?.id) return false;
 
   await message.reactions.removeAll();
   const totalVotes = poll.options.reduce((acc, curr) => (acc += curr.votes), 0);
@@ -38,7 +38,7 @@ const foundExpiredPoll = async (pollId: string) => {
         const percentage = ((option.votes * 100) / totalVotes).toFixed(2);
 
         return {
-          title: `Option ${createRegionalLetterIndicator(letter)} (${option.votes} ${votes}, ${percentage}%)`,
+          title: `Option ${createRegionalLetterIndicator(letter)} (${option.votes} ${votes}, ${option.votes === 0 ? '0' : percentage}%)`,
           description: option.description,
           letter,
           votes: option.votes,
@@ -47,12 +47,19 @@ const foundExpiredPoll = async (pollId: string) => {
       .sort((a, b) => b.votes - a.votes || a.letter.localeCompare(b.letter)),
   });
 
-  await message.edit({
-    embeds: [pollEndedEmbed],
-  });
+  const isSuccess = await new Promise<boolean>((resolve, reject) => {
+    message
+      .edit({
+        embeds: [pollEndedEmbed],
+      })
+      .then(() => resolve(true))
+      .catch(() => reject(false));
+  }).catch(() => false);
+
+  return isSuccess;
 };
 
-const foundPollToSend = async (pollId: string) => {
+export const _sendScheduledPoll = async (pollId: string): Promise<boolean> => {
   try {
     const poll = await prisma.poll.findUnique({
       where: { id: pollId, ended: false },
@@ -61,10 +68,10 @@ const foundPollToSend = async (pollId: string) => {
       },
     });
 
-    if (!poll?.id) return;
+    if (!poll?.id) return false;
 
     const channel = client.channels.cache.get(poll.channelId);
-    if (!channel || channel.type !== ChannelType.GuildText) return;
+    if (!channel || channel.type !== ChannelType.GuildText) return false;
 
     const options = poll.options.map((option, idx) => ({
       description: option.description,
@@ -80,6 +87,8 @@ const foundPollToSend = async (pollId: string) => {
 
     const message = await channel.send({ embeds: [pollEmbed] });
 
+    if (!message.id) return false;
+
     for (const option of poll.options) {
       await message.react(createRegionalLetterIndicator(option.letter as (typeof POLL_LETTERS)[number]));
     }
@@ -91,7 +100,11 @@ const foundPollToSend = async (pollId: string) => {
         messageId: message.id,
       },
     });
-  } catch {}
+
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 export const _handlePollsEvents = async () => {
@@ -116,8 +129,8 @@ export const _handlePollsEvents = async () => {
     return hasExpired(poll.expireAt);
   });
 
-  expiredPolls.forEach((poll) => foundExpiredPoll(poll.id));
-  pollsToSend.forEach((poll) => foundPollToSend(poll.id));
+  expiredPolls.forEach((poll) => _closePoll(poll.id));
+  pollsToSend.forEach((poll) => _sendScheduledPoll(poll.id));
 
   setTimeout(_handlePollsEvents, 2_500);
 };

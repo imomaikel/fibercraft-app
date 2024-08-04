@@ -9,6 +9,7 @@ import {
   updateWidget,
 } from '../../../bot/api/index';
 import { getPermissionFromLabel, translateWidgetEnum, widgetEnums } from '../../(assets)/lib/utils';
+import { closePoll, createPoll, sendScheduledPoll } from '../../../bot/plugins/polls';
 import { createDiscordRCONLog, executeRconCommand } from '../../../bot/plugins/rcon';
 import { cryoramaEditor, structuresEditor } from '../../../bot/plugins/editor';
 import { serverControlApi } from '../../../bot/plugins/server-control';
@@ -17,7 +18,6 @@ import { advancedSearch } from '../../(assets)/lib/advanced-search';
 import { PollSchema } from '../../(assets)/lib/poll-validator';
 import { dbGetFiberServers } from '../../../bot/lib/mysql';
 import { TAllNavLabels } from '../../(assets)/lib/types';
-import { createPoll } from '../../../bot/plugins/polls';
 import { ManagementPermission } from '@prisma/client';
 import { managementProcedure, router } from './trpc';
 import { createPanelLog } from '../lib/actions';
@@ -656,5 +656,109 @@ export const managementRouter = router({
     }
 
     return poll;
+  }),
+  getPolls: managementProcedure.query(async ({ ctx }) => {
+    const { userPermissions, user, prisma } = ctx;
+
+    if (!verifyFromLabel('Polls', userPermissions) || !user.name) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+
+    const polls = await prisma.poll.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        ended: true,
+        scheduleSend: true,
+        expireAt: true,
+      },
+    });
+
+    return polls;
+  }),
+  getPoll: managementProcedure.input(z.object({ pollId: z.string() })).query(async ({ ctx, input }) => {
+    const { prisma, userPermissions, user } = ctx;
+    const { pollId } = input;
+
+    if (!verifyFromLabel('Polls', userPermissions) || !user.name) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+
+    const roles = await apiGetRoles({ guildId: user.selectedDiscordId });
+    if (!roles.data) return null;
+
+    const getRoleName = (roleId: string) => {
+      return roles.data.find((role) => role.value === roleId)?.label || 'Unknown Role Name';
+    };
+
+    const poll = await prisma.poll.findUnique({
+      where: { id: pollId },
+      select: {
+        title: true,
+        description: true,
+        ended: true,
+        scheduleSend: true,
+        expireAt: true,
+        messageId: true,
+        channelId: true,
+        options: {
+          select: {
+            description: true,
+            letter: true,
+            votes: true,
+          },
+        },
+        ranks: {
+          select: {
+            maxVotes: true,
+            pointsPerVote: true,
+            roleId: true,
+          },
+        },
+      },
+    });
+
+    if (!poll) return null;
+
+    poll.ranks = poll.ranks.map((rank) => ({
+      ...rank,
+      roleId: getRoleName(rank.roleId),
+    }));
+
+    return poll;
+  }),
+  closePoll: managementProcedure.input(z.object({ pollId: z.string() })).mutation(async ({ ctx, input }) => {
+    const { prisma, userPermissions, user } = ctx;
+    const { pollId } = input;
+
+    if (!verifyFromLabel('Polls', userPermissions) || !user.name) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+
+    const poll = await prisma.poll.findUnique({ where: { id: pollId, ended: false } });
+    if (!poll?.id) return { error: true, message: 'This poll is already closed' };
+
+    const isSuccess = await closePoll(poll.id);
+
+    return isSuccess;
+  }),
+  sendPoll: managementProcedure.input(z.object({ pollId: z.string() })).mutation(async ({ ctx, input }) => {
+    const { prisma, userPermissions, user } = ctx;
+    const { pollId } = input;
+
+    if (!verifyFromLabel('Polls', userPermissions) || !user.name) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+
+    const poll = await prisma.poll.findUnique({ where: { id: pollId, ended: false } });
+    if (!poll?.id) return { error: true, message: 'This poll is already closed' };
+
+    const isSuccess = await sendScheduledPoll(poll.id);
+
+    return isSuccess;
   }),
 });
