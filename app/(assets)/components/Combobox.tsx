@@ -22,6 +22,7 @@ type TCombobox = {
   className?: string;
   isLoading?: boolean;
   isDisabled?: boolean;
+  cancelSelect?: boolean;
 };
 
 const Combobox = ({
@@ -35,6 +36,7 @@ const Combobox = ({
   searchLabel,
   isLoading,
   isDisabled,
+  cancelSelect,
 }: TCombobox) => {
   const data = useMemo(
     () => _data.map((entry) => ({ label: entry.label, value: `${entry.label}:${entry.value}` })),
@@ -107,6 +109,7 @@ const Combobox = ({
 
                     if (newValue.length >= 1 && onSelect) onSelect(newLabel, newValue.split(':')[1]);
 
+                    if (cancelSelect) return;
                     setSelected({
                       value: newValue,
                       label: newLabel,

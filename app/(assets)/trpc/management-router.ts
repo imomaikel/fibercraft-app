@@ -14,8 +14,10 @@ import { cryoramaEditor, structuresEditor } from '../../../bot/plugins/editor';
 import { serverControlApi } from '../../../bot/plugins/server-control';
 import { ManagementPermissionValidator } from '../validators/custom';
 import { advancedSearch } from '../../(assets)/lib/advanced-search';
+import { PollSchema } from '../../(assets)/lib/poll-validator';
 import { dbGetFiberServers } from '../../../bot/lib/mysql';
 import { TAllNavLabels } from '../../(assets)/lib/types';
+import { createPoll } from '../../../bot/plugins/polls';
 import { ManagementPermission } from '@prisma/client';
 import { managementProcedure, router } from './trpc';
 import { createPanelLog } from '../lib/actions';
@@ -635,5 +637,24 @@ export const managementRouter = router({
     } catch {
       return { error: true };
     }
+  }),
+  createPoll: managementProcedure.input(PollSchema).mutation(async ({ ctx, input }) => {
+    const { userPermissions, user } = ctx;
+
+    if (!verifyFromLabel('Polls', userPermissions) || !user.name) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+
+    const poll = await createPoll(input);
+
+    if (poll.success) {
+      createPanelLog({
+        content: `Created new poll "${input.title}"`,
+        userDiscordId: user.discordId,
+        username: user.name!,
+      });
+    }
+
+    return poll;
   }),
 });

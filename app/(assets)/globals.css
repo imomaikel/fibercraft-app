@@ -58,3 +58,7 @@
 .testimonialScroll::-webkit-scrollbar-thumb:hover {
   @apply rounded-br-2xl rounded-tr-2xl  bg-slate-400;
 }
+
+input[type='datetime-local']::-webkit-calendar-picker-indicator {
+  @apply invert;
+}
