@@ -75,10 +75,12 @@ const PollIdPage = () => {
     <div className="max-w-xl">
       <h2 className="flex items-center space-x-2">
         <span className="text-4xl font-bold">{title}</span>
-        <Button variant="link">Go back</Button>
+        <Button variant="link" onClick={() => router.back()}>
+          Go back
+        </Button>
       </h2>
       {poll.ended && (
-        <Badge variant="destructive" className="my-3" onClick={() => router.back()}>
+        <Badge variant="destructive" className="my-3">
           Poll is closed!
         </Badge>
       )}
