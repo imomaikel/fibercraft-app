@@ -4,7 +4,9 @@ import { getEnv } from './utils/env';
 import events from './events';
 
 // Create bot instance
-export const client = new Client({
+export const client: Client<boolean> & {
+  pollsReady?: boolean;
+} = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,

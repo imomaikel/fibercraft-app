@@ -21,7 +21,7 @@ export const _createPoll = async (values: TPollSchema) => {
       letter: POLL_LETTERS[idx],
     }));
 
-    if (options.length <= 2) {
+    if (options.length < 2) {
       return {
         error: true,
         message: 'Specify at least two options',
@@ -54,7 +54,7 @@ export const _createPoll = async (values: TPollSchema) => {
         description,
         title,
         expireAt,
-        scheduleSend,
+        scheduleSend: scheduleSend || undefined,
         options: {
           createMany: {
             data: options,

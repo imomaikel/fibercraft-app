@@ -1,7 +1,8 @@
 import { MessageReaction, PartialMessageReaction, PartialUser, User } from 'discord.js';
 import { getUserReactions, removeUserReaction } from '../../utils/reaction';
-import { getLetterFromRegionalIndicatorEmoji } from '../../constans';
 import { sendErrorEmbed, sendSuccessEmbed } from '../../utils/embeds';
+import { getLetterFromRegionalIndicatorEmoji } from '../../constans';
+import { client } from '../../client';
 import prisma from '../../lib/prisma';
 import { updatePollResult } from '.';
 import { debounce } from 'lodash';
@@ -15,6 +16,18 @@ type THandlePollReaction = {
 };
 export const _handlePollReaction = async ({ reaction, user, method }: THandlePollReaction) => {
   try {
+    if (!client.pollsReady) {
+      if (method === 'add') {
+        await sendErrorEmbed({
+          channel: reaction.message.channel,
+          content: `Hey, ${user.toString()}\nThe poll results are being calculated. Please try again in a few moments.`,
+          deleteAfter: 10,
+        });
+        await removeUserReaction(user.id, reaction);
+      }
+      return;
+    }
+
     const messageId = reaction.message.id;
     const guild = reaction.message.guild;
     const emoji = reaction.emoji.name;
@@ -32,6 +45,20 @@ export const _handlePollReaction = async ({ reaction, user, method }: THandlePol
     if (!poll) return;
 
     const member = await guild?.members.fetch(user.id);
+
+    const currentTime = new Date().getTime();
+    const expireTime = poll.expireAt ? poll.expireAt.getTime() : 0;
+
+    if (poll.ended || currentTime > expireTime) {
+      await sendErrorEmbed({
+        channel: reaction.message.channel,
+        deleteAfter: 10,
+        content: poll.ended
+          ? `Hey, ${user.toString()}\nThis poll has already closed.`
+          : `Hey, ${user.toString()}\nThis poll has expired.`,
+      });
+      return;
+    }
 
     const emojiAsLetter = getLetterFromRegionalIndicatorEmoji(emoji || '');
     const isReactionValid = poll.options.some((entry) => entry.letter === emojiAsLetter);
@@ -61,6 +88,7 @@ export const _handlePollReaction = async ({ reaction, user, method }: THandlePol
     const pointsPerVote = highestRank[0] ? highestRank[0].pointsPerVote : 1;
 
     const userReactions = await getUserReactions(user.id, reaction);
+
     if (maxVotes && userReactions.size > maxVotes) {
       await removeUserReaction(user.id, reaction);
       await sendErrorEmbed({
@@ -68,14 +96,17 @@ export const _handlePollReaction = async ({ reaction, user, method }: THandlePol
         deleteAfter: 10,
         content: `Hey, ${user.toString()}\nYou have reached the maximum number of votes allowed. However, you still have the option to modify your vote.`,
       });
-    } else {
+    } else if (method === 'add') {
       await sendSuccessEmbed({
         channel: reaction.message.channel,
         deleteAfter: 10,
-        content:
-          method === 'add'
-            ? `Hey, ${user.toString()}\nThank you for casting your vote :handshake:\nThe poll results are currently being updated.\nYour vote multiplier is set at **${pointsPerVote}x**`
-            : `Hey, ${user.toString()}\nYour vote has been removed.\nThe poll results are currently being updated.`,
+        content: `Hey, ${user.toString()}\nThank you for casting your vote :handshake:\nThe poll results are currently being updated.\nYour vote multiplier is set at **${pointsPerVote}x**`,
+      });
+    } else if (method === 'remove' && userReactions.size !== maxVotes) {
+      await sendSuccessEmbed({
+        channel: reaction.message.channel,
+        deleteAfter: 10,
+        content: `Hey, ${user.toString()}\nYour vote has been removed.\nThe poll results are currently being updated.`,
       });
     }
 
@@ -104,8 +135,6 @@ export const _handlePollReaction = async ({ reaction, user, method }: THandlePol
     });
 
     update(poll.id);
-
-    // TODO Notify user
   } catch (error) {
     console.log(error);
   }

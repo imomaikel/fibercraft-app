@@ -6,17 +6,21 @@ type TCreatePollEmbed = {
   title: string;
   expireAt: Date | undefined;
   options: { description: string; letter: (typeof POLL_LETTERS)[number]; title?: string }[];
+  isExpired?: boolean;
 };
-export const _createPollEmbed = ({ description, expireAt, title, options }: TCreatePollEmbed) => {
-  if (expireAt) {
-    description += `\n\nThis poll expires ${time(expireAt, 'R')}`;
-  }
-
+export const _createPollEmbed = ({ description, expireAt, title, options, isExpired }: TCreatePollEmbed) => {
   const embed = new EmbedBuilder()
     .setColor(colors.green)
     .setTitle(title)
     .setDescription(description)
     .setFooter({ text: 'Keep in mind that some roles have more vote power' });
+
+  if (isExpired) {
+    embed.addFields({
+      name: ':closed_lock_with_key: Poll closed!',
+      value: 'This poll is closed. You can see the results below.',
+    });
+  }
 
   options.forEach((option) =>
     embed.addFields({
@@ -24,6 +28,13 @@ export const _createPollEmbed = ({ description, expireAt, title, options }: TCre
       value: option.description,
     }),
   );
+
+  if (expireAt) {
+    embed.addFields({
+      name: ':alarm_clock: Poll expiry date',
+      value: time(expireAt, 'R'),
+    });
+  }
 
   return embed;
 };
