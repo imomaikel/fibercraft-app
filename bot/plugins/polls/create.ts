@@ -74,7 +74,8 @@ export const _createPoll = async (values: TPollSchema) => {
       try {
         const message = await channel.send({ embeds: [pollEmbed], components: pollButtons });
         await prisma.poll.update({ where: { id: pollData.id }, data: { messageId: message.id } });
-      } catch {
+      } catch (error) {
+        console.log('Send poll error', error);
         await prisma.poll.delete({ where: { id: pollData.id } });
         return {
           error: true,

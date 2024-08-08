@@ -17,6 +17,7 @@ export const _createPollButtons = ({ options, pollId: id }: TCreatePollButtons) 
     const rowColumns = Array.from(Array(isLastRow ? lastRowColumns : 5).keys());
 
     const rowBuilder = new ActionRowBuilder<ButtonBuilder>();
+    const extraRow = new ActionRowBuilder<ButtonBuilder>();
 
     const buttons: ButtonBuilder[] = [];
 
@@ -31,18 +32,29 @@ export const _createPollButtons = ({ options, pollId: id }: TCreatePollButtons) 
       idx++;
     });
 
+    let hasExtraRow = false;
+
     if (isLastRow) {
-      buttons.push(
-        new ButtonBuilder()
-          .setCustomId(`${client.user?.id}-poll-check|${id}`)
-          .setLabel('My Votes')
-          .setStyle(ButtonStyle.Success),
-      );
+      const myVotesButton = new ButtonBuilder()
+        .setCustomId(`${client.user?.id}-poll-check|${id}`)
+        .setLabel('My Votes')
+        .setStyle(ButtonStyle.Success);
+
+      if (buttons.length === 5) {
+        extraRow.addComponents(myVotesButton);
+        hasExtraRow = true;
+      } else {
+        buttons.push(myVotesButton);
+      }
     }
 
     rowBuilder.addComponents(buttons);
 
     actionRows.push(rowBuilder);
+
+    if (hasExtraRow) {
+      actionRows.push(extraRow);
+    }
   }
 
   return actionRows;

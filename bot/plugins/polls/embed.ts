@@ -7,8 +7,16 @@ type TCreatePollEmbed = {
   expireAt: Date | undefined;
   options: { description: string; order: number; title?: string }[];
   isExpired?: boolean;
+  footerText?: string;
 };
-export const _createPollEmbed = ({ description, expireAt, title, options, isExpired }: TCreatePollEmbed) => {
+export const _createPollEmbed = ({
+  description,
+  expireAt,
+  title,
+  options,
+  isExpired,
+  footerText,
+}: TCreatePollEmbed) => {
   const embed = new EmbedBuilder()
     .setColor(colors.green)
     .setTitle(title)
@@ -19,6 +27,12 @@ export const _createPollEmbed = ({ description, expireAt, title, options, isExpi
     embed.addFields({
       name: ':closed_lock_with_key: Poll closed!',
       value: 'This poll is closed. You can see the results below.',
+    });
+  }
+
+  if (footerText) {
+    embed.setFooter({
+      text: `Keep in mind that some roles have more vote power \n${footerText}`,
     });
   }
 
