@@ -1,4 +1,4 @@
-import { createRegionalLetterIndicator, POLL_LETTERS } from '../../constans';
+import { numberEmojis } from '../../constans';
 import { ChannelType } from 'discord.js';
 import { client } from '../../client';
 import prisma from '../../lib/prisma';
@@ -12,7 +12,11 @@ export const _updatePollResult = async ({ pollId }: TUpdatePollResult) => {
     const poll = await prisma.poll.findUnique({
       where: { id: pollId },
       include: {
-        options: true,
+        options: {
+          include: {
+            votes: true,
+          },
+        },
       },
     });
 
@@ -24,25 +28,28 @@ export const _updatePollResult = async ({ pollId }: TUpdatePollResult) => {
     const message = await channel.messages.fetch(poll.messageId);
     if (message.author.id !== client.user?.id) return;
 
-    const totalVotes = poll.options.reduce((acc, curr) => (acc += curr.votes), 0);
+    const totalVotes = poll.options.reduce(
+      (acc, curr) => (acc += curr.votes.reduce((acc2, curr2) => (acc2 += curr2.votes), 0)),
+      0,
+    );
 
     const updatedOptions = poll.options
       .map((option) => {
-        const letter = option.letter as (typeof POLL_LETTERS)[number];
-        const votes = option.votes === 1 ? 'vote' : 'votes';
-        const percentage = ((option.votes * 100) / totalVotes).toFixed(2);
+        const optionVotes = option.votes.reduce((acc, curr) => (acc += curr.votes), 0);
+        const votes = optionVotes === 1 ? 'vote' : 'votes';
+        const percentage = ((optionVotes * 100) / totalVotes).toFixed(2);
 
         return {
           description: option.description,
           title:
             totalVotes === 0
-              ? `Option ${createRegionalLetterIndicator(letter)}`
-              : `Option ${createRegionalLetterIndicator(letter)} (${option.votes} ${votes}, ${percentage}%)`,
-          letter,
-          votes: option.votes,
+              ? `Option ${numberEmojis[option.order - 1]}`
+              : `Option ${numberEmojis[option.order - 1]} (${optionVotes} ${votes}, ${percentage}%)`,
+          order: option.order,
+          votes: optionVotes,
         };
       })
-      .sort((a, b) => b.votes - a.votes || a.letter.localeCompare(b.letter));
+      .sort((a, b) => a.order - b.order);
 
     const newEmbed = createPollEmbed({
       description: poll.description,
@@ -53,6 +60,7 @@ export const _updatePollResult = async ({ pollId }: TUpdatePollResult) => {
 
     await message.edit({
       embeds: [newEmbed],
+      components: message.components,
     });
   } catch {}
 };

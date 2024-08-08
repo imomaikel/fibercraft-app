@@ -1,8 +1,8 @@
-import { fetchOldPollsReactions, handlePollsEvents } from '../plugins/polls';
 import { hoursToMilliseconds, minutesToMilliseconds } from 'date-fns';
 import { fetchOldReactions } from '../plugins/testimonials';
 import { updateTribeScore } from '../plugins/tribe-score';
 import { refetchTebexCategories } from '../../tebex';
+import { handlePollsEvents } from '../plugins/polls';
 import { revalidateBoosts } from '../plugins/boost';
 import scheduleEvents from '../plugins/scheduler';
 import { event } from '../utils/events';
@@ -38,7 +38,6 @@ export default event('ready', async (client) => {
   // Fetch old reaction
   fetchOldReactions();
   handlePollsEvents();
-  fetchOldPollsReactions();
 
   // TODO
   // Get shop data

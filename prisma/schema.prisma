@@ -343,13 +343,23 @@ model PollOption {
   id BigInt @id @default(autoincrement())
 
   description String @db.Text
-  letter      String
-  votes       Int    @default(0)
+  order       Int
+  votes       Vote[]
 
   poll   Poll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
   pollId String
 
-  @@unique([pollId, letter])
+  @@unique([pollId, order])
+}
+
+model Vote {
+  id BigInt @id @default(autoincrement())
+
+  userDiscordId String
+  votes         Int
+
+  pollOption   PollOption @relation(fields: [pollOptionId], references: [id], onDelete: Cascade)
+  pollOptionId BigInt
 }
 
 model Rank {

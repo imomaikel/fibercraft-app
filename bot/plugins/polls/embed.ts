@@ -1,11 +1,11 @@
-import { colors, createRegionalLetterIndicator, POLL_LETTERS } from '../../constans';
+import { colors, numberEmojis } from '../../constans';
 import { EmbedBuilder, time } from 'discord.js';
 
 type TCreatePollEmbed = {
   description: string;
   title: string;
   expireAt: Date | undefined;
-  options: { description: string; letter: (typeof POLL_LETTERS)[number]; title?: string }[];
+  options: { description: string; order: number; title?: string }[];
   isExpired?: boolean;
 };
 export const _createPollEmbed = ({ description, expireAt, title, options, isExpired }: TCreatePollEmbed) => {
@@ -24,7 +24,7 @@ export const _createPollEmbed = ({ description, expireAt, title, options, isExpi
 
   options.forEach((option) =>
     embed.addFields({
-      name: option.title || `Option ${createRegionalLetterIndicator(option.letter)}`,
+      name: option.title || `Option ${numberEmojis[option.order - 1]}`,
       value: option.description,
     }),
   );

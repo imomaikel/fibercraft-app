@@ -1,9 +1,8 @@
-import { createRegionalLetterIndicator, POLL_LETTERS } from '../../constans';
 import { TPollSchema } from '../../../app/(assets)/lib/poll-validator';
+import { createPollButtons, createPollEmbed } from '.';
 import { ChannelType } from 'discord.js';
-import prisma from '../../lib/prisma';
 import { client } from '../../client';
-import { createPollEmbed } from '.';
+import prisma from '../../lib/prisma';
 
 export const _createPoll = async (values: TPollSchema) => {
   try {
@@ -18,7 +17,7 @@ export const _createPoll = async (values: TPollSchema) => {
     const { description, scheduleSend, expireAt, ranks, title } = values;
     const options = values.options.map((option, idx) => ({
       description: option.description,
-      letter: POLL_LETTERS[idx],
+      order: idx + 1,
     }));
 
     if (options.length < 2) {
@@ -53,7 +52,7 @@ export const _createPoll = async (values: TPollSchema) => {
         channelId: channel.id,
         description,
         title,
-        expireAt,
+        expireAt: expireAt || undefined,
         scheduleSend: scheduleSend || undefined,
         options: {
           createMany: {
@@ -66,16 +65,15 @@ export const _createPoll = async (values: TPollSchema) => {
           },
         },
       },
+      include: { options: true },
     });
+
+    const pollButtons = createPollButtons({ options: pollData.options, pollId: pollData.id });
 
     if (!scheduleSend) {
       try {
-        const message = await channel.send({ embeds: [pollEmbed] });
+        const message = await channel.send({ embeds: [pollEmbed], components: pollButtons });
         await prisma.poll.update({ where: { id: pollData.id }, data: { messageId: message.id } });
-
-        for (const option of options) {
-          await message.react(createRegionalLetterIndicator(option.letter));
-        }
       } catch {
         await prisma.poll.delete({ where: { id: pollData.id } });
         return {

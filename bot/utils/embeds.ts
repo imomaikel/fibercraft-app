@@ -24,6 +24,15 @@ export const sendErrorEmbed = async ({ content, channel, deleteAfter }: TSendErr
   } catch {}
 };
 
+export const createErrorEmbed = (content: string) => {
+  const embed = new EmbedBuilder().setColor(colors.red).setDescription(content);
+  return embed;
+};
+export const createSuccessEmbed = (content: string) => {
+  const embed = new EmbedBuilder().setColor(colors.green).setDescription(content);
+  return embed;
+};
+
 type TSendSuccessEmbed = {
   channel: Channel;
   content: string;

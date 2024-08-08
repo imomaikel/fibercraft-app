@@ -708,7 +708,7 @@ export const managementRouter = router({
         options: {
           select: {
             description: true,
-            letter: true,
+            order: true,
             votes: true,
           },
         },

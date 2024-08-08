@@ -1,17 +1,19 @@
-import { _handlePollsEvents, _closePoll, _sendScheduledPoll } from './schedule';
-import { _handlePollReaction } from './reaction';
-import { _fetchOldPollsReactions } from './old';
+import { _closePoll, _sendScheduledPoll, _handlePollsEvents } from './schedule';
+import { _createPollButtons } from './buttons';
 import { _updatePollResult } from './update';
+import { _onPollOptionClick } from './click';
 import { _createPollEmbed } from './embed';
+import { _checkPollVotes } from './check';
 import { _createPoll } from './create';
 
 export {
   _closePoll as closePoll,
   _createPoll as createPoll,
+  _checkPollVotes as checkPollVotes,
   _createPollEmbed as createPollEmbed,
   _updatePollResult as updatePollResult,
-  _handlePollsEvents as handlePollsEvents,
+  _onPollOptionClick as onPollOptionClick,
+  _createPollButtons as createPollButtons,
   _sendScheduledPoll as sendScheduledPoll,
-  _handlePollReaction as handlePollReaction,
-  _fetchOldPollsReactions as fetchOldPollsReactions,
+  _handlePollsEvents as handlePollsEvents,
 };

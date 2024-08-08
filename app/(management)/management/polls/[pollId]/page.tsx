@@ -101,9 +101,9 @@ const PollIdPage = () => {
           {options.map((option, idx) => (
             <TableRow key={`opt-${idx}`}>
               <TableCell>
-                <Badge>{option.letter.toUpperCase()}</Badge>
+                <Badge>{option.order}</Badge>
               </TableCell>
-              <TableCell>{option.votes}</TableCell>
+              <TableCell>{option.votes.reduce((acc, curr) => (acc += curr.votes), 0)}</TableCell>
               <TableCell>{option.description}</TableCell>
             </TableRow>
           ))}
@@ -147,7 +147,7 @@ const PollIdPage = () => {
               </Link>
             </Button>
           )}
-          {expireAt && !ended && (
+          {!ended && (
             <Button
               className="flex flex-col"
               variant="destructive"
@@ -156,7 +156,7 @@ const PollIdPage = () => {
               disabled={isClosing}
             >
               <span>Close the Poll</span>
-              <span className="text-xs">Auto Expire: {relativeDate(expireAt)}</span>
+              {expireAt && <span className="text-xs">Auto Expire: {relativeDate(expireAt)}</span>}
             </Button>
           )}
           {scheduleSend && !ended && (

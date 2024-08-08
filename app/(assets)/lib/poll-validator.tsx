@@ -22,7 +22,7 @@ export const PollSchema = z.object({
       }),
     )
     .min(2)
-    .max(26),
+    .max(24),
 });
 
 export type TPollSchema = z.infer<typeof PollSchema>;
