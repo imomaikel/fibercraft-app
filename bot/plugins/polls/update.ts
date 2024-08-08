@@ -33,6 +33,8 @@ export const _updatePollResult = async ({ pollId }: TUpdatePollResult) => {
       0,
     );
 
+    const participants = poll.options.reduce((acc, curr) => (acc += curr.votes.length), 0);
+
     const updatedOptions = poll.options
       .map((option) => {
         const optionVotes = option.votes.reduce((acc, curr) => (acc += curr.votes), 0);
@@ -56,6 +58,7 @@ export const _updatePollResult = async ({ pollId }: TUpdatePollResult) => {
       expireAt: poll.expireAt || undefined,
       title: poll.title,
       options: updatedOptions,
+      footerText: `Total participants: ${participants}\nTotal votes: ${totalVotes}`,
     });
 
     await message.edit({
