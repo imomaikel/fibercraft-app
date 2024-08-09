@@ -33,7 +33,8 @@ export const _updatePollResult = async ({ pollId }: TUpdatePollResult) => {
       0,
     );
 
-    const participants = poll.options.reduce((acc, curr) => (acc += curr.votes.length), 0);
+    const participants = new Set(poll.options.flatMap((entry) => entry.votes.flatMap((vote) => vote.userDiscordId)))
+      .size;
 
     const updatedOptions = poll.options
       .map((option) => {
