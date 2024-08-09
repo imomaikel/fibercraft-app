@@ -34,11 +34,14 @@ export const _closePoll = async (pollId: string): Promise<boolean> => {
     0,
   );
 
+  const participants = new Set(poll.options.flatMap((entry) => entry.votes.flatMap((vote) => vote.userDiscordId))).size;
+
   const pollEndedEmbed = createPollEmbed({
     expireAt: undefined,
     isExpired: true,
     title: poll.title,
     description: poll.description,
+    footerText: `Total participants: ${participants}\nTotal votes: ${totalVotes}`,
     options: poll.options
       .map((option) => {
         const optionVotes = option.votes.reduce((acc, curr) => (acc += curr.votes), 0);
