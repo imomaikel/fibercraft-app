@@ -324,7 +324,7 @@ model Poll {
   channelId String
 
   title       String
-  description String @db.Text
+  description String? @db.Text
   ranks       Rank[]
 
   options PollOption[]

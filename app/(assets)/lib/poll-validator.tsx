@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const PollSchema = z.object({
   title: z.string().min(1),
-  description: z.string().min(1),
+  description: z.string().optional(),
   channelId: z.string().min(1),
   expireAt: z.date().or(z.literal('')).optional(),
   scheduleSend: z.date().or(z.literal('')).optional(),

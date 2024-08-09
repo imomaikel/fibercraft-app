@@ -7,7 +7,7 @@ import React from 'react';
 
 type TPollCard = {
   title: string;
-  description: string;
+  description: string | null | undefined;
   id: string;
   expireAt: Date | null;
   scheduleSend: Date | null;
@@ -22,9 +22,11 @@ const PollCard = ({ description, ended, expireAt, id, scheduleSend, title }: TPo
       <div>
         <span className="line-clamp-1 text-2xl">{title}</span>
       </div>
-      <div>
-        <span className="line-clamp-2 text-sm text-muted-foreground">{description}</span>
-      </div>
+      {description && (
+        <div>
+          <span className="line-clamp-2 text-sm text-muted-foreground">{description}</span>
+        </div>
+      )}
       <div>
         {ended && (
           <div className="mt-4 flex items-center gap-2">

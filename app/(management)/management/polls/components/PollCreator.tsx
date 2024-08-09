@@ -99,7 +99,7 @@ const PollCreator = ({ refetch }: TPollCreator) => {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Poll Description*</FormLabel>
+                  <FormLabel>Poll Description</FormLabel>
                   <FormControl>
                     <Textarea placeholder="Vote for changes to our network" {...field} rows={5} />
                   </FormControl>

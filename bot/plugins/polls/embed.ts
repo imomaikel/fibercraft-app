@@ -2,7 +2,7 @@ import { colors, numberEmojis } from '../../constans';
 import { EmbedBuilder, time } from 'discord.js';
 
 type TCreatePollEmbed = {
-  description: string;
+  description: string | null | undefined;
   title: string;
   expireAt: Date | undefined;
   options: { description: string; order: number; title?: string }[];
@@ -20,8 +20,11 @@ export const _createPollEmbed = ({
   const embed = new EmbedBuilder()
     .setColor(colors.green)
     .setTitle(title)
-    .setDescription(description)
     .setFooter({ text: 'Keep in mind that some roles have more vote power' });
+
+  if (description) {
+    embed.setDescription(description);
+  }
 
   if (isExpired) {
     embed.addFields({
