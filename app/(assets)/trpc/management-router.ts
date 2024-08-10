@@ -707,6 +707,7 @@ export const managementRouter = router({
         channelId: true,
         options: {
           select: {
+            id: true,
             description: true,
             order: true,
             votes: true,

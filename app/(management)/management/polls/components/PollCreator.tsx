@@ -16,10 +16,11 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 type TPollCreator = {
-  refetch: () => void;
+  refetch?: () => void;
+  defaultData?: TPollSchema;
 };
-const PollCreator = ({ refetch }: TPollCreator) => {
-  const [isCreatorVisible, setIsCreatorVisible] = useState(false);
+const PollCreator = ({ refetch, defaultData }: TPollCreator) => {
+  const [isCreatorVisible, setIsCreatorVisible] = useState(!!defaultData);
 
   const { data: channels, isLoading: channelsLoading } = trpc.management.getChannels.useQuery();
   const { data: roles, isLoading: rolesLoading } = trpc.management.getRoles.useQuery();
@@ -40,6 +41,7 @@ const PollCreator = ({ refetch }: TPollCreator) => {
       scheduleSend: '',
       options: [],
       ranks: [],
+      ...defaultData,
     },
   });
 
@@ -294,7 +296,6 @@ const PollCreator = ({ refetch }: TPollCreator) => {
                                 onClick={() => {
                                   field.onChange(
                                     field.value.filter((entry) => {
-                                      console.log(entry);
                                       return entry.id !== option.id;
                                     }),
                                   );

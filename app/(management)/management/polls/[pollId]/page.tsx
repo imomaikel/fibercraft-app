@@ -9,8 +9,11 @@ import { trpc } from '@trpc/index';
 import { Badge } from '@ui/badge';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import PollCreator from '../components/PollCreator';
+import { useState } from 'react';
 
 const PollIdPage = () => {
+  const [showCopiedPoll, setShowCopiedPoll] = useState(false);
   const { pollId } = useParams<{ pollId: string }>();
   const { user } = useCurrentUser();
   const router = useRouter();
@@ -147,6 +150,32 @@ const PollIdPage = () => {
               </Link>
             </Button>
           )}
+          <Button
+            className="flex flex-col"
+            variant="destructive"
+            size="lg"
+            onClick={() => setShowCopiedPoll(!showCopiedPoll)}
+          >
+            <span>Copy the Poll</span>
+          </Button>
+
+          {showCopiedPoll && (
+            <PollCreator
+              defaultData={{
+                ...poll,
+                options: poll.options.map(({ id, description }) => ({ id: Number(id), description })),
+                ranks: poll.ranks.map((rank) => {
+                  const roleName = ranks.find(({ roleId }) => roleId === rank.roleId)?.roleId;
+                  return {
+                    ...rank,
+                    description: poll.description || '',
+                    roleName: roleName || 'Unknown role',
+                  };
+                }),
+              }}
+            />
+          )}
+
           {!ended && (
             <Button
               className="flex flex-col"
