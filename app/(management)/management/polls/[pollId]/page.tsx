@@ -163,12 +163,14 @@ const PollIdPage = () => {
             <PollCreator
               defaultData={{
                 ...poll,
-                options: poll.options.map(({ id, description }) => ({ id: Number(id), description })),
+                options: poll.options.map((entry) => ({ id: Number(entry.id), description: entry.description })),
+                description: poll.description || '',
+                expireAt: poll.expireAt || '',
+                scheduleSend: poll.scheduleSend || '',
                 ranks: poll.ranks.map((rank) => {
                   const roleName = ranks.find(({ roleId }) => roleId === rank.roleId)?.roleId;
                   return {
                     ...rank,
-                    description: poll.description || '',
                     roleName: roleName || 'Unknown role',
                   };
                 }),
