@@ -59,7 +59,7 @@ const PollCreator = ({ refetch, defaultData }: TPollCreator) => {
       onSuccess: (data) => {
         if (data.success) {
           toast.success(data.message);
-          refetch();
+          if (refetch) refetch();
           form.reset();
           setIsCreatorVisible(false);
         } else {
