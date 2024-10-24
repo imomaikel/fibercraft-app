@@ -19,20 +19,18 @@ const pool = mysql.createPool({
   connectTimeout: 5_000,
 });
 
-export const db = async (query: string, values?: string[], timeout?: number) => {
-  const result = await new Promise((resolve, reject) => {
+export const db = async (query: string, values?: string[]) => {
+  let retries = 5;
+  let delay = 2000;
+
+  while (retries > 0) {
     try {
-      pool.getConnection(async (err, connection) => {
-        if (err) {
-          if (typeof timeout === 'number' && timeout <= 0) {
-            return reject(null);
-          }
-          console.log('DB Pool awaiting');
-          setTimeout(() => {
-            return db(query, values, timeout ? timeout - 2000 : undefined);
-          }, 2000);
-        } else {
-          try {
+      const result = await new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+          if (err) {
+            console.log('Error getting DB connection', err);
+            reject(err);
+          } else {
             connection.query(
               {
                 sql: query,
@@ -41,26 +39,30 @@ export const db = async (query: string, values?: string[], timeout?: number) => 
                 }),
               },
               (error, res) => {
+                connection.release();
                 if (error) {
-                  console.log(error);
-                  reject(null);
+                  console.log('MySQL Error:', error);
+                  reject(error);
+                } else {
+                  resolve(res);
                 }
-                if (res) return resolve(res);
-                return reject(null);
               },
             );
-            connection.release();
-          } catch (error) {
-            console.log('Mysql Error', error);
-            reject(null);
           }
-        }
+        });
       });
-    } catch {
-      reject(null);
+
+      return result;
+    } catch (err) {
+      console.log('Database query failed, retrying...', err);
+      retries -= 1;
+      await new Promise((res) => setTimeout(res, delay));
+      delay *= 2;
     }
-  }).catch(() => null);
-  return result;
+  }
+
+  console.log('Database query failed after retries');
+  return null;
 };
 
 export const dbCheckForFetchedTribesColumn = async () => {
@@ -102,18 +104,17 @@ export const dbGetPairedAccounts = async (searchText: string) => {
   return results;
 };
 
-export const dbGetFiberServers = async (timeout: number = 2000) => {
-  const query = await db('SELECT * from webapp.server WHERE serverName LIKE "%Fiber%";', undefined, timeout);
+export const dbGetFiberServers = async () => {
+  const query = await db('SELECT * from webapp.server WHERE serverName LIKE "%Fiber%";', undefined);
 
   return query ? (query as TDbGetFiberServers) : [];
 };
 
-export const getTopTribeScore = async (timeout: number = 2000) => {
+export const getTopTribeScore = async () => {
   const query = await db(
     // eslint-disable-next-line quotes
     `SELECT * FROM fibercraft.tribescore WHERE TribeName NOT LIKE '' ORDER BY score DESC LIMIT 10;`,
     undefined,
-    timeout,
   );
 
   return query ? (query as TDbGetTopTribeScore) : [];
