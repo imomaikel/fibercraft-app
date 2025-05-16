@@ -149,12 +149,14 @@ const ManagementRCON = () => {
         <ItemWrapper title="Maps Selection" description="Select map(s) where the command should be executed.">
           <div>
             <ToggleGroup type="multiple" onValueChange={handleMapsUpdate} className="flex justify-start">
-              {servers?.map((server, idx) => (
-                <ToggleGroupItem value={server.mapName} key={`server-${idx}`} className="capitalize">
-                  {server.mapName}
-                  {server.isX5 ? ' (X5)' : ''}
-                </ToggleGroupItem>
-              ))}
+              {servers
+                ?.filter((s) => s.isX5 === false)
+                .map((server, idx) => (
+                  <ToggleGroupItem value={server.mapName} key={`server-${idx}`} className="capitalize">
+                    {server.mapName}
+                    {server.isX5 ? ' (X5)' : ''}
+                  </ToggleGroupItem>
+                ))}
             </ToggleGroup>
           </div>
         </ItemWrapper>
