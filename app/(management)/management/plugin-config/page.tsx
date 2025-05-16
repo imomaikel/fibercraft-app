@@ -110,7 +110,10 @@ const ManagementPluginConfigPage = () => {
                           checked={checkedStructures.includes(server.id)}
                         />
                       </TableCell>
-                      <TableCell>{server.name}</TableCell>
+                      <TableCell>
+                        {server.name}
+                        {server.isX5 && ' (X5)'}
+                      </TableCell>
                       <TableCell>
                         <Badge>{server.fileStatus}</Badge>
                       </TableCell>
@@ -154,7 +157,10 @@ const ManagementPluginConfigPage = () => {
                           checked={checkedCryorama.includes(server.id)}
                         />
                       </TableCell>
-                      <TableCell>{server.name}</TableCell>
+                      <TableCell>
+                        {server.name}
+                        {server.isX5 && ' (X5)'}
+                      </TableCell>
                       <TableCell>
                         <Badge>{server.fileStatus}</Badge>
                       </TableCell>
@@ -196,7 +202,10 @@ const ManagementPluginConfigPage = () => {
               {response.servers.map((server) => {
                 return (
                   <TableRow key={`server-result-${server.id}`}>
-                    <TableCell>{server.name}</TableCell>
+                    <TableCell>
+                      {server.name}
+                      {server.isX5 && ' (X5)'}
+                    </TableCell>
                     <TableCell>
                       <Badge>{server.fileStatus}</Badge>
                     </TableCell>

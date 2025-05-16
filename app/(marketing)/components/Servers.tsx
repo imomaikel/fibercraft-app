@@ -11,6 +11,7 @@ import { cn } from '@assets/lib/utils';
 import { trpc } from '@trpc/index';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { Badge } from '@ui/badge';
 
 type TServers = {
   ipAddress: string;
@@ -71,6 +72,7 @@ const Servers = ({ ipAddress }: TServers) => {
               <div className="flex items-start space-x-2">
                 <FaMapMarkedAlt className="h-6 w-6" />
                 <span className="capitalize">{server.mapName}</span>
+                <Badge>{server.isX5 ? 'X5' : 'FF'}</Badge>
               </div>
             ),
             description: (

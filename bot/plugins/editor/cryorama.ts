@@ -18,6 +18,7 @@ type TCryoramaEditorOutput =
       servers: {
         name: string;
         id: number;
+        isX5: boolean;
         fileStatus: 'With SpaceWhale' | 'Without SpaceWhale' | 'Error';
       }[];
     }
@@ -26,6 +27,7 @@ type TCryoramaEditorOutput =
       servers: {
         name: string;
         id: number;
+        isX5: boolean;
         fileStatus: 'Success' | 'Error';
         rconStatus: boolean;
       }[];
@@ -89,6 +91,7 @@ export const _cryoramaEditor = async (props: TCryoramaEditorInput): Promise<TCry
       servers: servers.map((server) => ({
         id: server.id,
         name: server.mapName,
+        isX5: server.isX5,
         fileStatus: checkList.includes(server.id)
           ? 'With SpaceWhale'
           : errorList.includes(server.id)
@@ -101,6 +104,7 @@ export const _cryoramaEditor = async (props: TCryoramaEditorInput): Promise<TCry
       method: props.method,
       servers: servers.map((server) => ({
         id: server.id,
+        isX5: server.isX5,
         name: server.mapName,
         fileStatus: successList.includes(server.id) ? 'Success' : 'Error',
         rconStatus: executedMaps.includes(server.mapName),

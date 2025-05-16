@@ -20,7 +20,7 @@ const pool = mysql.createPool({
 });
 
 export const db = async (query: string, values?: string[]) => {
-  let retries = 5;
+  let retries = 2;
   let delay = 2000;
 
   while (retries > 0) {
@@ -105,9 +105,15 @@ export const dbGetPairedAccounts = async (searchText: string) => {
 };
 
 export const dbGetFiberServers = async () => {
-  const query = await db('SELECT * from webapp.server WHERE serverName LIKE "%Fiber%";', undefined);
+  const query = (await db('SELECT * from webapp.server WHERE serverName LIKE "%Fiber%";', undefined)) as
+    | TDbGetFiberServers
+    | undefined;
+  if (!query || !Array.isArray(query)) return [];
 
-  return query ? (query as TDbGetFiberServers) : [];
+  return query.map((entry) => ({
+    ...entry,
+    isX5: entry.customName ? entry.customName.includes('X5') : false,
+  }));
 };
 
 export const getTopTribeScore = async () => {

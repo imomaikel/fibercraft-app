@@ -28,6 +28,7 @@ export type TDbGetFiberServers = {
   lastPlayers: number;
   position: number;
   serverName: string;
+  isX5: boolean;
 }[];
 
 export type TDbGetTopTribeScore = {

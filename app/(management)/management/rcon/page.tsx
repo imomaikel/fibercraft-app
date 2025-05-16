@@ -152,6 +152,7 @@ const ManagementRCON = () => {
               {servers?.map((server, idx) => (
                 <ToggleGroupItem value={server.mapName} key={`server-${idx}`} className="capitalize">
                   {server.mapName}
+                  {server.isX5 ? ' (X5)' : ''}
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>

@@ -18,6 +18,7 @@ type TStructuresEditorOutput =
       servers: {
         name: string;
         id: number;
+        isX5: boolean;
         fileStatus: 'With teleporter' | 'Without teleporter' | 'Error';
       }[];
     }
@@ -26,6 +27,7 @@ type TStructuresEditorOutput =
       servers: {
         name: string;
         id: number;
+        isX5: boolean;
         fileStatus: 'Success' | 'Error';
         rconStatus: boolean;
       }[];
@@ -97,6 +99,7 @@ export const _structuresEditor = async (props: TStructuresEditorInput): Promise<
       servers: servers.map((server) => ({
         id: server.id,
         name: server.mapName,
+        isX5: server.isX5,
         fileStatus: checkList.includes(server.id)
           ? 'With teleporter'
           : errorList.includes(server.id)
@@ -110,6 +113,7 @@ export const _structuresEditor = async (props: TStructuresEditorInput): Promise<
       servers: servers.map((server) => ({
         id: server.id,
         name: server.mapName,
+        isX5: server.isX5,
         fileStatus: successList.includes(server.id) ? 'Success' : 'Error',
         rconStatus: executedMaps.includes(server.mapName),
       })),

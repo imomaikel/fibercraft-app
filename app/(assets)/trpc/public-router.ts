@@ -111,6 +111,7 @@ export const publicRouter = router({
             lastStatus: server.lastStatus as 'online' | 'offline',
             lastPlayers: server.lastStatus === 'online' ? server.lastPlayers : 0,
             queryPort: server.queryPort,
+            isX5: server.isX5,
           }))
         : []
     ).sort((a, b) => b.lastPlayers - a.lastPlayers);
